@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from "
 import { SEED_WORDS } from "../data/seedWords";
 import { Word } from "../types/word";
 import { getJson, setJson } from "../utils/storage";
-import { setSharedString } from "../native/appGroup";
+import { setSharedString, setWidgetQueue } from "../native/appGroup";
 
 type WordsState = {
   words: Word[];
@@ -87,15 +87,17 @@ export function WordsProvider({ children }: { children: React.ReactNode }) {
     return todaySet.wordIds.map(id => map.get(id)).filter(Boolean) as Word[];
   }, [todaySet]);
 
-  // 🔹 THIS IS THE ONLY NEW LOGIC 🔹
+  // Sync words to widget
   useEffect(() => {
-    const w = todayWords?.[0];
-    if (!w) return;
+    if (!todayWords || todayWords.length === 0) return;
 
-    const text = (w as any).word ?? (w as any).term ?? (w as any).id;
-    if (!text) return;
+    const firstWord = todayWords[0];
 
-    setSharedString("daily_word", String(text));
+    // Sync simple daily_word for backward compat
+    setSharedString("daily_word", firstWord.term);
+
+    // Sync full word queue for interactive widget
+    setWidgetQueue(todayWords);
   }, [todayWords]);
 
   return (
