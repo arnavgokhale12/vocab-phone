@@ -27,6 +27,9 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "plugins": [
+      "./plugins/withVocabWidget/withVocabWidget.js"
+    ],
     "extra": {
       "eas": {
         "projectId": "5243863b-0f29-42d2-9036-b7050e129397"
