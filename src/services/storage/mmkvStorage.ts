@@ -1,4 +1,4 @@
-import { MMKV } from 'react-native-mmkv';
+import { createMMKV } from 'react-native-mmkv';
 import {
   WordProgress,
   UserStats,
@@ -7,7 +7,7 @@ import {
 } from '../../types/wordProgress';
 
 // Initialize MMKV instance
-export const storage = new MMKV({
+export const storage = createMMKV({
   id: 'vocab-phone-storage',
 });
 
