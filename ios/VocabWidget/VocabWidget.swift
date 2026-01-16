@@ -175,17 +175,19 @@ struct InteractiveRectangularView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            // Large word - primary focus
-            HStack(alignment: .firstTextBaseline, spacing: 6) {
-                Text(entry.term)
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
-                    .lineLimit(1)
-
-                if !entry.pronunciation.isEmpty {
-                    Text(entry.pronunciation)
-                        .font(.system(size: 10, weight: .regular, design: .rounded))
-                        .foregroundStyle(.secondary)
+            // Large word - tappable to open app
+            Link(destination: URL(string: "vocabphone://pronounce/\(entry.wordId)")!) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text(entry.term)
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
                         .lineLimit(1)
+
+                    if !entry.pronunciation.isEmpty {
+                        Text(entry.pronunciation)
+                            .font(.system(size: 10, weight: .regular, design: .rounded))
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
                 }
             }
 
