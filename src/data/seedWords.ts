@@ -4,6 +4,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "perspicacious",
     term: "perspicacious",
+    pronunciation: "per-spi-KAY-shus",
     partOfSpeech: "adj",
     definition: "Having keen mental perception and understanding; discerning.",
     example: "Her perspicacious analysis of the market trends saved the company millions.",
@@ -13,6 +14,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "loquacious",
     term: "loquacious",
+    pronunciation: "loh-KWAY-shus",
     partOfSpeech: "adj",
     definition: "Tending to talk a great deal; garrulous.",
     example: "The loquacious guest monopolized every conversation at the dinner party.",
@@ -22,6 +24,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "recalcitrant",
     term: "recalcitrant",
+    pronunciation: "ri-KAL-si-trunt",
     partOfSpeech: "adj",
     definition: "Having an obstinately uncooperative attitude toward authority.",
     example: "The recalcitrant board member refused to support any proposed reforms.",
@@ -31,6 +34,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "sycophantic",
     term: "sycophantic",
+    pronunciation: "sik-uh-FAN-tik",
     partOfSpeech: "adj",
     definition: "Behaving in an obsequious way to gain advantage; servile flattery.",
     example: "His sycophantic behavior toward the CEO disgusted his colleagues.",
@@ -40,6 +44,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "pulchritudinous",
     term: "pulchritudinous",
+    pronunciation: "pul-kri-TOOD-uh-nus",
     partOfSpeech: "adj",
     definition: "Physically beautiful; comely.",
     example: "The pulchritudinous landscape of Tuscany has inspired artists for centuries.",
@@ -49,6 +54,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "sesquipedalian",
     term: "sesquipedalian",
+    pronunciation: "ses-kwi-puh-DAY-lee-un",
     partOfSpeech: "adj",
     definition: "Characterized by long words; long-winded.",
     example: "His sesquipedalian prose made the academic paper nearly unreadable.",
@@ -58,6 +64,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "obsequious",
     term: "obsequious",
+    pronunciation: "uhb-SEE-kwee-us",
     partOfSpeech: "adj",
     definition: "Obedient or attentive to an excessive degree; servile.",
     example: "The obsequious waiter hovered annoyingly at our table throughout dinner.",
@@ -67,6 +74,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "truculent",
     term: "truculent",
+    pronunciation: "TRUK-yoo-lunt",
     partOfSpeech: "adj",
     definition: "Eager or quick to argue or fight; aggressively defiant.",
     example: "His truculent demeanor made negotiations nearly impossible.",
@@ -76,6 +84,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "magnanimous",
     term: "magnanimous",
+    pronunciation: "mag-NAN-uh-mus",
     partOfSpeech: "adj",
     definition: "Generous or forgiving, especially toward a rival or less powerful person.",
     example: "In a magnanimous gesture, she declined to press charges against her accuser.",
@@ -85,6 +94,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "equanimity",
     term: "equanimity",
+    pronunciation: "ee-kwuh-NIM-uh-tee",
     partOfSpeech: "noun",
     definition: "Mental calmness and composure, especially in difficult situations.",
     example: "She accepted the devastating news with remarkable equanimity.",
@@ -94,6 +104,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "perfidious",
     term: "perfidious",
+    pronunciation: "per-FID-ee-us",
     partOfSpeech: "adj",
     definition: "Deceitful and untrustworthy; treacherous.",
     example: "The perfidious advisor had been leaking secrets to competitors for years.",
@@ -103,6 +114,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "ineffable",
     term: "ineffable",
+    pronunciation: "in-EF-uh-bul",
     partOfSpeech: "adj",
     definition: "Too great or extreme to be expressed in words; indescribable.",
     example: "The ineffable beauty of the aurora borealis left us speechless.",
@@ -112,6 +124,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "lugubrious",
     term: "lugubrious",
+    pronunciation: "loo-GOO-bree-us",
     partOfSpeech: "adj",
     definition: "Looking or sounding sad and dismal; mournful.",
     example: "The lugubrious tone of the cello piece moved the audience to tears.",
@@ -121,6 +134,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "obstreperous",
     term: "obstreperous",
+    pronunciation: "uhb-STREP-er-us",
     partOfSpeech: "adj",
     definition: "Noisy and difficult to control; unruly.",
     example: "The obstreperous crowd forced security to close the venue early.",
@@ -130,6 +144,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "pusillanimous",
     term: "pusillanimous",
+    pronunciation: "pyoo-suh-LAN-uh-mus",
     partOfSpeech: "adj",
     definition: "Showing a lack of courage or determination; timid.",
     example: "His pusillanimous response to the crisis disappointed his supporters.",
@@ -139,6 +154,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "sanguine",
     term: "sanguine",
+    pronunciation: "SANG-gwin",
     partOfSpeech: "adj",
     definition: "Optimistic or positive, especially in a difficult situation.",
     example: "Despite the setbacks, she remained sanguine about the project's success.",
@@ -148,6 +164,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "vituperative",
     term: "vituperative",
+    pronunciation: "vy-TOO-per-uh-tiv",
     partOfSpeech: "adj",
     definition: "Bitter and abusive in language; harshly critical.",
     example: "The vituperative editorial sparked outrage across the political spectrum.",
@@ -157,6 +174,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "ephemeral",
     term: "ephemeral",
+    pronunciation: "ih-FEM-er-ul",
     partOfSpeech: "adj",
     definition: "Lasting for a very short time; transitory.",
     example: "Social media fame is often ephemeral, fading as quickly as it arose.",
@@ -166,6 +184,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "mercurial",
     term: "mercurial",
+    pronunciation: "mer-KYOOR-ee-ul",
     partOfSpeech: "adj",
     definition: "Subject to sudden changes of mood or mind; volatile.",
     example: "Her mercurial temperament made her both fascinating and exhausting.",
@@ -175,6 +194,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "sagacious",
     term: "sagacious",
+    pronunciation: "suh-GAY-shus",
     partOfSpeech: "adj",
     definition: "Having or showing keen mental discernment and good judgment.",
     example: "The sagacious investor predicted the market crash months in advance.",
@@ -184,6 +204,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "verisimilitude",
     term: "verisimilitude",
+    pronunciation: "ver-uh-si-MIL-i-tood",
     partOfSpeech: "noun",
     definition: "The appearance of being true or real; believability.",
     example: "The novel's verisimilitude made readers forget they were reading fiction.",
@@ -193,6 +214,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "pernicious",
     term: "pernicious",
+    pronunciation: "per-NISH-us",
     partOfSpeech: "adj",
     definition: "Having a harmful effect, especially in a gradual or subtle way.",
     example: "The pernicious influence of misinformation eroded public trust.",
@@ -202,6 +224,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "ennui",
     term: "ennui",
+    pronunciation: "on-WEE",
     partOfSpeech: "noun",
     definition: "A feeling of listlessness and dissatisfaction arising from boredom.",
     example: "The ennui of suburban life drove her to seek adventure abroad.",
@@ -211,6 +234,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "insouciance",
     term: "insouciance",
+    pronunciation: "in-SOO-see-uns",
     partOfSpeech: "noun",
     definition: "Casual lack of concern; indifference.",
     example: "He faced the accusations with an infuriating insouciance.",
@@ -220,6 +244,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "schadenfreude",
     term: "schadenfreude",
+    pronunciation: "SHAH-dun-froy-duh",
     partOfSpeech: "noun",
     definition: "Pleasure derived from another person's misfortune.",
     example: "There was undeniable schadenfreude in watching his rival's downfall.",
@@ -229,6 +254,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "zeitgeist",
     term: "zeitgeist",
+    pronunciation: "TSYTE-gyst",
     partOfSpeech: "noun",
     definition: "The defining spirit or mood of a particular period of history.",
     example: "The film perfectly captured the zeitgeist of the 1960s counterculture.",
@@ -238,6 +264,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "apotheosis",
     term: "apotheosis",
+    pronunciation: "uh-poth-ee-OH-sis",
     partOfSpeech: "noun",
     definition: "The highest point in development; culmination or climax.",
     example: "The symphony represented the apotheosis of his compositional career.",
@@ -247,6 +274,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "antediluvian",
     term: "antediluvian",
+    pronunciation: "an-tee-di-LOO-vee-un",
     partOfSpeech: "adj",
     definition: "Ridiculously old-fashioned; belonging to the time before the biblical Flood.",
     example: "His antediluvian views on gender roles alienated younger voters.",
@@ -256,6 +284,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "tergiversation",
     term: "tergiversation",
+    pronunciation: "tur-ji-ver-SAY-shun",
     partOfSpeech: "noun",
     definition: "The act of being evasive or ambiguous; equivocation.",
     example: "The politician's tergiversation on the issue frustrated journalists.",
@@ -265,6 +294,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "propinquity",
     term: "propinquity",
+    pronunciation: "proh-PING-kwi-tee",
     partOfSpeech: "noun",
     definition: "The state of being close to someone or something; proximity.",
     example: "Their propinquity in the small office led to an unexpected romance.",
@@ -274,6 +304,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "solipsistic",
     term: "solipsistic",
+    pronunciation: "sol-ip-SIS-tik",
     partOfSpeech: "adj",
     definition: "Characterized by extreme self-centeredness or egoism.",
     example: "His solipsistic worldview prevented him from understanding others' perspectives.",
@@ -283,6 +314,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "surreptitious",
     term: "surreptitious",
+    pronunciation: "sur-up-TISH-us",
     partOfSpeech: "adj",
     definition: "Kept secret, especially because it would not be approved of.",
     example: "She took surreptitious glances at her phone during the meeting.",
@@ -292,6 +324,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "mendacious",
     term: "mendacious",
+    pronunciation: "men-DAY-shus",
     partOfSpeech: "adj",
     definition: "Not telling the truth; lying; deceitful.",
     example: "The mendacious testimony ultimately led to his perjury conviction.",
@@ -301,6 +334,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "quotidian",
     term: "quotidian",
+    pronunciation: "kwoh-TID-ee-un",
     partOfSpeech: "adj",
     definition: "Of or occurring every day; mundane; ordinary.",
     example: "She found beauty in the quotidian rituals of morning coffee and newspapers.",
@@ -310,6 +344,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "parsimonious",
     term: "parsimonious",
+    pronunciation: "par-suh-MOH-nee-us",
     partOfSpeech: "adj",
     definition: "Excessively unwilling to spend money; frugal to a fault.",
     example: "His parsimonious nature prevented him from enjoying his wealth.",
@@ -319,6 +354,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "desultory",
     term: "desultory",
+    pronunciation: "DES-ul-tor-ee",
     partOfSpeech: "adj",
     definition: "Lacking a plan, purpose, or enthusiasm; half-hearted.",
     example: "Their desultory conversation drifted from topic to topic without depth.",
@@ -328,6 +364,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "laconic",
     term: "laconic",
+    pronunciation: "luh-KON-ik",
     partOfSpeech: "adj",
     definition: "Using very few words; concise to the point of seeming rude.",
     example: "His laconic reply of 'fine' conveyed neither approval nor objection.",
@@ -337,6 +374,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "ebullient",
     term: "ebullient",
+    pronunciation: "ih-BOOL-yunt",
     partOfSpeech: "adj",
     definition: "Cheerful and full of energy; enthusiastic.",
     example: "Her ebullient personality made her the life of every gathering.",
@@ -346,6 +384,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "penurious",
     term: "penurious",
+    pronunciation: "puh-NOOR-ee-us",
     partOfSpeech: "adj",
     definition: "Extremely poor; poverty-stricken; or extremely frugal.",
     example: "The penurious artist lived in a cramped studio, surviving on bread and coffee.",
@@ -355,6 +394,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "obstinate",
     term: "obstinate",
+    pronunciation: "OB-stuh-nut",
     partOfSpeech: "adj",
     definition: "Stubbornly refusing to change one's opinion or course of action.",
     example: "His obstinate refusal to compromise derailed the entire negotiation.",
@@ -364,6 +404,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "obfuscate",
     term: "obfuscate",
+    pronunciation: "OB-fuh-skayt",
     partOfSpeech: "verb",
     definition: "To render obscure or unclear; to confuse or bewilder.",
     example: "The lawyer attempted to obfuscate the facts with technical jargon.",
@@ -373,6 +414,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "garrulous",
     term: "garrulous",
+    pronunciation: "GAR-uh-lus",
     partOfSpeech: "adj",
     definition: "Excessively talkative, especially on trivial matters.",
     example: "The garrulous cab driver shared his entire life story during the ride.",
@@ -382,6 +424,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "supercilious",
     term: "supercilious",
+    pronunciation: "soo-per-SIL-ee-us",
     partOfSpeech: "adj",
     definition: "Behaving as though one is superior to others; condescending.",
     example: "Her supercilious attitude alienated potential allies in the department.",
@@ -391,6 +434,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "grandiloquent",
     term: "grandiloquent",
+    pronunciation: "gran-DIL-uh-kwunt",
     partOfSpeech: "adj",
     definition: "Pompous or extravagant in language, style, or manner.",
     example: "The grandiloquent speech impressed some but irritated many.",
@@ -400,6 +444,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "intransigent",
     term: "intransigent",
+    pronunciation: "in-TRAN-si-junt",
     partOfSpeech: "adj",
     definition: "Unwilling to change one's views or to agree about something.",
     example: "The intransigent union leaders refused any concessions on wages.",
@@ -409,6 +454,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "erstwhile",
     term: "erstwhile",
+    pronunciation: "URST-wyl",
     partOfSpeech: "adj",
     definition: "Former; previous.",
     example: "Her erstwhile mentor had become her fiercest professional rival.",
@@ -418,6 +464,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "legerdemain",
     term: "legerdemain",
+    pronunciation: "lej-er-duh-MAYN",
     partOfSpeech: "noun",
     definition: "Skillful use of one's hands for magic; deception or trickery.",
     example: "The financial legerdemain eventually caught up with the fraudulent CEO.",
@@ -427,6 +474,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "malfeasance",
     term: "malfeasance",
+    pronunciation: "mal-FEE-zuns",
     partOfSpeech: "noun",
     definition: "Wrongdoing, especially by a public official.",
     example: "The investigation uncovered years of corporate malfeasance.",
@@ -436,6 +484,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "nascent",
     term: "nascent",
+    pronunciation: "NAY-sunt",
     partOfSpeech: "adj",
     definition: "Just beginning to develop; emerging.",
     example: "The nascent democracy faced numerous challenges in its first decade.",
@@ -445,6 +494,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "vicissitude",
     term: "vicissitude",
+    pronunciation: "vi-SIS-i-tood",
     partOfSpeech: "noun",
     definition: "A change of circumstances or fortune, typically unwelcome.",
     example: "Through all the vicissitudes of her career, she maintained her integrity.",
@@ -454,6 +504,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "quixotic",
     term: "quixotic",
+    pronunciation: "kwik-SOT-ik",
     partOfSpeech: "adj",
     definition: "Exceedingly idealistic; unrealistic and impractical.",
     example: "His quixotic quest to reform the entire system amused his pragmatic colleagues.",
@@ -463,6 +514,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "specious",
     term: "specious",
+    pronunciation: "SPEE-shus",
     partOfSpeech: "adj",
     definition: "Superficially plausible but actually wrong; misleading in appearance.",
     example: "The specious argument fooled many but collapsed under scrutiny.",
@@ -472,6 +524,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "tendentious",
     term: "tendentious",
+    pronunciation: "ten-DEN-shus",
     partOfSpeech: "adj",
     definition: "Expressing a strong opinion, especially a controversial one.",
     example: "The tendentious documentary presented only one side of the debate.",
@@ -481,6 +534,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "enervate",
     term: "enervate",
+    pronunciation: "EN-er-vayt",
     partOfSpeech: "verb",
     definition: "To cause someone to feel drained of energy; to weaken.",
     example: "The relentless heat enervated the construction workers by midday.",
@@ -490,6 +544,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "anodyne",
     term: "anodyne",
+    pronunciation: "AN-uh-dyn",
     partOfSpeech: "adj",
     definition: "Not likely to cause offense or disagreement; bland; inoffensive.",
     example: "The politician's anodyne statements satisfied no one on either side.",
@@ -499,6 +554,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "avarice",
     term: "avarice",
+    pronunciation: "AV-er-is",
     partOfSpeech: "noun",
     definition: "Extreme greed for wealth or material gain.",
     example: "His avarice ultimately destroyed both his fortune and his family.",
@@ -508,6 +564,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "calumny",
     term: "calumny",
+    pronunciation: "KAL-um-nee",
     partOfSpeech: "noun",
     definition: "The making of false and defamatory statements; slander.",
     example: "She sued the tabloid for the calumny published about her personal life.",
@@ -517,6 +574,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "circumlocution",
     term: "circumlocution",
+    pronunciation: "sur-kum-loh-KYOO-shun",
     partOfSpeech: "noun",
     definition: "The use of many words where fewer would do; evasive speech.",
     example: "His circumlocution made it impossible to determine his actual position.",
@@ -526,6 +584,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "conflagration",
     term: "conflagration",
+    pronunciation: "kon-fluh-GRAY-shun",
     partOfSpeech: "noun",
     definition: "An extensive fire that destroys a great deal; a conflict or war.",
     example: "The conflagration spread rapidly through the drought-stricken forest.",
@@ -535,6 +594,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "contumacious",
     term: "contumacious",
+    pronunciation: "kon-too-MAY-shus",
     partOfSpeech: "adj",
     definition: "Stubbornly or willfully disobedient to authority.",
     example: "The contumacious defendant was held in contempt of court.",
@@ -544,6 +604,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "cupidity",
     term: "cupidity",
+    pronunciation: "kyoo-PID-i-tee",
     partOfSpeech: "noun",
     definition: "Greed for money or possessions.",
     example: "The Wall Street scandal exposed the cupidity at the heart of the system.",
@@ -553,6 +614,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "dilettante",
     term: "dilettante",
+    pronunciation: "dil-uh-TAHNT",
     partOfSpeech: "noun",
     definition: "A person who cultivates an interest without real commitment or knowledge.",
     example: "Critics dismissed him as a dilettante who dabbled in art without mastering any medium.",
@@ -562,6 +624,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "emollient",
     term: "emollient",
+    pronunciation: "ih-MOL-yunt",
     partOfSpeech: "adj",
     definition: "Having a softening or soothing effect; attempting to avoid confrontation.",
     example: "Her emollient approach helped defuse tensions between the warring factions.",
@@ -571,6 +634,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "epistemic",
     term: "epistemic",
+    pronunciation: "ep-i-STEM-ik",
     partOfSpeech: "adj",
     definition: "Relating to knowledge or the degree of its validation.",
     example: "The epistemic foundations of the theory were questioned by philosophers.",
@@ -580,6 +644,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "excoriate",
     term: "excoriate",
+    pronunciation: "eks-KOR-ee-ayt",
     partOfSpeech: "verb",
     definition: "To censure or criticize severely; to strip off the skin.",
     example: "The review excoriated the director's pretentious artistic choices.",
@@ -589,6 +654,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "exigent",
     term: "exigent",
+    pronunciation: "EK-si-junt",
     partOfSpeech: "adj",
     definition: "Pressing; demanding immediate action or attention.",
     example: "The exigent circumstances required an emergency session of Congress.",
@@ -598,6 +664,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "fatuous",
     term: "fatuous",
+    pronunciation: "FACH-oo-us",
     partOfSpeech: "adj",
     definition: "Silly and pointless; devoid of intelligence.",
     example: "His fatuous remarks revealed a profound ignorance of the subject.",
@@ -607,6 +674,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "feckless",
     term: "feckless",
+    pronunciation: "FEK-lis",
     partOfSpeech: "adj",
     definition: "Lacking initiative or strength of character; irresponsible.",
     example: "The feckless administration failed to address the mounting crisis.",
@@ -616,6 +684,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "filibuster",
     term: "filibuster",
+    pronunciation: "FIL-i-bus-ter",
     partOfSpeech: "verb",
     definition: "To obstruct legislation by speaking at length; to delay.",
     example: "The senator threatened to filibuster the bill for as long as necessary.",
@@ -625,6 +694,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "fulminate",
     term: "fulminate",
+    pronunciation: "FUL-mi-nayt",
     partOfSpeech: "verb",
     definition: "To express vehement protest or condemnation.",
     example: "The critic fulminated against the decline of artistic standards.",
@@ -634,6 +704,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "hagiography",
     term: "hagiography",
+    pronunciation: "hag-ee-OG-ruh-fee",
     partOfSpeech: "noun",
     definition: "A biography that idealizes its subject; excessively flattering writing.",
     example: "The biography was dismissed as hagiography rather than serious scholarship.",
@@ -643,6 +714,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "hegemony",
     term: "hegemony",
+    pronunciation: "heh-JEM-uh-nee",
     partOfSpeech: "noun",
     definition: "Leadership or dominance, especially by one state or social group over others.",
     example: "American cultural hegemony has waned in the face of global competition.",
@@ -652,6 +724,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "hermetic",
     term: "hermetic",
+    pronunciation: "her-MET-ik",
     partOfSpeech: "adj",
     definition: "Completely sealed; protected from outside influence; esoteric.",
     example: "The hermetic world of high finance remained impenetrable to outsiders.",
@@ -661,6 +734,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "hubris",
     term: "hubris",
+    pronunciation: "HYOO-bris",
     partOfSpeech: "noun",
     definition: "Excessive pride or self-confidence, especially when leading to downfall.",
     example: "The CEO's hubris blinded him to the company's fundamental weaknesses.",
@@ -670,6 +744,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "ignominious",
     term: "ignominious",
+    pronunciation: "ig-nuh-MIN-ee-us",
     partOfSpeech: "adj",
     definition: "Deserving or causing public disgrace or shame.",
     example: "The ignominious defeat ended his political career.",
@@ -679,6 +754,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "impecunious",
     term: "impecunious",
+    pronunciation: "im-pi-KYOO-nee-us",
     partOfSpeech: "adj",
     definition: "Having little or no money; penniless.",
     example: "The impecunious graduate survived on ramen noodles and optimism.",
@@ -688,6 +764,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "implacable",
     term: "implacable",
+    pronunciation: "im-PLAK-uh-bul",
     partOfSpeech: "adj",
     definition: "Unable to be appeased or pacified; relentless.",
     example: "She faced her implacable critics with unwavering resolve.",
@@ -697,6 +774,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "inchoate",
     term: "inchoate",
+    pronunciation: "in-KOH-it",
     partOfSpeech: "adj",
     definition: "Just begun and not fully formed or developed; rudimentary.",
     example: "His inchoate ideas needed significant development before publication.",
@@ -706,6 +784,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "inimical",
     term: "inimical",
+    pronunciation: "i-NIM-i-kul",
     partOfSpeech: "adj",
     definition: "Tending to obstruct or harm; hostile; unfriendly.",
     example: "The regulations proved inimical to small business growth.",
@@ -715,6 +794,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "insidious",
     term: "insidious",
+    pronunciation: "in-SID-ee-us",
     partOfSpeech: "adj",
     definition: "Proceeding in a gradual, subtle way but with harmful effects.",
     example: "The insidious spread of the disease went unnoticed for months.",
@@ -724,6 +804,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "internecine",
     term: "internecine",
+    pronunciation: "in-ter-NEE-seen",
     partOfSpeech: "adj",
     definition: "Destructive to both sides in a conflict; relating to conflict within a group.",
     example: "The internecine feuds within the party weakened their electoral chances.",
@@ -733,6 +814,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "invective",
     term: "invective",
+    pronunciation: "in-VEK-tiv",
     partOfSpeech: "noun",
     definition: "Insulting, abusive, or highly critical language.",
     example: "The debate descended into personal invective rather than policy discussion.",
@@ -742,6 +824,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "inveterate",
     term: "inveterate",
+    pronunciation: "in-VET-er-it",
     partOfSpeech: "adj",
     definition: "Having a particular habit or activity that is firmly established.",
     example: "An inveterate procrastinator, he always submitted work at the last moment.",
@@ -751,6 +834,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "jejune",
     term: "jejune",
+    pronunciation: "ji-JOON",
     partOfSpeech: "adj",
     definition: "Naive and simplistic; lacking interest or significance; dull.",
     example: "The jejune analysis failed to grasp the complexity of the situation.",
@@ -760,6 +844,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "malediction",
     term: "malediction",
+    pronunciation: "mal-uh-DIK-shun",
     partOfSpeech: "noun",
     definition: "A curse; the utterance of a curse against someone.",
     example: "The spurned lover hurled maledictions at her departing figure.",
@@ -769,6 +854,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "meretricious",
     term: "meretricious",
+    pronunciation: "mer-uh-TRISH-us",
     partOfSpeech: "adj",
     definition: "Apparently attractive but having no real value; flashy and insincere.",
     example: "The meretricious advertising campaign promised more than the product delivered.",
@@ -778,6 +864,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "miasma",
     term: "miasma",
+    pronunciation: "my-AZ-muh",
     partOfSpeech: "noun",
     definition: "An unpleasant or unhealthy smell; an oppressive atmosphere.",
     example: "A miasma of corruption pervaded the entire administration.",
@@ -787,6 +874,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "munificent",
     term: "munificent",
+    pronunciation: "myoo-NIF-i-sunt",
     partOfSpeech: "adj",
     definition: "Larger or more generous than usual or necessary.",
     example: "Her munificent donation transformed the struggling charity.",
@@ -796,6 +884,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "nefarious",
     term: "nefarious",
+    pronunciation: "ni-FAIR-ee-us",
     partOfSpeech: "adj",
     definition: "Wicked, criminal, or villainous.",
     example: "The nefarious scheme was uncovered by investigative journalists.",
@@ -805,6 +894,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "nugatory",
     term: "nugatory",
+    pronunciation: "NOO-guh-tor-ee",
     partOfSpeech: "adj",
     definition: "Of no value or importance; useless; futile.",
     example: "His objections proved nugatory in the face of overwhelming evidence.",
@@ -814,6 +904,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "obdurate",
     term: "obdurate",
+    pronunciation: "OB-doo-rit",
     partOfSpeech: "adj",
     definition: "Stubbornly refusing to change one's opinion or course of action.",
     example: "The obdurate negotiator refused to consider any compromise.",
@@ -823,6 +914,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "opprobrious",
     term: "opprobrious",
+    pronunciation: "uh-PROH-bree-us",
     partOfSpeech: "adj",
     definition: "Expressing scorn or criticism; shamefully disgraceful.",
     example: "The opprobrious remarks drew gasps from the assembled crowd.",
@@ -832,6 +924,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "ossified",
     term: "ossified",
+    pronunciation: "OS-i-fyd",
     partOfSpeech: "adj",
     definition: "Become rigid or inflexible; turned into bone.",
     example: "The ossified bureaucracy resisted any attempt at modernization.",
@@ -841,6 +934,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "palimpsest",
     term: "palimpsest",
+    pronunciation: "PAL-imp-sest",
     partOfSpeech: "noun",
     definition: "Something bearing visible traces of earlier forms; a manuscript written over erased text.",
     example: "The city is a palimpsest of architectural styles from different eras.",
@@ -850,6 +944,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "panegyric",
     term: "panegyric",
+    pronunciation: "pan-uh-JIR-ik",
     partOfSpeech: "noun",
     definition: "A public speech or writing in praise of someone or something.",
     example: "The eulogy was less a panegyric than an honest assessment of a complicated life.",
@@ -859,6 +954,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "pecuniary",
     term: "pecuniary",
+    pronunciation: "pi-KYOO-nee-er-ee",
     partOfSpeech: "adj",
     definition: "Relating to or consisting of money.",
     example: "His pecuniary interests in the company raised conflict-of-interest concerns.",
@@ -868,6 +964,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "pellucid",
     term: "pellucid",
+    pronunciation: "puh-LOO-sid",
     partOfSpeech: "adj",
     definition: "Translucently clear; easily understood.",
     example: "Her pellucid prose made even complex subjects accessible.",
@@ -877,6 +974,7 @@ export const SEED_WORDS: Word[] = [
   {
     id: "peremptory",
     term: "peremptory",
+    pronunciation: "puh-REMP-tuh-ree",
     partOfSpeech: "adj",
     definition: "Insisting on immediate attention or obedience; imperious.",
     example: "His peremptory tone brooked no argument or discussion.",

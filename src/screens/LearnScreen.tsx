@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Pressable, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { useWords } from "../context/WordsContext";
+import {
+  GradientBackground,
+  GlassCard,
+  GradientButton,
+  CapsuleBadge,
+} from "../components";
 import {
   colors,
   typography,
   spacing,
   borderRadius,
-  shadows,
+  glassmorphism,
 } from "../theme";
 
 export default function LearnScreen() {
@@ -22,94 +28,81 @@ export default function LearnScreen() {
 
   if (!w) {
     return (
-      <View style={styles.container}>
-        <View style={styles.doneCard}>
-          <Text style={styles.doneTitle}>All Done!</Text>
-          <Text style={styles.doneSubtitle}>
-            You've completed today's vocabulary.
-          </Text>
-          <Text style={styles.doneCount}>
-            {todayWords.length} words learned
-          </Text>
+      <GradientBackground>
+        <View style={styles.container}>
+          <GlassCard elevated style={styles.doneCard}>
+            <Text style={styles.doneTitle}>All Done!</Text>
+            <Text style={styles.doneSubtitle}>
+              You've completed today's vocabulary.
+            </Text>
+            <Text style={styles.doneCount}>
+              {todayWords.length} words learned
+            </Text>
+          </GlassCard>
         </View>
-      </View>
+      </GradientBackground>
     );
   }
 
   const progress = `${idx + 1} of ${todayWords.length}`;
 
   return (
-    <ScrollView
-      style={styles.scrollContainer}
-      contentContainerStyle={styles.scrollContent}
-    >
-      <Text style={styles.progress}>{progress}</Text>
+    <GradientBackground>
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <Text style={styles.progress}>{progress}</Text>
 
-      <View style={styles.wordCard}>
-        <Text style={styles.partOfSpeech}>{w.partOfSpeech}</Text>
-        <Text style={styles.term}>{w.term}</Text>
+        <GlassCard elevated style={styles.wordCard}>
+          <CapsuleBadge label={w.partOfSpeech} />
+          <Text style={styles.term}>{w.term}</Text>
+          <Text style={styles.pronunciation}>{w.pronunciation}</Text>
 
-        {revealed ? (
-          <View style={styles.meaningContainer}>
-            <Text style={styles.definition}>{w.definition}</Text>
-            <View style={styles.exampleContainer}>
-              <Text style={styles.example}>"{w.example}"</Text>
+          {revealed ? (
+            <View style={styles.meaningContainer}>
+              <Text style={styles.definition}>{w.definition}</Text>
+              <View style={styles.exampleContainer}>
+                <Text style={styles.example}>"{w.example}"</Text>
+              </View>
             </View>
-          </View>
-        ) : (
-          <Text style={styles.hint}>Tap below to reveal the meaning</Text>
-        )}
-      </View>
+          ) : (
+            <Text style={styles.hint}>Tap below to reveal the meaning</Text>
+          )}
+        </GlassCard>
 
-      <View style={styles.actions}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.revealButton,
-            revealed && styles.revealButtonActive,
-            pressed && styles.buttonPressed,
-          ]}
-          onPress={() => setRevealed((r) => !r)}
-        >
-          <Text
-            style={[
-              styles.revealButtonText,
-              revealed && styles.revealButtonTextActive,
-            ]}
-          >
-            {revealed ? "Hide" : "Reveal"}
-          </Text>
-        </Pressable>
-
-        <Pressable
-          style={({ pressed }) => [
-            styles.nextButton,
-            pressed && styles.buttonPressed,
-          ]}
-          onPress={() => {
-            setRevealed(false);
-            setIdx((i) => i + 1);
-          }}
-        >
-          <Text style={styles.nextButtonText}>Next Word</Text>
-        </Pressable>
-      </View>
-    </ScrollView>
+        <View style={styles.actions}>
+          <GradientButton
+            title={revealed ? "Hide" : "Reveal"}
+            onPress={() => setRevealed((r) => !r)}
+            variant="glass"
+          />
+          <GradientButton
+            title="Next Word"
+            onPress={() => {
+              setRevealed(false);
+              setIdx((i) => i + 1);
+            }}
+            variant="primary"
+          />
+        </View>
+      </ScrollView>
+    </GradientBackground>
   );
 }
 
 const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
-    backgroundColor: colors.background,
   },
   scrollContent: {
     flexGrow: 1,
     padding: spacing.lg,
+    paddingTop: spacing.xxl + spacing.xl,
     justifyContent: "center",
   },
   container: {
     flex: 1,
-    backgroundColor: colors.background,
     padding: spacing.lg,
     justifyContent: "center",
   },
@@ -119,25 +112,21 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: spacing.md,
     textTransform: "uppercase",
+    letterSpacing: 1.5,
   },
   wordCard: {
-    backgroundColor: colors.card,
-    borderRadius: borderRadius.xl,
-    padding: spacing.xl,
-    borderWidth: 1,
-    borderColor: colors.cardBorder,
-    ...shadows.lg,
     marginBottom: spacing.lg,
-  },
-  partOfSpeech: {
-    ...typography.label,
-    color: colors.accent,
-    textTransform: "uppercase",
-    marginBottom: spacing.sm,
   },
   term: {
     ...typography.displayMedium,
     color: colors.text,
+    marginTop: spacing.md,
+    marginBottom: spacing.xs,
+  },
+  pronunciation: {
+    ...typography.body,
+    color: colors.textMuted,
+    fontStyle: "italic",
     marginBottom: spacing.md,
   },
   hint: {
@@ -157,7 +146,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
   },
   exampleContainer: {
-    backgroundColor: colors.accentLight,
+    ...glassmorphism.overlay,
     borderRadius: borderRadius.sm,
     padding: spacing.md,
   },
@@ -169,53 +158,8 @@ const styles = StyleSheet.create({
   actions: {
     gap: spacing.md,
   },
-  revealButton: {
-    backgroundColor: colors.card,
-    borderRadius: borderRadius.md,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  revealButtonActive: {
-    backgroundColor: colors.accentLight,
-    borderColor: colors.accent,
-  },
-  revealButtonText: {
-    ...typography.button,
-    color: colors.text,
-  },
-  revealButtonTextActive: {
-    color: colors.accent,
-  },
-  nextButton: {
-    backgroundColor: colors.primary,
-    borderRadius: borderRadius.md,
-    paddingVertical: spacing.md + 2,
-    paddingHorizontal: spacing.lg,
-    alignItems: "center",
-    justifyContent: "center",
-    ...shadows.md,
-  },
-  nextButtonText: {
-    color: colors.primaryText,
-    ...typography.button,
-  },
-  buttonPressed: {
-    opacity: 0.9,
-    transform: [{ scale: 0.98 }],
-  },
-  // Done state styles
   doneCard: {
-    backgroundColor: colors.card,
-    borderRadius: borderRadius.xl,
-    padding: spacing.xl,
-    borderWidth: 1,
-    borderColor: colors.cardBorder,
     alignItems: "center",
-    ...shadows.lg,
   },
   doneTitle: {
     ...typography.displayMedium,
@@ -230,6 +174,6 @@ const styles = StyleSheet.create({
   },
   doneCount: {
     ...typography.h3,
-    color: colors.accent,
+    color: colors.accentPurple,
   },
 });

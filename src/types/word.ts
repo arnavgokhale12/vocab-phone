@@ -3,6 +3,7 @@ export type PartOfSpeech = "noun" | "verb" | "adj" | "adv" | "phrase" | "other";
 export type Word = {
   id: string;
   term: string;
+  pronunciation: string;
   partOfSpeech: PartOfSpeech;
   definition: string;
   example: string;

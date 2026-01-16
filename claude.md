@@ -260,4 +260,44 @@ The VocabWidget extension target must be manually added in Xcode:
 2. Name: VocabWidget
 3. Add existing files from `ios/VocabWidget/` to target
 4. Configure App Groups capability
-5. Set minimum deployment target to iOS 16.0
+5. Set minimum deployment target to iOS 17.0
+
+## v2.1 UI Redesign (Glassmorphism)
+
+The app UI was redesigned to match the iOS widget's premium dark aesthetic:
+
+### Theme Changes (`src/theme/index.ts`)
+- Dark gradient background: `#262633` → `#14141F`
+- Purple (`#9966FF`) and blue (`#6699FF`) accents
+- White text hierarchy with opacity (100%, 70%, 50%)
+- Glassmorphism tokens for cards (8% white overlay, 15% white borders)
+
+### New Components (`src/components/`)
+- `GradientBackground`: Dark gradient with purple radial glow
+- `GlassCard`: Semi-transparent card with glass borders
+- `GradientButton`: Purple-to-blue gradient or glass variant
+- `CapsuleBadge`: Rounded pill for part-of-speech labels
+
+### Dependencies Added
+- `expo-linear-gradient`: For gradient backgrounds and buttons
+
+## Next Version (v2.2) - Planned Changes
+
+### 1. Lock Screen Widget Enhancement
+- Use the largest Lock Screen widget family: `accessoryRectangular`
+- Redesign layout for readability: large word text, optional short definition line, minimal padding
+- Keep other lock screen families if already supported, but prioritize rectangular
+
+### 2. Home Screen Widget Pronunciation
+- Add pronunciationText (IPA or simple phonetic) to the widget UI
+- Add a speaker button on the Home Screen widget that deep-links into the app to a Pronunciation screen for the current word and auto-plays audio there
+- Don't attempt audio playback inside the widget (not allowed); playback must occur in-app after deep link
+
+### 3. App Logo
+- Add proper AppIcon asset set (`Assets.xcassets/AppIcon`) with required sizes
+- Confirm the icon shows on device and in Settings
+
+### Deliverables for v2.2
+- Exact code diffs + file paths
+- Deep link route implementation details
+- Build/run verification steps on a real iPhone

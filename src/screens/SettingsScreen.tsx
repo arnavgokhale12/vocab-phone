@@ -1,12 +1,13 @@
 import React from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import { useWords } from "../context/WordsContext";
+import { GradientBackground } from "../components";
 import {
   colors,
   typography,
   spacing,
   borderRadius,
-  shadows,
+  glassmorphism,
 } from "../theme";
 
 const GOAL_OPTIONS = [
@@ -19,64 +20,66 @@ export default function SettingsScreen() {
   const { todayGoal, setTodayGoal } = useWords();
 
   return (
-    <View style={styles.container}>
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Daily Goal</Text>
-        <Text style={styles.sectionDescription}>
-          How many new words do you want to learn each day?
-        </Text>
+    <GradientBackground>
+      <View style={styles.container}>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Daily Goal</Text>
+          <Text style={styles.sectionDescription}>
+            How many new words do you want to learn each day?
+          </Text>
 
-        <View style={styles.optionsContainer}>
-          {GOAL_OPTIONS.map((option) => {
-            const isSelected = option.value === todayGoal;
-            return (
-              <Pressable
-                key={option.value}
-                style={({ pressed }) => [
-                  styles.optionButton,
-                  isSelected && styles.optionButtonSelected,
-                  pressed && styles.optionButtonPressed,
-                ]}
-                onPress={() => setTodayGoal(option.value)}
-              >
-                <Text
-                  style={[
-                    styles.optionValue,
-                    isSelected && styles.optionValueSelected,
+          <View style={styles.optionsContainer}>
+            {GOAL_OPTIONS.map((option) => {
+              const isSelected = option.value === todayGoal;
+              return (
+                <Pressable
+                  key={option.value}
+                  style={({ pressed }) => [
+                    styles.optionButton,
+                    isSelected && styles.optionButtonSelected,
+                    pressed && styles.optionButtonPressed,
                   ]}
+                  onPress={() => setTodayGoal(option.value)}
                 >
-                  {option.value}
-                </Text>
-                <Text
-                  style={[
-                    styles.optionLabel,
-                    isSelected && styles.optionLabelSelected,
-                  ]}
-                >
-                  {option.label}
-                </Text>
-                <Text
-                  style={[
-                    styles.optionDescription,
-                    isSelected && styles.optionDescriptionSelected,
-                  ]}
-                >
-                  {option.description}
-                </Text>
-              </Pressable>
-            );
-          })}
+                  <Text
+                    style={[
+                      styles.optionValue,
+                      isSelected && styles.optionValueSelected,
+                    ]}
+                  >
+                    {option.value}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.optionLabel,
+                      isSelected && styles.optionLabelSelected,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.optionDescription,
+                      isSelected && styles.optionDescriptionSelected,
+                    ]}
+                  >
+                    {option.description}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
       </View>
-    </View>
+    </GradientBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
     padding: spacing.lg,
+    paddingTop: spacing.xxl + spacing.xl,
   },
   section: {
     marginTop: spacing.lg,
@@ -95,17 +98,15 @@ const styles = StyleSheet.create({
     gap: spacing.md,
   },
   optionButton: {
-    backgroundColor: colors.card,
+    ...glassmorphism.card,
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
-    borderWidth: 2,
-    borderColor: colors.cardBorder,
     flexDirection: "row",
     alignItems: "center",
   },
   optionButtonSelected: {
-    backgroundColor: colors.accentLight,
-    borderColor: colors.accent,
+    backgroundColor: colors.accentPurpleLight,
+    borderColor: colors.accentPurple,
   },
   optionButtonPressed: {
     opacity: 0.9,
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     width: 60,
   },
   optionValueSelected: {
-    color: colors.accent,
+    color: colors.accentPurple,
   },
   optionLabel: {
     ...typography.h3,

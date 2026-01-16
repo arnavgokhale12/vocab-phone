@@ -1,6 +1,6 @@
 import { Word } from '../types/word';
 import { WordProgress } from '../types/wordProgress';
-import { seedWords } from '../data/seedWords';
+import { SEED_WORDS } from '../data/seedWords';
 import { getAllProgress } from './storage/mmkvStorage';
 
 // FNV-1a hash constants
@@ -39,7 +39,7 @@ function seededShuffle<T>(arr: T[], seed: number): T[] {
  */
 export function getDeterministicDailyWords(date: string, count: number): Word[] {
   const seed = fnvHash(date);
-  const shuffled = seededShuffle(seedWords, seed);
+  const shuffled = seededShuffle(SEED_WORDS, seed);
   return shuffled.slice(0, count);
 }
 
@@ -54,7 +54,7 @@ export function getTodayDateString(): string {
  * Get words that need review (not mastered, have been seen)
  */
 export function getReviewWords(progress: Map<string, WordProgress>): Word[] {
-  return seedWords.filter((word) => {
+  return SEED_WORDS.filter((word: Word) => {
     const p = progress.get(word.id);
     if (!p) return false;
     if (p.masteryLevel === 'mastered') return false;

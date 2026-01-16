@@ -22,6 +22,24 @@ private let progressKey = "word_progress"
 private let currentWordKey = "widget_current_word"
 private let wordQueueKey = "widget_word_queue"
 
+// MARK: - Shared Keys
+private let definitionVisibleKey = "widget_definition_visible"
+
+// MARK: - Toggle Definition Intent
+@available(iOS 17.0, *)
+struct ToggleDefinitionIntent: AppIntent {
+    static var title: LocalizedStringResource = "Toggle Definition"
+    static var description = IntentDescription("Show or hide the definition")
+
+    func perform() async throws -> some IntentResult {
+        let defaults = UserDefaults(suiteName: appGroupSuite)
+        let current = defaults?.bool(forKey: definitionVisibleKey) ?? false
+        defaults?.set(!current, forKey: definitionVisibleKey)
+        WidgetCenter.shared.reloadAllTimelines()
+        return .result()
+    }
+}
+
 // MARK: - Got It Intent
 @available(iOS 17.0, *)
 struct GotItIntent: AppIntent {
@@ -63,8 +81,9 @@ struct GotItIntent: AppIntent {
         // Update daily reviewed count
         incrementDailyCount(defaults: defaults)
 
-        // Load next word
+        // Load next word and reset definition visibility
         loadNextWord(defaults: defaults)
+        defaults?.set(false, forKey: definitionVisibleKey)
 
         // Reload widget
         WidgetCenter.shared.reloadAllTimelines()
@@ -108,8 +127,9 @@ struct RepeatIntent: AppIntent {
         // Update daily reviewed count
         incrementDailyCount(defaults: defaults)
 
-        // Load next word (this word will appear again later)
+        // Load next word and reset definition visibility
         loadNextWord(defaults: defaults)
+        defaults?.set(false, forKey: definitionVisibleKey)
 
         // Reload widget
         WidgetCenter.shared.reloadAllTimelines()

@@ -17,6 +17,7 @@ struct WordEntry: TimelineEntry {
     let term: String
     let definition: String
     let partOfSpeech: String
+    let definitionVisible: Bool
 
     static var placeholder: WordEntry {
         WordEntry(
@@ -24,9 +25,24 @@ struct WordEntry: TimelineEntry {
             wordId: "placeholder",
             term: "Word",
             definition: "Definition will appear here",
-            partOfSpeech: "noun"
+            partOfSpeech: "noun",
+            definitionVisible: false
         )
     }
+}
+
+// MARK: - Premium Design System
+
+struct WidgetColors {
+    static let gradientStart = Color(red: 0.15, green: 0.15, blue: 0.2)
+    static let gradientEnd = Color(red: 0.08, green: 0.08, blue: 0.12)
+    static let accentPurple = Color(red: 0.6, green: 0.4, blue: 1.0)
+    static let accentBlue = Color(red: 0.4, green: 0.6, blue: 1.0)
+    static let textPrimary = Color.white
+    static let textSecondary = Color.white.opacity(0.7)
+    static let textTertiary = Color.white.opacity(0.5)
+    static let glassOverlay = Color.white.opacity(0.08)
+    static let glassBorder = Color.white.opacity(0.15)
 }
 
 // MARK: - Timeline Provider
@@ -52,6 +68,9 @@ struct Provider: TimelineProvider {
     }
 
     private func getCurrentEntry() -> WordEntry {
+        // Read definition visibility state
+        let definitionVisible = suite?.bool(forKey: "widget_definition_visible") ?? false
+
         // Try to get structured word data first (stored as JSON string)
         if let jsonString = suite?.string(forKey: "widget_current_word"),
            let data = jsonString.data(using: .utf8),
@@ -61,7 +80,8 @@ struct Provider: TimelineProvider {
                 wordId: word.wordId,
                 term: word.term,
                 definition: word.definition,
-                partOfSpeech: word.partOfSpeech
+                partOfSpeech: word.partOfSpeech,
+                definitionVisible: definitionVisible
             )
         }
 
@@ -72,7 +92,8 @@ struct Provider: TimelineProvider {
             wordId: "unknown",
             term: term,
             definition: "Open app to see definition",
-            partOfSpeech: ""
+            partOfSpeech: "",
+            definitionVisible: definitionVisible
         )
     }
 }
@@ -81,20 +102,49 @@ struct Provider: TimelineProvider {
 
 struct HomeScreenWidgetView: View {
     var entry: WordEntry
+    @Environment(\.widgetFamily) var family
 
     var body: some View {
-        ZStack {
-            Color.black
-            VStack(alignment: .leading, spacing: 8) {
-                Text(entry.partOfSpeech)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.gray)
-                Text(entry.term)
-                    .font(.system(size: 28, weight: .bold))
-                    .foregroundColor(.white)
+        VStack(alignment: .leading, spacing: family == .systemSmall ? 6 : 10) {
+            // Part of speech pill
+            Text(entry.partOfSpeech.uppercased())
+                .font(.system(size: 10, weight: .bold, design: .rounded))
+                .tracking(1.2)
+                .foregroundColor(WidgetColors.accentPurple)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(
+                    Capsule()
+                        .fill(WidgetColors.accentPurple.opacity(0.2))
+                )
+
+            // Word
+            Text(entry.term)
+                .font(.system(size: family == .systemSmall ? 22 : 26, weight: .bold, design: .rounded))
+                .foregroundColor(WidgetColors.textPrimary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+
+            // Definition
+            Text(entry.definition)
+                .font(.system(size: family == .systemSmall ? 11 : 13, weight: .regular, design: .rounded))
+                .foregroundColor(WidgetColors.textSecondary)
+                .lineLimit(family == .systemSmall ? 2 : 3)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Spacer(minLength: 0)
+
+            // Bottom accent line
+            HStack(spacing: 4) {
+                Circle()
+                    .fill(WidgetColors.accentPurple)
+                    .frame(width: 6, height: 6)
+                Text("vocab")
+                    .font(.system(size: 9, weight: .medium, design: .rounded))
+                    .foregroundColor(WidgetColors.textTertiary)
             }
-            .padding()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 
@@ -103,59 +153,72 @@ struct HomeScreenWidgetView: View {
 @available(iOS 17.0, *)
 struct InteractiveRectangularView: View {
     var entry: WordEntry
-    @State private var revealed = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
+        VStack(alignment: .leading, spacing: 3) {
+            // Header row
+            HStack(alignment: .center) {
                 Text(entry.term)
-                    .font(.system(size: 16, weight: .bold))
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .lineLimit(1)
                 Spacer()
                 if !entry.partOfSpeech.isEmpty {
-                    Text(entry.partOfSpeech)
-                        .font(.system(size: 10))
-                        .foregroundColor(.secondary)
+                    Text(entry.partOfSpeech.lowercased())
+                        .font(.system(size: 9, weight: .medium, design: .rounded))
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(
+                            Capsule()
+                                .fill(.secondary.opacity(0.2))
+                        )
                 }
             }
 
-            if revealed {
+            if entry.definitionVisible {
                 Text(entry.definition)
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 10, weight: .regular, design: .rounded))
+                    .foregroundStyle(.secondary)
                     .lineLimit(2)
+                    .padding(.top, 1)
 
-                HStack(spacing: 12) {
+                // Action buttons
+                HStack(spacing: 6) {
+                    Button(intent: ToggleDefinitionIntent()) {
+                        Label("Hide", systemImage: "eye.slash")
+                            .font(.system(size: 9, weight: .medium, design: .rounded))
+                    }
+                    .buttonStyle(.plain)
+
+                    Spacer()
+
                     Button(intent: RepeatIntent(wordId: entry.wordId)) {
-                        HStack(spacing: 2) {
-                            Image(systemName: "arrow.counterclockwise")
-                            Text("Again")
-                        }
-                        .font(.system(size: 10, weight: .medium))
+                        Label("Again", systemImage: "arrow.counterclockwise")
+                            .font(.system(size: 9, weight: .medium, design: .rounded))
+                            .foregroundStyle(.orange)
                     }
                     .buttonStyle(.plain)
 
                     Button(intent: GotItIntent(wordId: entry.wordId)) {
-                        HStack(spacing: 2) {
-                            Image(systemName: "checkmark")
-                            Text("Got it")
-                        }
-                        .font(.system(size: 10, weight: .medium))
+                        Label("Got it", systemImage: "checkmark.circle.fill")
+                            .font(.system(size: 9, weight: .medium, design: .rounded))
+                            .foregroundStyle(.green)
                     }
                     .buttonStyle(.plain)
                 }
-                .padding(.top, 2)
+                .padding(.top, 3)
             } else {
-                Button(action: {}) {
-                    Text("Tap to reveal")
-                        .font(.system(size: 11))
-                        .foregroundColor(.blue)
+                Button(intent: ToggleDefinitionIntent()) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 10))
+                        Text("Tap to reveal")
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                    }
+                    .foregroundStyle(.blue)
                 }
                 .buttonStyle(.plain)
-                .onTapGesture {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        revealed = true
-                    }
-                }
+                .padding(.top, 2)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -249,7 +312,28 @@ struct VocabWidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             if #available(iOS 17.0, *) {
                 VocabWidgetEntryView(entry: entry)
-                    .containerBackground(.fill.tertiary, for: .widget)
+                    .containerBackground(for: .widget) {
+                        // Premium gradient for home screen widgets
+                        ZStack {
+                            LinearGradient(
+                                colors: [WidgetColors.gradientStart, WidgetColors.gradientEnd],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                            // Accent glow
+                            Circle()
+                                .fill(
+                                    RadialGradient(
+                                        colors: [WidgetColors.accentPurple.opacity(0.25), .clear],
+                                        center: .center,
+                                        startRadius: 0,
+                                        endRadius: 150
+                                    )
+                                )
+                                .offset(x: -50, y: -30)
+                                .blur(radius: 40)
+                        }
+                    }
             } else {
                 VocabWidgetEntryView(entry: entry)
             }
