@@ -176,10 +176,18 @@ struct InteractiveRectangularView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             // Large word - primary focus
-            Text(entry.term)
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Text(entry.term)
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .lineLimit(1)
+
+                if !entry.pronunciation.isEmpty {
+                    Text(entry.pronunciation)
+                        .font(.system(size: 10, weight: .regular, design: .rounded))
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+            }
 
             if entry.definitionVisible {
                 // Short definition
