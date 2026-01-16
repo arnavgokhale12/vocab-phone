@@ -1,10 +1,10 @@
 # Vocab Phone
 
-A React Native vocabulary learning app with iOS home screen and lock screen widget integration.
+A React Native vocabulary learning app with iOS home screen and lock screen widget integration, featuring interactive widgets with mastery tracking.
 
 ## Overview
 
-Vocab Phone helps users learn vocabulary through a daily learning flow. Each day, the app deterministically generates the same set of words using a seeded random selection algorithm. Users navigate through words, revealing definitions and examples one at a time. iOS widgets display the current daily word on both the home screen and lock screen.
+Vocab Phone helps users learn vocabulary through a daily learning flow. Each day, the app deterministically generates the same set of words using a seeded random selection algorithm. Users navigate through words, revealing definitions and examples one at a time. iOS widgets display the current daily word on both the home screen and lock screen, with interactive "Got it" / "Repeat" buttons for iOS 17+.
 
 ## Tech Stack
 
@@ -13,31 +13,42 @@ Vocab Phone helps users learn vocabulary through a daily learning flow. Each day
 - **React**: 19.1.0
 - **TypeScript**: 5.9.2 (strict mode)
 - **Navigation**: React Navigation 7.x (native-stack)
-- **Storage**: AsyncStorage for persistence
-- **iOS Widget**: Swift + WidgetKit (iOS 16.0+, with lock screen support)
+- **Storage**: MMKV v4 for progress persistence, AsyncStorage for settings
+- **iOS Widget**: Swift + WidgetKit (iOS 16.0+) with App Intents (iOS 17+)
 - **Build**: EAS (Expo Application Services)
 
 ## Project Structure
 
 ```
 src/
-├── context/WordsContext.tsx   # Global state, seeded word selection
+├── context/
+│   ├── WordsContext.tsx       # Global state, seeded word selection
+│   └── ProgressContext.tsx    # Mastery tracking context (v2.0)
 ├── navigation/AppNavigator.tsx # Stack navigation (Home → Learn → Settings)
 ├── screens/
 │   ├── HomeScreen.tsx         # Landing page
 │   ├── LearnScreen.tsx        # Word learning UI with card layout
 │   └── SettingsScreen.tsx     # Daily goal selector (3/5/10 words)
+├── services/
+│   ├── MasteryService.ts      # Mastery calculation & answer recording (v2.0)
+│   ├── QueueService.ts        # Daily word queue generation (v2.0)
+│   └── storage/
+│       └── mmkvStorage.ts     # MMKV persistence helpers (v2.0)
+├── types/
+│   ├── word.ts                # Word and vocabulary types
+│   └── wordProgress.ts        # Progress and mastery types (v2.0)
 ├── theme/index.ts             # Centralized theme (colors, typography, spacing)
-├── types/word.ts              # TypeScript types
 ├── data/seedWords.ts          # Vocabulary database (100 words)
-├── utils/storage.ts           # AsyncStorage helpers
+├── utils/storage.ts           # AsyncStorage helpers (settings)
 └── native/appGroup.ts         # Native module bridge for App Groups
 
 ios/
 ├── vocabphone/                # Main app target
 │   └── Native/AppGroupStore.swift  # React Native ↔ Swift bridge
 └── VocabWidget/               # WidgetKit extension
-    └── VocabWidget.swift      # Widget UI (home + lock screen)
+    ├── VocabWidget.swift      # Widget UI (home + lock screen + interactive)
+    ├── VocabWidgetBundle.swift # Widget bundle configuration
+    └── AppIntent.swift        # App Intents (GotIt, Repeat) for iOS 17+
 ```
 
 ## Commands
@@ -48,6 +59,27 @@ npm start            # Start Expo dev server
 npm run ios          # Run on iOS simulator
 npm run android      # Run on Android emulator
 npm run web          # Run in web browser
+npx tsc --noEmit     # Type check without emitting
+```
+
+### iOS Build with CocoaPods
+
+Due to Xcode 16 using project format objectVersion 70 (which CocoaPods doesn't yet support), use this workaround:
+
+```bash
+cd ios
+
+# Temporarily downgrade project format for pod install
+perl -i -pe 's/objectVersion = 70/objectVersion = 56/' vocabphone.xcodeproj/project.pbxproj
+
+# Install pods
+pod install
+
+# Restore project format
+perl -i -pe 's/objectVersion = 56/objectVersion = 70/' vocabphone.xcodeproj/project.pbxproj
+
+cd ..
+npx expo run:ios
 ```
 
 ### Production Build
@@ -81,6 +113,19 @@ Daily words are deterministic using FNV-1a hash with the date as seed:
 - Same date produces same word set across all devices
 - Configurable daily goal: 3, 5, or 10 words
 
+### Mastery System (v2.0)
+
+Three-level mastery progression:
+- **new**: Never reviewed or 0 consecutive correct
+- **learning**: 1-2 consecutive correct answers
+- **mastered**: 3+ consecutive correct answers
+
+Progress tracking includes:
+- Correct/incorrect counts
+- Consecutive correct streak
+- Last seen timestamp
+- Daily streaks and stats
+
 ### iOS Widget
 
 Supports both home screen and lock screen widgets:
@@ -90,21 +135,31 @@ Supports both home screen and lock screen widgets:
 - Displays daily vocabulary word
 
 **Lock Screen** (iOS 16+):
-- `accessoryRectangular`: "TODAY'S WORD" label + word
+- `accessoryRectangular`: Interactive view with reveal + buttons (iOS 17+)
 - `accessoryCircular`: First 4 letters of word
 - `accessoryInline`: "Word: [term]" format
 
+**Interactive Features** (iOS 17+):
+- Tap to reveal definition
+- "Got it" button: Marks correct, advances to next word
+- "Repeat" button: Marks for review, continues
+
 ### Widget Communication
 
-1. React Native calls `setSharedString("daily_word", word)` via native module
+1. React Native calls `setWidgetState(word)` and `setWidgetQueue(words)` via native module
 2. `AppGroupStore.swift` writes to App Groups UserDefaults
 3. Triggers `WidgetCenter.shared.reloadAllTimelines()`
 4. Widget reads from shared UserDefaults and updates display
+5. Interactive buttons trigger App Intents which update progress
 
 ### App Groups
 
 - Suite: `group.com.anonymous.vocab-phone`
-- Shared key: `daily_word`
+- Shared keys:
+  - `daily_word`: Current word term (legacy)
+  - `widget_current_word`: Full word data (JSON)
+  - `widget_word_queue`: Today's word queue (JSON array)
+  - `word_progress`: Progress data (JSON)
 - Enables main app ↔ widget data sharing
 
 ## Configuration
@@ -118,5 +173,91 @@ Supports both home screen and lock screen widgets:
 
 1. App launch → Load `todayGoal` and `todayWords` from AsyncStorage
 2. Date/goal change → Regenerate words using seeded selection
-3. Words update → Sync first word to widget via App Groups
-4. Widget reloads every 30 minutes or on app update
+3. Words update → Sync word queue to widget via App Groups
+4. Widget interaction → App Intents update progress in shared UserDefaults
+5. Widget reloads every 30 minutes or on interaction
+
+## v2.0 Implementation Details
+
+### TypeScript Types (`src/types/wordProgress.ts`)
+
+```typescript
+export type MasteryLevel = 'new' | 'learning' | 'mastered';
+
+export interface WordProgress {
+  wordId: string;
+  masteryLevel: MasteryLevel;
+  correctCount: number;
+  incorrectCount: number;
+  consecutiveCorrect: number;
+  lastSeenAt: string | null;
+  nextReviewDate: string | null;
+}
+
+export interface UserStats {
+  currentStreak: number;
+  longestStreak: number;
+  lastActiveDate: string;
+  totalWordsReviewed: number;
+  totalWordsMastered: number;
+  todayReviewedCount: number;
+  todayGoalMet: boolean;
+}
+```
+
+### MMKV Storage (`src/services/storage/mmkvStorage.ts`)
+
+Uses MMKV v4 API (note: v4 uses `createMMKV()` function, not constructor):
+
+```typescript
+import { createMMKV } from 'react-native-mmkv';
+
+export const storage = createMMKV({
+  id: 'vocab-phone-storage',
+});
+```
+
+### Mastery Thresholds
+
+```typescript
+export const MASTERY_THRESHOLDS = {
+  LEARNING: 1,  // 1+ correct to become learning
+  MASTERED: 3,  // 3+ consecutive correct to become mastered
+};
+```
+
+### App Intents (Swift)
+
+Interactive widget buttons use iOS 17 App Intents:
+
+- `GotItIntent`: Marks word correct, increments streak, loads next word
+- `RepeatIntent`: Marks for review, resets streak, loads next word
+
+Both intents:
+1. Update progress in shared UserDefaults
+2. Increment daily review count
+3. Load next word from queue
+4. Trigger widget timeline reload
+
+## Known Issues & Workarounds
+
+### CocoaPods + Xcode 16
+
+Xcode 16 uses project format objectVersion 70 which CocoaPods doesn't support. Use the perl workaround documented above.
+
+### MMKV v4 API Change
+
+MMKV v4 changed from constructor to factory function. If you see "Cannot read property 'prototype' of undefined", ensure you're using:
+```typescript
+import { createMMKV } from 'react-native-mmkv';  // Correct
+// NOT: import { MMKV } from 'react-native-mmkv'; new MMKV()
+```
+
+### Widget Target Setup
+
+The VocabWidget extension target must be manually added in Xcode:
+1. File → New → Target → Widget Extension
+2. Name: VocabWidget
+3. Add existing files from `ios/VocabWidget/` to target
+4. Configure App Groups capability
+5. Set minimum deployment target to iOS 16.0
