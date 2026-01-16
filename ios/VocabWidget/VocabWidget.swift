@@ -9,6 +9,7 @@ struct WordData: Codable {
     let term: String
     let definition: String
     let partOfSpeech: String
+    let pronunciation: String?
 }
 
 struct WordEntry: TimelineEntry {
@@ -17,6 +18,7 @@ struct WordEntry: TimelineEntry {
     let term: String
     let definition: String
     let partOfSpeech: String
+    let pronunciation: String
     let definitionVisible: Bool
 
     static var placeholder: WordEntry {
@@ -26,6 +28,7 @@ struct WordEntry: TimelineEntry {
             term: "Word",
             definition: "Definition will appear here",
             partOfSpeech: "noun",
+            pronunciation: "/wɜːrd/",
             definitionVisible: false
         )
     }
@@ -68,10 +71,8 @@ struct Provider: TimelineProvider {
     }
 
     private func getCurrentEntry() -> WordEntry {
-        // Read definition visibility state
         let definitionVisible = suite?.bool(forKey: "widget_definition_visible") ?? false
 
-        // Try to get structured word data first (stored as JSON string)
         if let jsonString = suite?.string(forKey: "widget_current_word"),
            let data = jsonString.data(using: .utf8),
            let word = try? JSONDecoder().decode(WordData.self, from: data) {
@@ -81,11 +82,11 @@ struct Provider: TimelineProvider {
                 term: word.term,
                 definition: word.definition,
                 partOfSpeech: word.partOfSpeech,
+                pronunciation: word.pronunciation ?? "",
                 definitionVisible: definitionVisible
             )
         }
 
-        // Fallback to simple daily_word string
         let term = suite?.string(forKey: "daily_word") ?? "No word"
         return WordEntry(
             date: Date(),
@@ -93,6 +94,7 @@ struct Provider: TimelineProvider {
             term: term,
             definition: "Open app to see definition",
             partOfSpeech: "",
+            pronunciation: "",
             definitionVisible: definitionVisible
         )
     }
@@ -125,6 +127,23 @@ struct HomeScreenWidgetView: View {
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
 
+            // Pronunciation with speaker button
+            if !entry.pronunciation.isEmpty {
+                HStack(spacing: 6) {
+                    Text(entry.pronunciation)
+                        .font(.system(size: family == .systemSmall ? 11 : 13, weight: .regular, design: .rounded))
+                        .foregroundColor(WidgetColors.textTertiary)
+                        .italic()
+
+                    // Speaker button - deep links to app for audio playback
+                    Link(destination: URL(string: "vocabphone://pronounce/\(entry.wordId)")!) {
+                        Image(systemName: "speaker.wave.2.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(WidgetColors.accentBlue)
+                    }
+                }
+            }
+
             // Definition
             Text(entry.definition)
                 .font(.system(size: family == .systemSmall ? 11 : 13, weight: .regular, design: .rounded))
@@ -148,77 +167,74 @@ struct HomeScreenWidgetView: View {
     }
 }
 
-// MARK: - Interactive Lock Screen Widget (iOS 17+)
+// MARK: - Enhanced Interactive Lock Screen Widget (iOS 17+)
 
 @available(iOS 17.0, *)
 struct InteractiveRectangularView: View {
     var entry: WordEntry
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            // Header row
-            HStack(alignment: .center) {
-                Text(entry.term)
-                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                    .lineLimit(1)
-                Spacer()
-                if !entry.partOfSpeech.isEmpty {
-                    Text(entry.partOfSpeech.lowercased())
-                        .font(.system(size: 9, weight: .medium, design: .rounded))
-                        .foregroundStyle(.secondary)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(
-                            Capsule()
-                                .fill(.secondary.opacity(0.2))
-                        )
-                }
-            }
+        VStack(alignment: .leading, spacing: 2) {
+            // Large word - primary focus
+            Text(entry.term)
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
 
             if entry.definitionVisible {
+                // Short definition
                 Text(entry.definition)
-                    .font(.system(size: 10, weight: .regular, design: .rounded))
+                    .font(.system(size: 11, weight: .regular, design: .rounded))
                     .foregroundStyle(.secondary)
                     .lineLimit(2)
-                    .padding(.top, 1)
 
-                // Action buttons
-                HStack(spacing: 6) {
+                // Compact action buttons
+                HStack(spacing: 8) {
                     Button(intent: ToggleDefinitionIntent()) {
-                        Label("Hide", systemImage: "eye.slash")
-                            .font(.system(size: 9, weight: .medium, design: .rounded))
+                        Image(systemName: "eye.slash")
+                            .font(.system(size: 11))
                     }
                     .buttonStyle(.plain)
 
                     Spacer()
 
                     Button(intent: RepeatIntent(wordId: entry.wordId)) {
-                        Label("Again", systemImage: "arrow.counterclockwise")
-                            .font(.system(size: 9, weight: .medium, design: .rounded))
+                        Image(systemName: "arrow.counterclockwise")
+                            .font(.system(size: 11))
                             .foregroundStyle(.orange)
                     }
                     .buttonStyle(.plain)
 
                     Button(intent: GotItIntent(wordId: entry.wordId)) {
-                        Label("Got it", systemImage: "checkmark.circle.fill")
-                            .font(.system(size: 9, weight: .medium, design: .rounded))
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 11))
                             .foregroundStyle(.green)
                     }
                     .buttonStyle(.plain)
                 }
-                .padding(.top, 3)
-            } else {
-                Button(intent: ToggleDefinitionIntent()) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 10))
-                        Text("Tap to reveal")
-                            .font(.system(size: 10, weight: .medium, design: .rounded))
-                    }
-                    .foregroundStyle(.blue)
-                }
-                .buttonStyle(.plain)
                 .padding(.top, 2)
+            } else {
+                // Part of speech + reveal button
+                HStack {
+                    if !entry.partOfSpeech.isEmpty {
+                        Text(entry.partOfSpeech.lowercased())
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    Button(intent: ToggleDefinitionIntent()) {
+                        HStack(spacing: 3) {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 10))
+                            Text("Reveal")
+                                .font(.system(size: 10, weight: .medium, design: .rounded))
+                        }
+                        .foregroundStyle(.blue)
+                    }
+                    .buttonStyle(.plain)
+                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -233,12 +249,14 @@ struct RectangularLockScreenView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text("TODAY'S WORD")
-                .font(.system(size: 10, weight: .semibold))
-                .opacity(0.7)
             Text(entry.term)
-                .font(.system(size: 18, weight: .bold))
+                .font(.system(size: 20, weight: .bold, design: .rounded))
                 .lineLimit(1)
+            if !entry.partOfSpeech.isEmpty {
+                Text(entry.partOfSpeech.lowercased())
+                    .font(.system(size: 11, weight: .medium))
+                    .opacity(0.7)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -313,14 +331,12 @@ struct VocabWidget: Widget {
             if #available(iOS 17.0, *) {
                 VocabWidgetEntryView(entry: entry)
                     .containerBackground(for: .widget) {
-                        // Premium gradient for home screen widgets
                         ZStack {
                             LinearGradient(
                                 colors: [WidgetColors.gradientStart, WidgetColors.gradientEnd],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
-                            // Accent glow
                             Circle()
                                 .fill(
                                     RadialGradient(
