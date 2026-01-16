@@ -9,6 +9,7 @@ export type Word = {
   example: string;
   difficulty: 1 | 2 | 3 | 4 | 5;
   tags: string[];
+  synonyms?: string[];
 };
 
 export type UserWordProgress = {

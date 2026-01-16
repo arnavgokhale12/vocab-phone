@@ -25,6 +25,8 @@ export function setWidgetState(word: Word) {
     term: word.term,
     definition: word.definition,
     partOfSpeech: word.partOfSpeech,
+    pronunciation: word.pronunciation,
+    synonyms: word.synonyms ?? [],
   };
 
   MOD?.setString?.("widget_current_word", JSON.stringify(state));
@@ -41,6 +43,8 @@ export function setWidgetQueue(words: Word[]) {
     term: w.term,
     definition: w.definition,
     partOfSpeech: w.partOfSpeech,
+    pronunciation: w.pronunciation,
+    synonyms: w.synonyms ?? [],
   }));
 
   MOD?.setString?.("widget_word_queue", JSON.stringify(queue));

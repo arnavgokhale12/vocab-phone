@@ -10,6 +10,7 @@ export const SEED_WORDS: Word[] = [
     example: "Her perspicacious analysis of the market trends saved the company millions.",
     difficulty: 5,
     tags: ["academic", "rare"],
+    synonyms: ["astute", "shrewd", "perceptive"],
   },
   {
     id: "loquacious",
@@ -20,6 +21,7 @@ export const SEED_WORDS: Word[] = [
     example: "The loquacious guest monopolized every conversation at the dinner party.",
     difficulty: 4,
     tags: ["academic"],
+    synonyms: ["talkative", "chatty", "verbose"],
   },
   {
     id: "recalcitrant",
@@ -30,6 +32,7 @@ export const SEED_WORDS: Word[] = [
     example: "The recalcitrant board member refused to support any proposed reforms.",
     difficulty: 4,
     tags: ["academic", "business"],
+    synonyms: ["defiant", "stubborn", "unruly"],
   },
   {
     id: "sycophantic",
@@ -40,6 +43,7 @@ export const SEED_WORDS: Word[] = [
     example: "His sycophantic behavior toward the CEO disgusted his colleagues.",
     difficulty: 4,
     tags: ["business", "academic"],
+    synonyms: ["fawning", "obsequious", "servile"],
   },
   {
     id: "pulchritudinous",
@@ -50,6 +54,7 @@ export const SEED_WORDS: Word[] = [
     example: "The pulchritudinous landscape of Tuscany has inspired artists for centuries.",
     difficulty: 5,
     tags: ["rare", "literary"],
+    synonyms: ["beautiful", "gorgeous", "stunning"],
   },
   {
     id: "sesquipedalian",
@@ -90,6 +95,7 @@ export const SEED_WORDS: Word[] = [
     example: "In a magnanimous gesture, she declined to press charges against her accuser.",
     difficulty: 3,
     tags: ["academic"],
+    synonyms: ["generous", "noble", "forgiving"],
   },
   {
     id: "equanimity",
@@ -100,6 +106,7 @@ export const SEED_WORDS: Word[] = [
     example: "She accepted the devastating news with remarkable equanimity.",
     difficulty: 4,
     tags: ["academic"],
+    synonyms: ["composure", "serenity", "poise"],
   },
   {
     id: "perfidious",
@@ -180,6 +187,7 @@ export const SEED_WORDS: Word[] = [
     example: "Social media fame is often ephemeral, fading as quickly as it arose.",
     difficulty: 3,
     tags: ["academic"],
+    synonyms: ["fleeting", "transient", "brief"],
   },
   {
     id: "mercurial",

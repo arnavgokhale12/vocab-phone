@@ -10,6 +10,7 @@ struct WordData: Codable {
     let definition: String
     let partOfSpeech: String
     let pronunciation: String?
+    let synonyms: [String]?
 }
 
 struct WordEntry: TimelineEntry {
@@ -19,6 +20,7 @@ struct WordEntry: TimelineEntry {
     let definition: String
     let partOfSpeech: String
     let pronunciation: String
+    let synonyms: [String]
     let definitionVisible: Bool
 
     static var placeholder: WordEntry {
@@ -29,6 +31,7 @@ struct WordEntry: TimelineEntry {
             definition: "Definition will appear here",
             partOfSpeech: "noun",
             pronunciation: "/wɜːrd/",
+            synonyms: ["synonym1", "synonym2"],
             definitionVisible: false
         )
     }
@@ -83,6 +86,7 @@ struct Provider: TimelineProvider {
                 definition: word.definition,
                 partOfSpeech: word.partOfSpeech,
                 pronunciation: word.pronunciation ?? "",
+                synonyms: word.synonyms ?? [],
                 definitionVisible: definitionVisible
             )
         }
@@ -95,34 +99,36 @@ struct Provider: TimelineProvider {
             definition: "Open app to see definition",
             partOfSpeech: "",
             pronunciation: "",
+            synonyms: [],
             definitionVisible: definitionVisible
         )
     }
 }
 
-// MARK: - Home Screen Widget View (systemSmall, systemMedium)
+// MARK: - Medium Home Screen Widget View (systemMedium)
 
-struct HomeScreenWidgetView: View {
+struct MediumHomeScreenWidgetView: View {
     var entry: WordEntry
-    @Environment(\.widgetFamily) var family
 
     var body: some View {
-        VStack(alignment: .leading, spacing: family == .systemSmall ? 6 : 10) {
+        VStack(alignment: .leading, spacing: 8) {
             // Part of speech pill
-            Text(entry.partOfSpeech.uppercased())
-                .font(.system(size: 10, weight: .bold, design: .rounded))
-                .tracking(1.2)
-                .foregroundColor(WidgetColors.accentPurple)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(
-                    Capsule()
-                        .fill(WidgetColors.accentPurple.opacity(0.2))
-                )
+            if !entry.partOfSpeech.isEmpty {
+                Text(entry.partOfSpeech.uppercased())
+                    .font(.system(size: 10, weight: .bold, design: .rounded))
+                    .tracking(1.2)
+                    .foregroundColor(WidgetColors.accentPurple)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(
+                        Capsule()
+                            .fill(WidgetColors.accentPurple.opacity(0.2))
+                    )
+            }
 
             // Word
             Text(entry.term)
-                .font(.system(size: family == .systemSmall ? 22 : 26, weight: .bold, design: .rounded))
+                .font(.system(size: 26, weight: .bold, design: .rounded))
                 .foregroundColor(WidgetColors.textPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
@@ -131,11 +137,10 @@ struct HomeScreenWidgetView: View {
             if !entry.pronunciation.isEmpty {
                 HStack(spacing: 6) {
                     Text(entry.pronunciation)
-                        .font(.system(size: family == .systemSmall ? 11 : 13, weight: .regular, design: .rounded))
+                        .font(.system(size: 13, weight: .regular, design: .rounded))
                         .foregroundColor(WidgetColors.textTertiary)
                         .italic()
 
-                    // Speaker button - deep links to app for audio playback
                     Link(destination: URL(string: "vocabphone://pronounce/\(entry.wordId)")!) {
                         Image(systemName: "speaker.wave.2.fill")
                             .font(.system(size: 12))
@@ -146,9 +151,9 @@ struct HomeScreenWidgetView: View {
 
             // Definition
             Text(entry.definition)
-                .font(.system(size: family == .systemSmall ? 11 : 13, weight: .regular, design: .rounded))
+                .font(.system(size: 13, weight: .regular, design: .rounded))
                 .foregroundColor(WidgetColors.textSecondary)
-                .lineLimit(family == .systemSmall ? 2 : 3)
+                .lineLimit(3)
                 .fixedSize(horizontal: false, vertical: true)
 
             Spacer(minLength: 0)
@@ -167,132 +172,116 @@ struct HomeScreenWidgetView: View {
     }
 }
 
-// MARK: - Enhanced Interactive Lock Screen Widget (iOS 17+)
+// MARK: - Large Home Screen Widget View (systemLarge)
 
-@available(iOS 17.0, *)
-struct InteractiveRectangularView: View {
+struct LargeHomeScreenWidgetView: View {
     var entry: WordEntry
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            // Large word - tappable to open app
-            Link(destination: URL(string: "vocabphone://pronounce/\(entry.wordId)")!) {
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
-                    Text(entry.term)
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .lineLimit(1)
-
-                    if !entry.pronunciation.isEmpty {
-                        Text(entry.pronunciation)
-                            .font(.system(size: 10, weight: .regular, design: .rounded))
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                    }
-                }
-            }
-
-            if entry.definitionVisible {
-                // Short definition
-                Text(entry.definition)
-                    .font(.system(size: 11, weight: .regular, design: .rounded))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(2)
-
-                // Compact action buttons
-                HStack(spacing: 8) {
-                    Button(intent: ToggleDefinitionIntent()) {
-                        Image(systemName: "eye.slash")
-                            .font(.system(size: 11))
-                    }
-                    .buttonStyle(.plain)
-
-                    Spacer()
-
-                    Button(intent: RepeatIntent(wordId: entry.wordId)) {
-                        Image(systemName: "arrow.counterclockwise")
-                            .font(.system(size: 11))
-                            .foregroundStyle(.orange)
-                    }
-                    .buttonStyle(.plain)
-
-                    Button(intent: GotItIntent(wordId: entry.wordId)) {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 11))
-                            .foregroundStyle(.green)
-                    }
-                    .buttonStyle(.plain)
-                }
-                .padding(.top, 2)
-            } else {
-                // Part of speech + reveal button
-                HStack {
-                    if !entry.partOfSpeech.isEmpty {
-                        Text(entry.partOfSpeech.lowercased())
-                            .font(.system(size: 10, weight: .medium, design: .rounded))
-                            .foregroundStyle(.secondary)
-                    }
-
-                    Spacer()
-
-                    Button(intent: ToggleDefinitionIntent()) {
-                        HStack(spacing: 3) {
-                            Image(systemName: "sparkles")
-                                .font(.system(size: 10))
-                            Text("Reveal")
-                                .font(.system(size: 10, weight: .medium, design: .rounded))
-                        }
-                        .foregroundStyle(.blue)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
-// MARK: - Static Lock Screen Views (iOS 16, fallback)
-
-@available(iOS 16.0, *)
-struct RectangularLockScreenView: View {
-    var entry: WordEntry
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(entry.term)
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .lineLimit(1)
+        VStack(alignment: .leading, spacing: 12) {
+            // Part of speech pill
             if !entry.partOfSpeech.isEmpty {
-                Text(entry.partOfSpeech.lowercased())
-                    .font(.system(size: 11, weight: .medium))
-                    .opacity(0.7)
+                Text(entry.partOfSpeech.uppercased())
+                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                    .tracking(1.2)
+                    .foregroundColor(WidgetColors.accentPurple)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(
+                        Capsule()
+                            .fill(WidgetColors.accentPurple.opacity(0.2))
+                    )
+            }
+
+            // Word
+            Text(entry.term)
+                .font(.system(size: 32, weight: .bold, design: .rounded))
+                .foregroundColor(WidgetColors.textPrimary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+
+            // Pronunciation with speaker button
+            if !entry.pronunciation.isEmpty {
+                HStack(spacing: 8) {
+                    Text(entry.pronunciation)
+                        .font(.system(size: 15, weight: .regular, design: .rounded))
+                        .foregroundColor(WidgetColors.textTertiary)
+                        .italic()
+
+                    // Speaker button - deep links to app for audio playback
+                    Link(destination: URL(string: "vocabphone://pronounce/\(entry.wordId)")!) {
+                        Image(systemName: "speaker.wave.2.fill")
+                            .font(.system(size: 14))
+                            .foregroundColor(WidgetColors.accentBlue)
+                    }
+                }
+            }
+
+            // Definition (multi-line)
+            Text(entry.definition)
+                .font(.system(size: 15, weight: .regular, design: .rounded))
+                .foregroundColor(WidgetColors.textSecondary)
+                .lineLimit(4)
+                .fixedSize(horizontal: false, vertical: true)
+
+            // Synonyms (max 2)
+            if !entry.synonyms.isEmpty {
+                HStack(spacing: 8) {
+                    Text("Similar:")
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .foregroundColor(WidgetColors.textTertiary)
+
+                    ForEach(entry.synonyms.prefix(2), id: \.self) { synonym in
+                        Text(synonym)
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .foregroundColor(WidgetColors.accentBlue)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(
+                                Capsule()
+                                    .fill(WidgetColors.accentBlue.opacity(0.15))
+                            )
+                    }
+                }
+                .padding(.top, 4)
+            }
+
+            Spacer(minLength: 0)
+
+            // Bottom accent line
+            HStack(spacing: 4) {
+                Circle()
+                    .fill(WidgetColors.accentPurple)
+                    .frame(width: 6, height: 6)
+                Text("vocab")
+                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                    .foregroundColor(WidgetColors.textTertiary)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }
 }
 
+// MARK: - Lock Screen Widget View (accessoryRectangular only)
+
 @available(iOS 16.0, *)
-struct CircularLockScreenView: View {
+struct LockScreenRectangularView: View {
     var entry: WordEntry
 
     var body: some View {
-        ZStack {
-            AccessoryWidgetBackground()
-            Text(entry.term.prefix(4))
-                .font(.system(size: 14, weight: .bold))
+        VStack(alignment: .leading, spacing: 3) {
+            // Word - prominent
+            Text(entry.term)
+                .font(.system(size: 18, weight: .bold, design: .rounded))
                 .lineLimit(1)
+
+            // Definition - 1-2 lines, truncated
+            Text(entry.definition)
+                .font(.system(size: 11, weight: .regular, design: .rounded))
+                .foregroundStyle(.secondary)
+                .lineLimit(2)
         }
-    }
-}
-
-@available(iOS 16.0, *)
-struct InlineLockScreenView: View {
-    var entry: WordEntry
-
-    var body: some View {
-        Text("Word: \(entry.term)")
-            .lineLimit(1)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -303,30 +292,19 @@ struct VocabWidgetEntryView: View {
     var entry: WordEntry
 
     var body: some View {
-        if #available(iOS 17.0, *) {
+        if #available(iOS 16.0, *) {
             switch widgetFamily {
             case .accessoryRectangular:
-                InteractiveRectangularView(entry: entry)
-            case .accessoryCircular:
-                CircularLockScreenView(entry: entry)
-            case .accessoryInline:
-                InlineLockScreenView(entry: entry)
+                LockScreenRectangularView(entry: entry)
+            case .systemMedium:
+                MediumHomeScreenWidgetView(entry: entry)
+            case .systemLarge:
+                LargeHomeScreenWidgetView(entry: entry)
             default:
-                HomeScreenWidgetView(entry: entry)
-            }
-        } else if #available(iOS 16.0, *) {
-            switch widgetFamily {
-            case .accessoryRectangular:
-                RectangularLockScreenView(entry: entry)
-            case .accessoryCircular:
-                CircularLockScreenView(entry: entry)
-            case .accessoryInline:
-                InlineLockScreenView(entry: entry)
-            default:
-                HomeScreenWidgetView(entry: entry)
+                MediumHomeScreenWidgetView(entry: entry)
             }
         } else {
-            HomeScreenWidgetView(entry: entry)
+            MediumHomeScreenWidgetView(entry: entry)
         }
     }
 }
@@ -365,21 +343,19 @@ struct VocabWidget: Widget {
             }
         }
         .configurationDisplayName("Vocab Word")
-        .description("Learn vocabulary from your lock screen. Tap to reveal, then mark as known or repeat.")
+        .description("Learn vocabulary from your lock screen and home screen.")
         .supportedFamilies(supportedFamilies)
     }
 
     private var supportedFamilies: [WidgetFamily] {
         if #available(iOS 16.0, *) {
             return [
-                .systemSmall,
                 .systemMedium,
-                .accessoryRectangular,
-                .accessoryCircular,
-                .accessoryInline
+                .systemLarge,
+                .accessoryRectangular
             ]
         } else {
-            return [.systemSmall, .systemMedium]
+            return [.systemMedium, .systemLarge]
         }
     }
 }

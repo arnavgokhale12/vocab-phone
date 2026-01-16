@@ -255,12 +255,14 @@ import { createMMKV } from 'react-native-mmkv';  // Correct
 
 ### Widget Target Setup
 
-The VocabWidget extension target must be manually added in Xcode:
+The VocabWidget extension target was manually added in Xcode (not automated by the config plugin):
 1. File → New → Target → Widget Extension
 2. Name: VocabWidget
 3. Add existing files from `ios/VocabWidget/` to target
 4. Configure App Groups capability
 5. Set minimum deployment target to iOS 17.0
+
+**CRITICAL: Do NOT run `npx expo prebuild --clean`** - this will delete the VocabWidgetExtension target from the Xcode project. The config plugin only creates widget files but doesn't add the Xcode target. If you accidentally run it, restore from git: `git checkout HEAD -- ios/`
 
 ## v2.1 UI Redesign (Glassmorphism)
 

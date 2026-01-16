@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import * as Speech from "expo-speech";
 import { useWords } from "../context/WordsContext";
 import {
   GradientBackground,
@@ -23,6 +25,14 @@ export default function LearnScreen() {
   useEffect(() => {
     refreshTodayIfNeeded();
   }, []);
+
+  const speakWord = (term: string) => {
+    Speech.speak(term, {
+      language: "en-US",
+      rate: 0.8,
+      pitch: 1.0,
+    });
+  };
 
   const w = todayWords[idx];
 
@@ -57,7 +67,16 @@ export default function LearnScreen() {
         <GlassCard elevated style={styles.wordCard}>
           <CapsuleBadge label={w.partOfSpeech} />
           <Text style={styles.term}>{w.term}</Text>
-          <Text style={styles.pronunciation}>{w.pronunciation}</Text>
+          <View style={styles.pronunciationRow}>
+            <Text style={styles.pronunciation}>{w.pronunciation}</Text>
+            <TouchableOpacity
+              style={styles.speakerButton}
+              onPress={() => speakWord(w.term)}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="volume-high" size={20} color={colors.accentBlue} />
+            </TouchableOpacity>
+          </View>
 
           {revealed ? (
             <View style={styles.meaningContainer}>
@@ -123,11 +142,21 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
     marginBottom: spacing.xs,
   },
+  pronunciationRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: spacing.md,
+    gap: spacing.sm,
+  },
   pronunciation: {
     ...typography.body,
     color: colors.textMuted,
     fontStyle: "italic",
-    marginBottom: spacing.md,
+  },
+  speakerButton: {
+    padding: spacing.xs,
+    borderRadius: borderRadius.sm,
+    backgroundColor: colors.accentBlue + "20",
   },
   hint: {
     ...typography.body,

@@ -19,7 +19,9 @@
       "infoPlist": {
         "CFBundleURLTypes": [
           {
-            "CFBundleURLSchemes": ["vocabphone"]
+            "CFBundleURLSchemes": [
+              "vocabphone"
+            ]
           }
         ]
       }
@@ -30,7 +32,8 @@
         "backgroundColor": "#14141F"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.vocabphone"
     },
     "web": {
       "favicon": "./assets/favicon.png"
