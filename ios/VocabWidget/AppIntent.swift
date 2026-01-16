@@ -165,8 +165,9 @@ private func getTodayString() -> String {
 }
 
 private func loadNextWord(defaults: UserDefaults?) {
-    // Get word queue from shared storage
-    guard let queueData = defaults?.data(forKey: wordQueueKey),
+    // Get word queue from shared storage (stored as JSON string)
+    guard let jsonString = defaults?.string(forKey: wordQueueKey),
+          let queueData = jsonString.data(using: .utf8),
           var queue = try? JSONDecoder().decode([[String: String]].self, from: queueData),
           !queue.isEmpty else {
         return
@@ -176,14 +177,16 @@ private func loadNextWord(defaults: UserDefaults?) {
     queue.removeFirst()
 
     if let nextWord = queue.first {
-        // Update current word
-        if let wordData = try? JSONEncoder().encode(nextWord) {
-            defaults?.set(wordData, forKey: currentWordKey)
+        // Update current word as JSON string
+        if let wordData = try? JSONEncoder().encode(nextWord),
+           let wordString = String(data: wordData, encoding: .utf8) {
+            defaults?.set(wordString, forKey: currentWordKey)
         }
 
-        // Update queue
-        if let newQueueData = try? JSONEncoder().encode(queue) {
-            defaults?.set(newQueueData, forKey: wordQueueKey)
+        // Update queue as JSON string
+        if let newQueueData = try? JSONEncoder().encode(queue),
+           let queueString = String(data: newQueueData, encoding: .utf8) {
+            defaults?.set(queueString, forKey: wordQueueKey)
         }
     }
 }

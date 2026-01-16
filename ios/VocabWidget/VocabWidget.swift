@@ -52,8 +52,9 @@ struct Provider: TimelineProvider {
     }
 
     private func getCurrentEntry() -> WordEntry {
-        // Try to get structured word data first
-        if let data = suite?.data(forKey: "widget_current_word"),
+        // Try to get structured word data first (stored as JSON string)
+        if let jsonString = suite?.string(forKey: "widget_current_word"),
+           let data = jsonString.data(using: .utf8),
            let word = try? JSONDecoder().decode(WordData.self, from: data) {
             return WordEntry(
                 date: Date(),
