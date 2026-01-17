@@ -93,6 +93,18 @@ export default function LearnScreen() {
               <View style={styles.exampleContainer}>
                 <Text style={styles.example}>"{w.example}"</Text>
               </View>
+              {w.synonyms && w.synonyms.length > 0 && (
+                <View style={styles.synonymsContainer}>
+                  <Text style={styles.synonymsLabel}>Similar:</Text>
+                  <View style={styles.synonymsList}>
+                    {w.synonyms.slice(0, 3).map((synonym, index) => (
+                      <View key={index} style={styles.synonymPill}>
+                        <Text style={styles.synonymText}>{synonym}</Text>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              )}
             </View>
           ) : (
             <Text style={styles.hint}>Tap below to reveal the meaning</Text>
@@ -192,6 +204,32 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.textSecondary,
     fontStyle: "italic",
+  },
+  synonymsContainer: {
+    marginTop: spacing.md,
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: spacing.sm,
+  },
+  synonymsLabel: {
+    ...typography.label,
+    color: colors.textMuted,
+  },
+  synonymsList: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.xs,
+  },
+  synonymPill: {
+    backgroundColor: colors.accentBlue + "25",
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.xl,
+  },
+  synonymText: {
+    ...typography.label,
+    color: colors.accentBlue,
   },
   actions: {
     gap: spacing.md,

@@ -1,6 +1,7 @@
 import Expo
 import React
 import ReactAppDependencyProvider
+import AVFoundation
 
 @UIApplicationMain
 public class AppDelegate: ExpoAppDelegate {
@@ -13,6 +14,14 @@ public class AppDelegate: ExpoAppDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
+    // Configure audio session to play even when device is on silent mode
+    do {
+      try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
+      try AVAudioSession.sharedInstance().setActive(true)
+    } catch {
+      print("Failed to configure audio session: \(error)")
+    }
+
     let delegate = ReactNativeDelegate()
     let factory = ExpoReactNativeFactory(delegate: delegate)
     delegate.dependencyProvider = RCTAppDependencyProvider()
