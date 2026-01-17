@@ -144,6 +144,11 @@ Supports home screen widgets with real-time sync:
 - **Automatic**: Refreshes every 4 hours as backup
 - Uses `WidgetCenter.shared.reloadAllTimelines()` for instant updates
 
+**Interactive Features** (iOS 17+ via App Intents):
+- Widget buttons trigger `GotItIntent` and `RepeatIntent`
+- Intents update progress in shared UserDefaults and reload widget
+- Progress bar updates reflect learning activity
+
 ### Widget Communication
 
 1. React Native calls `setWidgetState(word)` and `setWidgetQueue(words)` via native module
@@ -274,6 +279,28 @@ If widget shows blurred/placeholder content on physical device:
 2. Ensure Face ID & Passcode settings allow widgets when locked
 3. Restart device after fresh install to reset widget daemon
 4. Force-unwrapped URLs in Link components can crash widget - always use optional binding
+
+### Audio Playback on Physical Devices
+
+`expo-speech` uses `AVSpeechSynthesizer` which respects the mute switch by default. To enable audio playback even when device is on silent:
+
+**Configuration** (`ios/vocabphone/AppDelegate.swift`):
+```swift
+import AVFoundation
+
+// In didFinishLaunchingWithOptions:
+do {
+  try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
+  try AVAudioSession.sharedInstance().setActive(true)
+} catch {
+  print("Failed to configure audio session: \(error)")
+}
+```
+
+This sets:
+- Category `.playback`: Ignores mute switch
+- Mode `.spokenAudio`: Optimized for speech synthesis
+- Option `.duckOthers`: Lowers other audio during speech
 
 ## v2.1 UI Redesign & Features
 
