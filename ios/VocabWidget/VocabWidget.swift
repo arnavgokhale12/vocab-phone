@@ -13,6 +13,12 @@ struct WordData: Codable {
     let synonyms: [String]?
 }
 
+struct WidgetStats: Codable {
+    let learned: Int
+    let goal: Int
+    let streak: Int
+}
+
 struct WordEntry: TimelineEntry {
     let date: Date
     let wordId: String
@@ -22,6 +28,7 @@ struct WordEntry: TimelineEntry {
     let pronunciation: String
     let synonyms: [String]
     let definitionVisible: Bool
+    let stats: WidgetStats
 
     static var placeholder: WordEntry {
         WordEntry(
@@ -32,7 +39,8 @@ struct WordEntry: TimelineEntry {
             partOfSpeech: "noun",
             pronunciation: "/wɜːrd/",
             synonyms: ["synonym1", "synonym2"],
-            definitionVisible: false
+            definitionVisible: false,
+            stats: WidgetStats(learned: 0, goal: 5, streak: 0)
         )
     }
 }
@@ -73,7 +81,18 @@ struct Provider: TimelineProvider {
         completion(timeline)
     }
 
+    private func getCurrentStats() -> WidgetStats {
+        if let jsonString = suite?.string(forKey: "widget_stats"),
+           let data = jsonString.data(using: .utf8),
+           let stats = try? JSONDecoder().decode(WidgetStats.self, from: data) {
+            return stats
+        }
+        return WidgetStats(learned: 0, goal: 5, streak: 0)
+    }
+
     private func getCurrentEntry() -> WordEntry {
+        let stats = getCurrentStats()
+
         if let jsonString = suite?.string(forKey: "widget_current_word"),
            let data = jsonString.data(using: .utf8),
            let word = try? JSONDecoder().decode(WordData.self, from: data) {
@@ -85,7 +104,8 @@ struct Provider: TimelineProvider {
                 partOfSpeech: word.partOfSpeech,
                 pronunciation: word.pronunciation ?? "",
                 synonyms: word.synonyms ?? [],
-                definitionVisible: true
+                definitionVisible: true,
+                stats: stats
             )
         }
 
@@ -98,7 +118,8 @@ struct Provider: TimelineProvider {
             partOfSpeech: "",
             pronunciation: "",
             synonyms: [],
-            definitionVisible: true
+            definitionVisible: true,
+            stats: stats
         )
     }
 }
@@ -179,17 +200,48 @@ struct MediumHomeScreenWidgetView: View {
 
             Spacer(minLength: 0)
 
-            // Bottom accent line
-            HStack(spacing: 4) {
-                Circle()
-                    .fill(WidgetColors.accentPurple)
-                    .frame(width: 6, height: 6)
-                Text("vocab")
-                    .font(.system(size: 9, weight: .medium, design: .rounded))
-                    .foregroundColor(WidgetColors.textTertiary)
+            // Progress bar
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text("\(entry.stats.learned)/\(entry.stats.goal) words")
+                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .foregroundColor(WidgetColors.textTertiary)
+                    Spacer()
+                    if entry.stats.streak > 0 {
+                        HStack(spacing: 2) {
+                            Text("🔥")
+                                .font(.system(size: 9))
+                            Text("\(entry.stats.streak)")
+                                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                                .foregroundColor(WidgetColors.accentPurple)
+                        }
+                    }
+                }
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(WidgetColors.glassOverlay)
+                            .frame(height: 4)
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(
+                                LinearGradient(
+                                    colors: [WidgetColors.accentPurple, WidgetColors.accentBlue],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(width: geometry.size.width * progressFraction, height: 4)
+                    }
+                }
+                .frame(height: 4)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+
+    private var progressFraction: CGFloat {
+        guard entry.stats.goal > 0 else { return 0 }
+        return min(CGFloat(entry.stats.learned) / CGFloat(entry.stats.goal), 1.0)
     }
 }
 
@@ -271,17 +323,48 @@ struct LargeHomeScreenWidgetView: View {
 
             Spacer(minLength: 0)
 
-            // Bottom accent line
-            HStack(spacing: 4) {
-                Circle()
-                    .fill(WidgetColors.accentPurple)
-                    .frame(width: 6, height: 6)
-                Text("vocab")
-                    .font(.system(size: 10, weight: .medium, design: .rounded))
-                    .foregroundColor(WidgetColors.textTertiary)
+            // Progress bar
+            VStack(alignment: .leading, spacing: 6) {
+                HStack {
+                    Text("\(entry.stats.learned)/\(entry.stats.goal) words today")
+                        .font(.system(size: 12, weight: .medium, design: .rounded))
+                        .foregroundColor(WidgetColors.textTertiary)
+                    Spacer()
+                    if entry.stats.streak > 0 {
+                        HStack(spacing: 3) {
+                            Text("🔥")
+                                .font(.system(size: 11))
+                            Text("\(entry.stats.streak) day\(entry.stats.streak == 1 ? "" : "s")")
+                                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                .foregroundColor(WidgetColors.accentPurple)
+                        }
+                    }
+                }
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(WidgetColors.glassOverlay)
+                            .frame(height: 6)
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(
+                                LinearGradient(
+                                    colors: [WidgetColors.accentPurple, WidgetColors.accentBlue],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .frame(width: geometry.size.width * progressFraction, height: 6)
+                    }
+                }
+                .frame(height: 6)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+    }
+
+    private var progressFraction: CGFloat {
+        guard entry.stats.goal > 0 else { return 0 }
+        return min(CGFloat(entry.stats.learned) / CGFloat(entry.stats.goal), 1.0)
     }
 }
 

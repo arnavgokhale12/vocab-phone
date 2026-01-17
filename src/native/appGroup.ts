@@ -54,3 +54,16 @@ export function setWidgetQueue(words: Word[]) {
     setWidgetState(words[0]);
   }
 }
+
+/**
+ * Set widget stats for progress display
+ */
+export function setWidgetStats(stats: {
+  learned: number;
+  goal: number;
+  streak: number;
+}) {
+  if (Platform.OS !== "ios") return;
+
+  MOD?.setString?.("widget_stats", JSON.stringify(stats));
+}

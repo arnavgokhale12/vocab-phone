@@ -3,6 +3,8 @@ import { SEED_WORDS } from "../data/seedWords";
 import { Word } from "../types/word";
 import { getJson, setJson } from "../utils/storage";
 import { setSharedString, setWidgetQueue } from "../native/appGroup";
+import { getAllProgress } from "../services/storage/mmkvStorage";
+import { WordProgress } from "../types/wordProgress";
 
 type WordsState = {
   words: Word[];
@@ -35,6 +37,43 @@ function seededPick(ids: string[], seed: string, n: number) {
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
   return arr.slice(0, n);
+}
+
+const MAX_REVIEW_WORDS = 3;
+
+/**
+ * Select review words from progress data
+ * Prioritizes: lower mastery level, then older lastSeenAt
+ */
+function selectReviewWords(
+  allProgress: Map<string, WordProgress>,
+  excludeIds: Set<string>,
+  today: string
+): string[] {
+  const masteryOrder = { new: 0, learning: 1, mastered: 2 };
+
+  const candidates = Array.from(allProgress.values())
+    .filter((p) => {
+      // Skip mastered words and words already in today's new set
+      if (p.masteryLevel === "mastered") return false;
+      if (excludeIds.has(p.wordId)) return false;
+      // Only include words seen before today
+      if (!p.lastSeenAt) return false;
+      const seenDate = p.lastSeenAt.split("T")[0];
+      if (seenDate >= today) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      // Priority: lower mastery first
+      const masteryDiff = masteryOrder[a.masteryLevel] - masteryOrder[b.masteryLevel];
+      if (masteryDiff !== 0) return masteryDiff;
+      // Then: older lastSeenAt first
+      const aDate = a.lastSeenAt ?? "";
+      const bDate = b.lastSeenAt ?? "";
+      return aDate.localeCompare(bDate);
+    });
+
+  return candidates.slice(0, MAX_REVIEW_WORDS).map((p) => p.wordId);
 }
 
 const STORAGE_KEYS = {
@@ -83,8 +122,19 @@ export function WordsProvider({ children }: { children: React.ReactNode }) {
   }, [todayGoal]);
 
   const todayWords = useMemo(() => {
-    const map = new Map(SEED_WORDS.map(w => [w.id, w]));
-    return todaySet.wordIds.map(id => map.get(id)).filter(Boolean) as Word[];
+    const wordMap = new Map(SEED_WORDS.map(w => [w.id, w]));
+    const newWordIds = new Set(todaySet.wordIds);
+
+    // Get new words for today
+    const newWords = todaySet.wordIds.map(id => wordMap.get(id)).filter(Boolean) as Word[];
+
+    // Get review words (words seen before but not mastered)
+    const allProgress = getAllProgress();
+    const reviewIds = selectReviewWords(allProgress, newWordIds, todaySet.date);
+    const reviewWords = reviewIds.map(id => wordMap.get(id)).filter(Boolean) as Word[];
+
+    // Return review words first, then new words
+    return [...reviewWords, ...newWords];
   }, [todaySet]);
 
   // Sync words to widget

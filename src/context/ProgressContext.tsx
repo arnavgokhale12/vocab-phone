@@ -17,7 +17,7 @@ import {
   checkGoalMet,
   markGoalMet,
 } from '../services/MasteryService';
-import { setSharedString, setWidgetState } from '../native/appGroup';
+import { setWidgetStats } from '../native/appGroup';
 
 interface ProgressContextValue {
   // Progress data
@@ -30,11 +30,17 @@ interface ProgressContextValue {
 
   // Computed
   isGoalMet: (dailyGoal: number) => boolean;
+  todayProgress: { learned: number; goal: number };
 }
 
 const ProgressContext = createContext<ProgressContextValue | null>(null);
 
-export function ProgressProvider({ children }: { children: React.ReactNode }) {
+interface ProviderProps {
+  children: React.ReactNode;
+  todayGoal: number;
+}
+
+export function ProgressProvider({ children, todayGoal }: ProviderProps) {
   const [progress, setProgress] = useState<Map<string, WordProgress>>(new Map());
   const [stats, setStatsState] = useState<UserStats>(createDefaultStats);
 
@@ -75,17 +81,22 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     if (Platform.OS !== 'ios') return;
 
     const currentStats = getStats();
-    setSharedString('current_streak', String(currentStats.currentStreak));
-    setSharedString(
-      'daily_progress',
-      `${currentStats.todayReviewedCount}`
-    );
-  }, []);
+    setWidgetStats({
+      learned: currentStats.todayReviewedCount,
+      goal: todayGoal,
+      streak: currentStats.currentStreak,
+    });
+  }, [todayGoal]);
 
   // Initial sync
   useEffect(() => {
     syncStatsToWidget();
   }, [syncStatsToWidget]);
+
+  const todayProgress = {
+    learned: stats.todayReviewedCount,
+    goal: todayGoal,
+  };
 
   return (
     <ProgressContext.Provider
@@ -95,6 +106,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
         recordAnswer,
         refreshProgress,
         isGoalMet,
+        todayProgress,
       }}
     >
       {children}

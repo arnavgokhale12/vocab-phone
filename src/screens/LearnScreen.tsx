@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import { Ionicons } from "@expo/vector-icons";
 import * as Speech from "expo-speech";
 import { useWords } from "../context/WordsContext";
+import { useProgress } from "../context/ProgressContext";
 import { setWidgetState } from "../native/appGroup";
 import {
   GradientBackground,
@@ -20,12 +21,22 @@ import {
 
 export default function LearnScreen() {
   const { todayWords, refreshTodayIfNeeded } = useWords();
+  const { recordAnswer } = useProgress();
   const [idx, setIdx] = useState(0);
   const [revealed, setRevealed] = useState(false);
 
   useEffect(() => {
     refreshTodayIfNeeded();
   }, []);
+
+  const handleAnswer = (correct: boolean) => {
+    const currentWord = todayWords[idx];
+    if (currentWord) {
+      recordAnswer(currentWord.id, correct);
+    }
+    setRevealed(false);
+    setIdx((i) => i + 1);
+  };
 
   // Update widget when current word changes
   useEffect(() => {
@@ -112,19 +123,26 @@ export default function LearnScreen() {
         </GlassCard>
 
         <View style={styles.actions}>
-          <GradientButton
-            title={revealed ? "Hide" : "Reveal"}
-            onPress={() => setRevealed((r) => !r)}
-            variant="glass"
-          />
-          <GradientButton
-            title="Next Word"
-            onPress={() => {
-              setRevealed(false);
-              setIdx((i) => i + 1);
-            }}
-            variant="primary"
-          />
+          {!revealed ? (
+            <GradientButton
+              title="Reveal"
+              onPress={() => setRevealed(true)}
+              variant="primary"
+            />
+          ) : (
+            <>
+              <GradientButton
+                title="Review Again"
+                onPress={() => handleAnswer(false)}
+                variant="glass"
+              />
+              <GradientButton
+                title="Got It!"
+                onPress={() => handleAnswer(true)}
+                variant="primary"
+              />
+            </>
+          )}
         </View>
       </ScrollView>
     </GradientBackground>
