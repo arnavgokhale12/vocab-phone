@@ -1,10 +1,10 @@
-# Vocab Phone
+# LexiStack
 
-A React Native vocabulary learning app with iOS home screen and lock screen widget integration, featuring interactive widgets with mastery tracking.
+A React Native vocabulary learning app with iOS home screen and lock screen widget integration, featuring a premium dark glassmorphism UI.
 
 ## Overview
 
-Vocab Phone helps users learn vocabulary through a daily learning flow. Each day, the app deterministically generates the same set of words using a seeded random selection algorithm. Users navigate through words, revealing definitions and examples one at a time. iOS widgets display the current daily word on both the home screen and lock screen, with interactive "Got it" / "Repeat" buttons for iOS 17+.
+LexiStack helps users learn vocabulary through a daily learning flow. Each day, the app deterministically generates the same set of words using a seeded random selection algorithm. Users navigate through words, revealing definitions and examples one at a time. iOS widgets display the current word on both the home screen (medium/large) and lock screen (rectangular), updating every 4 hours.
 
 ## Tech Stack
 
@@ -103,8 +103,9 @@ Centralized design tokens in `src/theme/index.ts`:
 
 100 curated words in `src/data/seedWords.ts`:
 - Mix of practical everyday and interesting words
-- Fields: id, term, partOfSpeech, definition, example, difficulty (1-5), tags
+- Fields: id, term, partOfSpeech, definition, example, difficulty (1-5), tags, synonyms (optional)
 - Parts of speech: noun, verb, adj, adv, phrase, other
+- 25+ words include synonyms for widget display
 
 ### Seeded Word Selection
 
@@ -130,19 +131,15 @@ Progress tracking includes:
 
 Supports both home screen and lock screen widgets:
 
-**Home Screen** (systemSmall, systemMedium):
-- Black background with bold white text
-- Displays daily vocabulary word
+**Home Screen** (systemMedium, systemLarge):
+- Dark gradient background matching app theme
+- Displays: word, pronunciation, definition, part of speech, synonyms (max 2)
+- Speaker button deep-links to app for audio playback
 
 **Lock Screen** (iOS 16+):
-- `accessoryRectangular`: Interactive view with reveal + buttons (iOS 17+)
-- `accessoryCircular`: First 4 letters of word
-- `accessoryInline`: "Word: [term]" format
+- `accessoryRectangular`: Word + definition (compact view)
 
-**Interactive Features** (iOS 17+):
-- Tap to reveal definition
-- "Got it" button: Marks correct, advances to next word
-- "Repeat" button: Marks for review, continues
+**Widget Refresh**: Every 4 hours
 
 ### Widget Communication
 
@@ -164,10 +161,12 @@ Supports both home screen and lock screen widgets:
 
 ## Configuration
 
+- **App Name**: LexiStack
 - **Bundle ID**: `com.anonymous.vocab-phone`
+- **Version**: 2.1.0
 - **EAS Project ID**: `5243863b-0f29-42d2-9036-b7050e129397`
 - **iOS Deployment Target**: 16.0
-- **Widget Families**: systemSmall, systemMedium, accessoryRectangular, accessoryCircular, accessoryInline
+- **Widget Families**: systemMedium, systemLarge, accessoryRectangular
 
 ## State Flow
 
@@ -175,7 +174,7 @@ Supports both home screen and lock screen widgets:
 2. Date/goal change → Regenerate words using seeded selection
 3. Words update → Sync word queue to widget via App Groups
 4. Widget interaction → App Intents update progress in shared UserDefaults
-5. Widget reloads every 30 minutes or on interaction
+5. Widget reloads every 4 hours or on app interaction
 
 ## v2.0 Implementation Details
 
@@ -264,9 +263,14 @@ The VocabWidget extension target was manually added in Xcode (not automated by t
 
 **CRITICAL: Do NOT run `npx expo prebuild --clean`** - this will delete the VocabWidgetExtension target from the Xcode project. The config plugin only creates widget files but doesn't add the Xcode target. If you accidentally run it, restore from git: `git checkout HEAD -- ios/`
 
-## v2.1 UI Redesign (Glassmorphism)
+## v2.1 UI Redesign & Features
 
-The app UI was redesigned to match the iOS widget's premium dark aesthetic:
+The app was rebranded to **LexiStack** with a premium dark aesthetic:
+
+### App Identity
+- **Name**: LexiStack (formerly Vocab Phone)
+- **Icon**: Custom dark gradient with purple-to-blue "V" logo
+- **Theme**: Dark glassmorphism matching iOS widget style
 
 ### Theme Changes (`src/theme/index.ts`)
 - Dark gradient background: `#262633` → `#14141F`
@@ -280,26 +284,25 @@ The app UI was redesigned to match the iOS widget's premium dark aesthetic:
 - `GradientButton`: Purple-to-blue gradient or glass variant
 - `CapsuleBadge`: Rounded pill for part-of-speech labels
 
+### Widget Updates
+- Home screen: systemMedium + systemLarge with word, pronunciation, definition, synonyms
+- Lock screen: accessoryRectangular only (word + definition)
+- Refresh interval: 4 hours
+- Speaker button deep-links to app for pronunciation
+
+### App Features
+- Speaker button in LearnScreen for text-to-speech pronunciation (expo-speech)
+- Synonyms field added to Word type and displayed in widgets
+
 ### Dependencies Added
 - `expo-linear-gradient`: For gradient backgrounds and buttons
+- `expo-speech`: For text-to-speech pronunciation
 
-## Next Version (v2.2) - Planned Changes
+## Future Plans
 
-### 1. Lock Screen Widget Enhancement
-- Use the largest Lock Screen widget family: `accessoryRectangular`
-- Redesign layout for readability: large word text, optional short definition line, minimal padding
-- Keep other lock screen families if already supported, but prioritize rectangular
-
-### 2. Home Screen Widget Pronunciation
-- Add pronunciationText (IPA or simple phonetic) to the widget UI
-- Add a speaker button on the Home Screen widget that deep-links into the app to a Pronunciation screen for the current word and auto-plays audio there
-- Don't attempt audio playback inside the widget (not allowed); playback must occur in-app after deep link
-
-### 3. App Logo
-- Add proper AppIcon asset set (`Assets.xcassets/AppIcon`) with required sizes
-- Confirm the icon shows on device and in Settings
-
-### Deliverables for v2.2
-- Exact code diffs + file paths
-- Deep link route implementation details
-- Build/run verification steps on a real iPhone
+### Potential Enhancements
+- Spaced repetition algorithm for smarter word scheduling
+- Statistics dashboard showing learning progress
+- More word categories and difficulty levels
+- Android widget support
+- Cloud sync for progress across devices

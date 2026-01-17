@@ -19,7 +19,7 @@
                BlueprintIdentifier = "B10057032F194D8700974D60"
                BuildableName = "VocabWidgetExtension.appex"
                BlueprintName = "VocabWidgetExtension"
-               ReferencedContainer = "container:vocabphone.xcodeproj">
+               ReferencedContainer = "container:VocabPhone.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -33,7 +33,7 @@
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
                BuildableName = "vocabphone.app"
                BlueprintName = "vocabphone"
-               ReferencedContainer = "container:vocabphone.xcodeproj">
+               ReferencedContainer = "container:VocabPhone.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -65,7 +65,7 @@
             BlueprintIdentifier = "B10057032F194D8700974D60"
             BuildableName = "VocabWidgetExtension.appex"
             BlueprintName = "VocabWidgetExtension"
-            ReferencedContainer = "container:vocabphone.xcodeproj">
+            ReferencedContainer = "container:VocabPhone.xcodeproj">
          </BuildableReference>
       </RemoteRunnable>
       <MacroExpansion>
@@ -74,7 +74,7 @@
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
             BuildableName = "vocabphone.app"
             BlueprintName = "vocabphone"
-            ReferencedContainer = "container:vocabphone.xcodeproj">
+            ReferencedContainer = "container:VocabPhone.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <EnvironmentVariables>
@@ -110,7 +110,7 @@
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
             BuildableName = "vocabphone.app"
             BlueprintName = "vocabphone"
-            ReferencedContainer = "container:vocabphone.xcodeproj">
+            ReferencedContainer = "container:VocabPhone.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

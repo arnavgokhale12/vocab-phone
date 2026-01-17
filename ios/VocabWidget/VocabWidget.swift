@@ -68,7 +68,7 @@ struct Provider: TimelineProvider {
         let entry = getCurrentEntry()
         let timeline = Timeline(
             entries: [entry],
-            policy: .after(Date().addingTimeInterval(60 * 30))
+            policy: .after(Date().addingTimeInterval(60 * 60 * 4))
         )
         completion(timeline)
     }
@@ -153,8 +153,29 @@ struct MediumHomeScreenWidgetView: View {
             Text(entry.definition)
                 .font(.system(size: 13, weight: .regular, design: .rounded))
                 .foregroundColor(WidgetColors.textSecondary)
-                .lineLimit(3)
+                .lineLimit(2)
                 .fixedSize(horizontal: false, vertical: true)
+
+            // Synonyms (max 2)
+            if !entry.synonyms.isEmpty {
+                HStack(spacing: 6) {
+                    Text("Similar:")
+                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .foregroundColor(WidgetColors.textTertiary)
+
+                    ForEach(entry.synonyms.prefix(2), id: \.self) { synonym in
+                        Text(synonym)
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .foregroundColor(WidgetColors.accentBlue)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 3)
+                            .background(
+                                Capsule()
+                                    .fill(WidgetColors.accentBlue.opacity(0.15))
+                            )
+                    }
+                }
+            }
 
             Spacer(minLength: 0)
 
@@ -342,7 +363,7 @@ struct VocabWidget: Widget {
                 VocabWidgetEntryView(entry: entry)
             }
         }
-        .configurationDisplayName("Vocab Word")
+        .configurationDisplayName("LexiStack")
         .description("Learn vocabulary from your lock screen and home screen.")
         .supportedFamilies(supportedFamilies)
     }

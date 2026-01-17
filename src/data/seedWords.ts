@@ -65,6 +65,7 @@ export const SEED_WORDS: Word[] = [
     example: "His sesquipedalian prose made the academic paper nearly unreadable.",
     difficulty: 5,
     tags: ["rare", "literary"],
+    synonyms: ["verbose", "wordy", "lengthy"],
   },
   {
     id: "obsequious",
@@ -75,6 +76,7 @@ export const SEED_WORDS: Word[] = [
     example: "The obsequious waiter hovered annoyingly at our table throughout dinner.",
     difficulty: 4,
     tags: ["academic"],
+    synonyms: ["servile", "submissive", "deferential"],
   },
   {
     id: "truculent",
@@ -85,6 +87,7 @@ export const SEED_WORDS: Word[] = [
     example: "His truculent demeanor made negotiations nearly impossible.",
     difficulty: 4,
     tags: ["academic"],
+    synonyms: ["aggressive", "hostile", "belligerent"],
   },
   {
     id: "magnanimous",
@@ -117,6 +120,7 @@ export const SEED_WORDS: Word[] = [
     example: "The perfidious advisor had been leaking secrets to competitors for years.",
     difficulty: 4,
     tags: ["academic", "literary"],
+    synonyms: ["treacherous", "disloyal", "deceitful"],
   },
   {
     id: "ineffable",
@@ -127,6 +131,7 @@ export const SEED_WORDS: Word[] = [
     example: "The ineffable beauty of the aurora borealis left us speechless.",
     difficulty: 4,
     tags: ["literary", "academic"],
+    synonyms: ["indescribable", "unspeakable", "beyond words"],
   },
   {
     id: "lugubrious",
@@ -137,6 +142,7 @@ export const SEED_WORDS: Word[] = [
     example: "The lugubrious tone of the cello piece moved the audience to tears.",
     difficulty: 4,
     tags: ["literary"],
+    synonyms: ["mournful", "gloomy", "sorrowful"],
   },
   {
     id: "obstreperous",
@@ -147,6 +153,7 @@ export const SEED_WORDS: Word[] = [
     example: "The obstreperous crowd forced security to close the venue early.",
     difficulty: 4,
     tags: ["academic"],
+    synonyms: ["rowdy", "boisterous", "unruly"],
   },
   {
     id: "pusillanimous",
@@ -157,6 +164,7 @@ export const SEED_WORDS: Word[] = [
     example: "His pusillanimous response to the crisis disappointed his supporters.",
     difficulty: 5,
     tags: ["academic", "rare"],
+    synonyms: ["cowardly", "timid", "spineless"],
   },
   {
     id: "sanguine",
@@ -167,6 +175,7 @@ export const SEED_WORDS: Word[] = [
     example: "Despite the setbacks, she remained sanguine about the project's success.",
     difficulty: 3,
     tags: ["academic"],
+    synonyms: ["optimistic", "hopeful", "confident"],
   },
   {
     id: "vituperative",
@@ -177,6 +186,7 @@ export const SEED_WORDS: Word[] = [
     example: "The vituperative editorial sparked outrage across the political spectrum.",
     difficulty: 5,
     tags: ["academic", "rare"],
+    synonyms: ["scathing", "abusive", "caustic"],
   },
   {
     id: "ephemeral",
@@ -198,6 +208,7 @@ export const SEED_WORDS: Word[] = [
     example: "Her mercurial temperament made her both fascinating and exhausting.",
     difficulty: 4,
     tags: ["academic"],
+    synonyms: ["volatile", "unpredictable", "capricious"],
   },
   {
     id: "sagacious",
@@ -208,6 +219,7 @@ export const SEED_WORDS: Word[] = [
     example: "The sagacious investor predicted the market crash months in advance.",
     difficulty: 4,
     tags: ["academic", "business"],
+    synonyms: ["wise", "shrewd", "astute"],
   },
   {
     id: "verisimilitude",
@@ -228,6 +240,7 @@ export const SEED_WORDS: Word[] = [
     example: "The pernicious influence of misinformation eroded public trust.",
     difficulty: 4,
     tags: ["academic"],
+    synonyms: ["harmful", "destructive", "insidious"],
   },
   {
     id: "ennui",
@@ -238,6 +251,7 @@ export const SEED_WORDS: Word[] = [
     example: "The ennui of suburban life drove her to seek adventure abroad.",
     difficulty: 3,
     tags: ["literary"],
+    synonyms: ["boredom", "tedium", "weariness"],
   },
   {
     id: "insouciance",
@@ -328,6 +342,7 @@ export const SEED_WORDS: Word[] = [
     example: "She took surreptitious glances at her phone during the meeting.",
     difficulty: 3,
     tags: ["academic"],
+    synonyms: ["secret", "stealthy", "covert"],
   },
   {
     id: "mendacious",
@@ -378,6 +393,7 @@ export const SEED_WORDS: Word[] = [
     example: "His laconic reply of 'fine' conveyed neither approval nor objection.",
     difficulty: 3,
     tags: ["academic"],
+    synonyms: ["terse", "brief", "succinct"],
   },
   {
     id: "ebullient",
@@ -388,6 +404,7 @@ export const SEED_WORDS: Word[] = [
     example: "Her ebullient personality made her the life of every gathering.",
     difficulty: 3,
     tags: ["academic"],
+    synonyms: ["exuberant", "buoyant", "vivacious"],
   },
   {
     id: "penurious",
@@ -518,6 +535,7 @@ export const SEED_WORDS: Word[] = [
     example: "His quixotic quest to reform the entire system amused his pragmatic colleagues.",
     difficulty: 4,
     tags: ["literary"],
+    synonyms: ["idealistic", "impractical", "romantic"],
   },
   {
     id: "specious",
@@ -568,6 +586,7 @@ export const SEED_WORDS: Word[] = [
     example: "His avarice ultimately destroyed both his fortune and his family.",
     difficulty: 3,
     tags: ["literary"],
+    synonyms: ["greed", "cupidity", "covetousness"],
   },
   {
     id: "calumny",
@@ -748,6 +767,7 @@ export const SEED_WORDS: Word[] = [
     example: "The CEO's hubris blinded him to the company's fundamental weaknesses.",
     difficulty: 3,
     tags: ["literary", "common"],
+    synonyms: ["arrogance", "pride", "conceit"],
   },
   {
     id: "ignominious",
@@ -808,6 +828,7 @@ export const SEED_WORDS: Word[] = [
     example: "The insidious spread of the disease went unnoticed for months.",
     difficulty: 3,
     tags: ["academic"],
+    synonyms: ["subtle", "cunning", "treacherous"],
   },
   {
     id: "internecine",
@@ -898,6 +919,7 @@ export const SEED_WORDS: Word[] = [
     example: "The nefarious scheme was uncovered by investigative journalists.",
     difficulty: 3,
     tags: ["academic"],
+    synonyms: ["wicked", "villainous", "sinister"],
   },
   {
     id: "nugatory",
