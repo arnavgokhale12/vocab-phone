@@ -4,7 +4,7 @@ A React Native vocabulary learning app with iOS home screen and lock screen widg
 
 ## Overview
 
-LexiStack helps users learn vocabulary through a daily learning flow. Each day, the app deterministically generates the same set of words using a seeded random selection algorithm. Users navigate through words, revealing definitions and examples one at a time. iOS widgets display the current word on both the home screen (medium/large) and lock screen (rectangular), updating every 4 hours.
+LexiStack helps users learn vocabulary through a daily learning flow. Each day, the app deterministically generates the same set of words using a seeded random selection algorithm. Users navigate through words, revealing definitions and examples one at a time. iOS widgets display the current word on both the home screen (medium/large), syncing in real-time as users navigate through words in the app, with automatic refresh every 4 hours.
 
 ## Tech Stack
 
@@ -129,17 +129,17 @@ Progress tracking includes:
 
 ### iOS Widget
 
-Supports both home screen and lock screen widgets:
+Supports home screen widgets with real-time sync:
 
 **Home Screen** (systemMedium, systemLarge):
 - Dark gradient background matching app theme
 - Displays: word, pronunciation, definition, part of speech, synonyms (max 2)
 - Speaker button deep-links to app for audio playback
 
-**Lock Screen** (iOS 16+):
-- `accessoryRectangular`: Word + definition (compact view)
-
-**Widget Refresh**: Every 4 hours
+**Widget Sync**:
+- **Real-time**: Updates immediately when user navigates to new word in app
+- **Automatic**: Refreshes every 4 hours as backup
+- Uses `WidgetCenter.shared.reloadAllTimelines()` for instant updates
 
 ### Widget Communication
 
@@ -166,7 +166,7 @@ Supports both home screen and lock screen widgets:
 - **Version**: 2.1.0
 - **EAS Project ID**: `5243863b-0f29-42d2-9036-b7050e129397`
 - **iOS Deployment Target**: 16.0
-- **Widget Families**: systemMedium, systemLarge, accessoryRectangular
+- **Widget Families**: systemMedium, systemLarge
 
 ## State Flow
 
@@ -263,6 +263,14 @@ The VocabWidget extension target was manually added in Xcode (not automated by t
 
 **CRITICAL: Do NOT run `npx expo prebuild --clean`** - this will delete the VocabWidgetExtension target from the Xcode project. The config plugin only creates widget files but doesn't add the Xcode target. If you accidentally run it, restore from git: `git checkout HEAD -- ios/`
 
+### Widget on Physical Devices
+
+If widget shows blurred/placeholder content on physical device:
+1. Simplified widget configuration is required (avoid complex `containerBackground` modifiers)
+2. Ensure Face ID & Passcode settings allow widgets when locked
+3. Restart device after fresh install to reset widget daemon
+4. Force-unwrapped URLs in Link components can crash widget - always use optional binding
+
 ## v2.1 UI Redesign & Features
 
 The app was rebranded to **LexiStack** with a premium dark aesthetic:
@@ -286,13 +294,15 @@ The app was rebranded to **LexiStack** with a premium dark aesthetic:
 
 ### Widget Updates
 - Home screen: systemMedium + systemLarge with word, pronunciation, definition, synonyms
-- Lock screen: accessoryRectangular only (word + definition)
-- Refresh interval: 4 hours
+- Real-time sync: Widget updates instantly when navigating to new word in app
+- Automatic refresh: Every 4 hours as backup
 - Speaker button deep-links to app for pronunciation
+- Simplified widget configuration for physical device compatibility
 
 ### App Features
 - Speaker button in LearnScreen for text-to-speech pronunciation (expo-speech)
 - Synonyms field added to Word type and displayed in widgets
+- Real-time widget sync when navigating through words
 
 ### Dependencies Added
 - `expo-linear-gradient`: For gradient backgrounds and buttons
