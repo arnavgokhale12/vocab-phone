@@ -59,7 +59,10 @@ npm start            # Start Expo dev server
 npm run ios          # Run on iOS simulator
 npm run android      # Run on Android emulator
 npm run web          # Run in web browser
-npx tsc --noEmit     # Type check without emitting
+npm run typecheck    # Type check without emitting
+npm run lint         # Run ESLint
+npm run test         # Run Jest tests
+npm run validate     # Run all checks (typecheck + lint + test)
 ```
 
 ### iOS Build with CocoaPods
@@ -157,13 +160,14 @@ Supports home screen widgets with real-time sync:
   - `widget_current_word`: Full word data (JSON)
   - `widget_word_queue`: Today's word queue (JSON array)
   - `word_progress`: Progress data (JSON)
+  - `widget_stats`: Daily progress stats (JSON) - `{ learned, goal, streak }`
 - Enables main app ↔ widget data sharing
 
 ## Configuration
 
 - **App Name**: LexiStack
 - **Bundle ID**: `com.anonymous.vocab-phone`
-- **Version**: 2.1.0
+- **Version**: 2.2.0
 - **EAS Project ID**: `5243863b-0f29-42d2-9036-b7050e129397`
 - **iOS Deployment Target**: 16.0
 - **Widget Families**: systemMedium, systemLarge
@@ -308,10 +312,80 @@ The app was rebranded to **LexiStack** with a premium dark aesthetic:
 - `expo-linear-gradient`: For gradient backgrounds and buttons
 - `expo-speech`: For text-to-speech pronunciation
 
+## v2.2 Spaced Repetition & Progress Tracking
+
+### Light Spaced Repetition
+
+Daily sessions now combine new words with review words:
+
+**Selection Algorithm** (`src/context/WordsContext.tsx`):
+1. Get today's deterministic new words (seeded by date)
+2. Select up to 3 review words from previously seen, non-mastered words
+3. Prioritize by: lower mastery level first, then older `lastSeenAt`
+4. Session order: review words first, then new words
+
+```typescript
+function selectReviewWords(
+  allProgress: Map<string, WordProgress>,
+  excludeIds: Set<string>,
+  today: string
+): string[]
+```
+
+### Streak & Daily Progress
+
+**User Stats** (persisted in MMKV):
+- `currentStreak`: Increments when daily goal is first met
+- `longestStreak`: All-time best streak
+- `todayReviewedCount`: Words reviewed today
+- `todayGoalMet`: Whether goal was reached today
+
+**Streak Logic** (`src/services/MasteryService.ts`):
+- Streak increments when `todayReviewedCount >= todayGoal` for the first time that day
+- Streak resets to 1 if more than 1 day passes since `lastActiveDate`
+- Streak continues if consecutive days
+
+### UI Changes
+
+**HomeScreen** (`src/screens/HomeScreen.tsx`):
+- Progress bar showing "X / Y words today" with gradient fill
+- Streak badge with fire emoji when streak > 0
+- Button text changes to "Continue Learning" when progress exists
+
+**LearnScreen** (`src/screens/LearnScreen.tsx`):
+- Single "Reveal" button when definition is hidden
+- "Review Again" / "Got It!" buttons when revealed
+- Each answer records progress via `recordAnswer(wordId, correct)`
+
+**ProgressBar Component** (`src/components/ProgressBar.tsx`):
+- Gradient fill from purple to blue
+- Shows "X / Y words today" label
+- "Goal reached!" message when complete
+
+### Widget Progress Display
+
+**Both Medium and Large widgets now show**:
+- Progress bar at bottom with gradient fill
+- "X/Y words" count
+- Streak badge with fire emoji and day count
+
+**Widget Stats Sync** (`src/native/appGroup.ts`):
+```typescript
+setWidgetStats({ learned: number, goal: number, streak: number })
+```
+
+Stored in App Groups as `widget_stats` JSON key.
+
+### New Files in v2.2
+
+- `src/components/ProgressBar.tsx`: Progress bar component
+- `eslint.config.js`: ESLint 9 flat config
+- `jest.config.js`: Jest test configuration
+- `src/__mocks__/`: Test mocks for native modules
+
 ## Future Plans
 
 ### Potential Enhancements
-- Spaced repetition algorithm for smarter word scheduling
 - Statistics dashboard showing learning progress
 - More word categories and difficulty levels
 - Android widget support
