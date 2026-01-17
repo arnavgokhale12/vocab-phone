@@ -74,8 +74,6 @@ struct Provider: TimelineProvider {
     }
 
     private func getCurrentEntry() -> WordEntry {
-        let definitionVisible = suite?.bool(forKey: "widget_definition_visible") ?? false
-
         if let jsonString = suite?.string(forKey: "widget_current_word"),
            let data = jsonString.data(using: .utf8),
            let word = try? JSONDecoder().decode(WordData.self, from: data) {
@@ -87,20 +85,20 @@ struct Provider: TimelineProvider {
                 partOfSpeech: word.partOfSpeech,
                 pronunciation: word.pronunciation ?? "",
                 synonyms: word.synonyms ?? [],
-                definitionVisible: definitionVisible
+                definitionVisible: true
             )
         }
 
-        let term = suite?.string(forKey: "daily_word") ?? "No word"
+        // Fallback
         return WordEntry(
             date: Date(),
             wordId: "unknown",
-            term: term,
-            definition: "Open app to see definition",
+            term: suite?.string(forKey: "daily_word") ?? "Open App",
+            definition: "Open LexiStack to load words",
             partOfSpeech: "",
             pronunciation: "",
             synonyms: [],
-            definitionVisible: definitionVisible
+            definitionVisible: true
         )
     }
 }
@@ -141,10 +139,12 @@ struct MediumHomeScreenWidgetView: View {
                         .foregroundColor(WidgetColors.textTertiary)
                         .italic()
 
-                    Link(destination: URL(string: "vocabphone://pronounce/\(entry.wordId)")!) {
-                        Image(systemName: "speaker.wave.2.fill")
-                            .font(.system(size: 12))
-                            .foregroundColor(WidgetColors.accentBlue)
+                    if let url = URL(string: "vocabphone://pronounce/\(entry.wordId)") {
+                        Link(destination: url) {
+                            Image(systemName: "speaker.wave.2.fill")
+                                .font(.system(size: 12))
+                                .foregroundColor(WidgetColors.accentBlue)
+                        }
                     }
                 }
             }
@@ -230,10 +230,12 @@ struct LargeHomeScreenWidgetView: View {
                         .italic()
 
                     // Speaker button - deep links to app for audio playback
-                    Link(destination: URL(string: "vocabphone://pronounce/\(entry.wordId)")!) {
-                        Image(systemName: "speaker.wave.2.fill")
-                            .font(.system(size: 14))
-                            .foregroundColor(WidgetColors.accentBlue)
+                    if let url = URL(string: "vocabphone://pronounce/\(entry.wordId)") {
+                        Link(destination: url) {
+                            Image(systemName: "speaker.wave.2.fill")
+                                .font(.system(size: 14))
+                                .foregroundColor(WidgetColors.accentBlue)
+                        }
                     }
                 }
             }
@@ -313,18 +315,12 @@ struct VocabWidgetEntryView: View {
     var entry: WordEntry
 
     var body: some View {
-        if #available(iOS 16.0, *) {
-            switch widgetFamily {
-            case .accessoryRectangular:
-                LockScreenRectangularView(entry: entry)
-            case .systemMedium:
-                MediumHomeScreenWidgetView(entry: entry)
-            case .systemLarge:
-                LargeHomeScreenWidgetView(entry: entry)
-            default:
-                MediumHomeScreenWidgetView(entry: entry)
-            }
-        } else {
+        switch widgetFamily {
+        case .systemMedium:
+            MediumHomeScreenWidgetView(entry: entry)
+        case .systemLarge:
+            LargeHomeScreenWidgetView(entry: entry)
+        default:
             MediumHomeScreenWidgetView(entry: entry)
         }
     }
@@ -337,46 +333,11 @@ struct VocabWidget: Widget {
 
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
-            if #available(iOS 17.0, *) {
-                VocabWidgetEntryView(entry: entry)
-                    .containerBackground(for: .widget) {
-                        ZStack {
-                            LinearGradient(
-                                colors: [WidgetColors.gradientStart, WidgetColors.gradientEnd],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                            Circle()
-                                .fill(
-                                    RadialGradient(
-                                        colors: [WidgetColors.accentPurple.opacity(0.25), .clear],
-                                        center: .center,
-                                        startRadius: 0,
-                                        endRadius: 150
-                                    )
-                                )
-                                .offset(x: -50, y: -30)
-                                .blur(radius: 40)
-                        }
-                    }
-            } else {
-                VocabWidgetEntryView(entry: entry)
-            }
+            VocabWidgetEntryView(entry: entry)
+                .containerBackground(.black, for: .widget)
         }
         .configurationDisplayName("LexiStack")
         .description("Learn vocabulary from your lock screen and home screen.")
-        .supportedFamilies(supportedFamilies)
-    }
-
-    private var supportedFamilies: [WidgetFamily] {
-        if #available(iOS 16.0, *) {
-            return [
-                .systemMedium,
-                .systemLarge,
-                .accessoryRectangular
-            ]
-        } else {
-            return [.systemMedium, .systemLarge]
-        }
+        .supportedFamilies([.systemMedium, .systemLarge])
     }
 }

@@ -266,9 +266,13 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1250;
+						DevelopmentTeam = "J76C7HD96G";
+						ProvisioningStyle = Automatic;
 					};
 					B10057032F194D8700974D60 = {
 						CreatedOnToolsVersion = 26.2;
+						DevelopmentTeam = "J76C7HD96G";
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -417,7 +421,7 @@
 			inputPaths = (
 				"$(SRCROOT)/.xcode.env",
 				"$(SRCROOT)/.xcode.env.local",
-				"$(SRCROOT)/vocabphone/vocabphone.entitlements",
+				"$(SRCROOT)/vocabphone/VocabPhone.entitlements",
 				"$(SRCROOT)/Pods/Target Support Files/Pods-vocabphone/expo-configure-project.sh",
 			);
 			name = "[Expo] Configure project";
@@ -468,7 +472,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = vocabphone/vocabphone.entitlements;
+				CODE_SIGN_ENTITLEMENTS = vocabphone/VocabPhone.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -495,6 +499,9 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
+				DEVELOPMENT_TEAM = "J76C7HD96G";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 			};
 			name = Debug;
 		};
@@ -504,7 +511,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = vocabphone/vocabphone.entitlements;
+				CODE_SIGN_ENTITLEMENTS = vocabphone/VocabPhone.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = vocabphone/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -525,6 +532,9 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
+				DEVELOPMENT_TEAM = "J76C7HD96G";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 			};
 			name = Release;
 		};
@@ -698,6 +708,8 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				DEVELOPMENT_TEAM = "J76C7HD96G";
+				CODE_SIGN_IDENTITY = "Apple Development";
 			};
 			name = Debug;
 		};
@@ -745,6 +757,8 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				DEVELOPMENT_TEAM = "J76C7HD96G";
+				CODE_SIGN_IDENTITY = "Apple Development";
 			};
 			name = Release;
 		};
