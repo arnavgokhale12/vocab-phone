@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-nati
 import { Ionicons } from "@expo/vector-icons";
 import * as Speech from "expo-speech";
 import { useWords } from "../context/WordsContext";
+import { setWidgetState } from "../native/appGroup";
 import {
   GradientBackground,
   GlassCard,
@@ -25,6 +26,14 @@ export default function LearnScreen() {
   useEffect(() => {
     refreshTodayIfNeeded();
   }, []);
+
+  // Update widget when current word changes
+  useEffect(() => {
+    const currentWord = todayWords[idx];
+    if (currentWord) {
+      setWidgetState(currentWord);
+    }
+  }, [idx, todayWords]);
 
   const speakWord = (term: string) => {
     Speech.speak(term, {
