@@ -2,9 +2,8 @@ import {
   WordProgress,
   MasteryLevel,
   MASTERY_THRESHOLDS,
-  createDefaultProgress,
 } from '../types/wordProgress';
-import { getProgress, setProgress, getStats, setStats } from './storage/mmkvStorage';
+import { getProgress, setProgress, getStats, setStats, getAllProgress } from './storage/mmkvStorage';
 
 /**
  * Calculate mastery level based on consecutive correct answers
@@ -20,10 +19,15 @@ function calculateMasteryLevel(consecutiveCorrect: number): MasteryLevel {
 }
 
 /**
- * Get today's date as YYYY-MM-DD string
+ * Get today's date as YYYY-MM-DD string in local timezone
+ * IMPORTANT: Uses local timezone to ensure consistent day boundaries for users
  */
 function getTodayString(): string {
-  return new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 /**
@@ -149,6 +153,5 @@ export function getWordProgress(wordId: string): WordProgress {
  * Get all word progress
  */
 export function getAllWordProgress(): Map<string, WordProgress> {
-  const { getAllProgress } = require('./storage/mmkvStorage');
   return getAllProgress();
 }

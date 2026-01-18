@@ -10,12 +10,10 @@ import { WordProgress, UserStats, createDefaultStats } from '../types/wordProgre
 import {
   getAllProgress,
   getStats,
-  setStats,
 } from '../services/storage/mmkvStorage';
 import {
   recordAnswer as recordAnswerService,
   checkGoalMet,
-  markGoalMet,
 } from '../services/MasteryService';
 import { setWidgetStats } from '../native/appGroup';
 

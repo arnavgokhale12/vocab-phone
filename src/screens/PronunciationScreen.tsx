@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable } from "react-native";
 import * as Speech from "expo-speech";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/AppNavigator";
-import { GradientBackground, GlassCard, GradientButton } from "../components";
+import { GradientBackground, GlassCard } from "../components";
 import { colors, typography, spacing } from "../theme";
 import { useWords } from "../context/WordsContext";
 

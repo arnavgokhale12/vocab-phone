@@ -27,7 +27,15 @@ export default function LearnScreen() {
 
   useEffect(() => {
     refreshTodayIfNeeded();
-  }, []);
+  }, [refreshTodayIfNeeded]);
+
+  // Reset idx if it exceeds todayWords length (can happen on goal/date change)
+  useEffect(() => {
+    if (idx > 0 && idx >= todayWords.length) {
+      setIdx(0);
+      setRevealed(false);
+    }
+  }, [idx, todayWords.length]);
 
   const handleAnswer = (correct: boolean) => {
     const currentWord = todayWords[idx];

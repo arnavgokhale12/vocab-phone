@@ -19,14 +19,52 @@ const KEYS = {
 
 // --- Word Progress ---
 
+/**
+ * Validate that a parsed object has the required WordProgress fields
+ * Returns a sanitized WordProgress or null if invalid
+ */
+function validateWordProgress(wordId: string, data: unknown): WordProgress | null {
+  if (!data || typeof data !== 'object') return null;
+
+  const p = data as Partial<WordProgress>;
+
+  // Ensure required fields exist with valid types
+  if (typeof p.wordId !== 'string') return null;
+
+  // Return sanitized object with defaults for missing fields
+  return {
+    wordId: p.wordId,
+    masteryLevel: ['new', 'learning', 'mastered'].includes(p.masteryLevel as string)
+      ? (p.masteryLevel as WordProgress['masteryLevel'])
+      : 'new',
+    correctCount: typeof p.correctCount === 'number' && p.correctCount >= 0 ? p.correctCount : 0,
+    incorrectCount: typeof p.incorrectCount === 'number' && p.incorrectCount >= 0 ? p.incorrectCount : 0,
+    consecutiveCorrect: typeof p.consecutiveCorrect === 'number' && p.consecutiveCorrect >= 0 ? p.consecutiveCorrect : 0,
+    lastSeenAt: typeof p.lastSeenAt === 'string' ? p.lastSeenAt : null,
+    nextReviewDate: typeof p.nextReviewDate === 'string' ? p.nextReviewDate : null,
+  };
+}
+
 export function getAllProgress(): Map<string, WordProgress> {
   const json = storage.getString(KEYS.PROGRESS);
   if (!json) return new Map();
 
   try {
-    const obj = JSON.parse(json) as Record<string, WordProgress>;
-    return new Map(Object.entries(obj));
-  } catch {
+    const obj = JSON.parse(json) as Record<string, unknown>;
+    const result = new Map<string, WordProgress>();
+
+    for (const [key, value] of Object.entries(obj)) {
+      const validated = validateWordProgress(key, value);
+      if (validated) {
+        result.set(key, validated);
+      }
+      // Skip invalid entries silently - they'll be recreated as needed
+    }
+
+    return result;
+  } catch (e) {
+    // Log error for debugging but don't crash
+    console.error('Failed to parse word progress from storage:', e);
     return new Map();
   }
 }
@@ -51,13 +89,37 @@ export function setAllProgress(progressMap: Map<string, WordProgress>): void {
 
 // --- User Stats ---
 
+/**
+ * Validate that a parsed object has the required UserStats fields
+ * Returns a sanitized UserStats or null if invalid
+ */
+function validateUserStats(data: unknown): UserStats | null {
+  if (!data || typeof data !== 'object') return null;
+
+  const s = data as Partial<UserStats>;
+
+  // Return sanitized object with defaults for missing/invalid fields
+  return {
+    currentStreak: typeof s.currentStreak === 'number' && s.currentStreak >= 0 ? s.currentStreak : 0,
+    longestStreak: typeof s.longestStreak === 'number' && s.longestStreak >= 0 ? s.longestStreak : 0,
+    lastActiveDate: typeof s.lastActiveDate === 'string' ? s.lastActiveDate : '',
+    totalWordsReviewed: typeof s.totalWordsReviewed === 'number' && s.totalWordsReviewed >= 0 ? s.totalWordsReviewed : 0,
+    totalWordsMastered: typeof s.totalWordsMastered === 'number' && s.totalWordsMastered >= 0 ? s.totalWordsMastered : 0,
+    todayReviewedCount: typeof s.todayReviewedCount === 'number' && s.todayReviewedCount >= 0 ? s.todayReviewedCount : 0,
+    todayGoalMet: typeof s.todayGoalMet === 'boolean' ? s.todayGoalMet : false,
+  };
+}
+
 export function getStats(): UserStats {
   const json = storage.getString(KEYS.STATS);
   if (!json) return createDefaultStats();
 
   try {
-    return JSON.parse(json) as UserStats;
-  } catch {
+    const parsed = JSON.parse(json);
+    const validated = validateUserStats(parsed);
+    return validated ?? createDefaultStats();
+  } catch (e) {
+    console.error('Failed to parse user stats from storage:', e);
     return createDefaultStats();
   }
 }

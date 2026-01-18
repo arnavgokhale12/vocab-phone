@@ -130,15 +130,15 @@ struct MediumHomeScreenWidgetView: View {
     var entry: WordEntry
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 4) {
             // Part of speech pill
             if !entry.partOfSpeech.isEmpty {
                 Text(entry.partOfSpeech.uppercased())
-                    .font(.system(size: 10, weight: .bold, design: .rounded))
+                    .font(.system(size: 9, weight: .bold, design: .rounded))
                     .tracking(1.2)
                     .foregroundColor(WidgetColors.accentPurple)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
                     .background(
                         Capsule()
                             .fill(WidgetColors.accentPurple.opacity(0.2))
@@ -147,7 +147,7 @@ struct MediumHomeScreenWidgetView: View {
 
             // Word
             Text(entry.term)
-                .font(.system(size: 26, weight: .bold, design: .rounded))
+                .font(.system(size: 24, weight: .bold, design: .rounded))
                 .foregroundColor(WidgetColors.textPrimary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
@@ -156,14 +156,14 @@ struct MediumHomeScreenWidgetView: View {
             if !entry.pronunciation.isEmpty {
                 HStack(spacing: 6) {
                     Text(entry.pronunciation)
-                        .font(.system(size: 13, weight: .regular, design: .rounded))
+                        .font(.system(size: 12, weight: .regular, design: .rounded))
                         .foregroundColor(WidgetColors.textTertiary)
                         .italic()
 
                     if let url = URL(string: "vocabphone://pronounce/\(entry.wordId)") {
                         Link(destination: url) {
                             Image(systemName: "speaker.wave.2.fill")
-                                .font(.system(size: 12))
+                                .font(.system(size: 11))
                                 .foregroundColor(WidgetColors.accentBlue)
                         }
                     }
@@ -172,24 +172,23 @@ struct MediumHomeScreenWidgetView: View {
 
             // Definition
             Text(entry.definition)
-                .font(.system(size: 13, weight: .regular, design: .rounded))
+                .font(.system(size: 12, weight: .regular, design: .rounded))
                 .foregroundColor(WidgetColors.textSecondary)
                 .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
 
             // Synonyms (max 2)
             if !entry.synonyms.isEmpty {
-                HStack(spacing: 6) {
+                HStack(spacing: 4) {
                     Text("Similar:")
-                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .font(.system(size: 9, weight: .medium, design: .rounded))
                         .foregroundColor(WidgetColors.textTertiary)
 
                     ForEach(entry.synonyms.prefix(2), id: \.self) { synonym in
                         Text(synonym)
-                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .font(.system(size: 9, weight: .medium, design: .rounded))
                             .foregroundColor(WidgetColors.accentBlue)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 3)
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
                             .background(
                                 Capsule()
                                     .fill(WidgetColors.accentBlue.opacity(0.15))
@@ -198,30 +197,22 @@ struct MediumHomeScreenWidgetView: View {
                 }
             }
 
-            Spacer(minLength: 0)
+            Spacer(minLength: 2)
 
             // Progress bar
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text("\(entry.stats.learned)/\(entry.stats.goal) words")
-                        .font(.system(size: 10, weight: .medium, design: .rounded))
-                        .foregroundColor(WidgetColors.textTertiary)
-                    Spacer()
-                    if entry.stats.streak > 0 {
-                        HStack(spacing: 2) {
-                            Text("🔥")
-                                .font(.system(size: 9))
-                            Text("\(entry.stats.streak)")
-                                .font(.system(size: 10, weight: .semibold, design: .rounded))
-                                .foregroundColor(WidgetColors.accentPurple)
-                        }
-                    }
-                }
+            HStack(spacing: 0) {
+                Text("\(entry.stats.learned)/\(entry.stats.goal) words")
+                    .font(.system(size: 9, weight: .medium, design: .rounded))
+                    .foregroundColor(WidgetColors.textTertiary)
+
+                Spacer()
+
+                // Progress bar inline
                 GeometryReader { geometry in
                     ZStack(alignment: .leading) {
                         RoundedRectangle(cornerRadius: 2)
                             .fill(WidgetColors.glassOverlay)
-                            .frame(height: 4)
+                            .frame(height: 3)
                         RoundedRectangle(cornerRadius: 2)
                             .fill(
                                 LinearGradient(
@@ -230,10 +221,21 @@ struct MediumHomeScreenWidgetView: View {
                                     endPoint: .trailing
                                 )
                             )
-                            .frame(width: geometry.size.width * progressFraction, height: 4)
+                            .frame(width: geometry.size.width * progressFraction, height: 3)
                     }
                 }
-                .frame(height: 4)
+                .frame(width: 60, height: 3)
+
+                if entry.stats.streak > 0 {
+                    HStack(spacing: 2) {
+                        Text("🔥")
+                            .font(.system(size: 8))
+                        Text("\(entry.stats.streak)")
+                            .font(.system(size: 9, weight: .semibold, design: .rounded))
+                            .foregroundColor(WidgetColors.accentPurple)
+                    }
+                    .padding(.leading, 6)
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

@@ -73,15 +73,42 @@ Due to Xcode 16 using project format objectVersion 70 (which CocoaPods doesn't y
 cd ios
 
 # Temporarily downgrade project format for pod install
-perl -i -pe 's/objectVersion = 70/objectVersion = 56/' vocabphone.xcodeproj/project.pbxproj
+perl -i -pe 's/objectVersion = 70/objectVersion = 56/' VocabPhone.xcodeproj/project.pbxproj
 
 # Install pods
 pod install
 
 # Restore project format
-perl -i -pe 's/objectVersion = 56/objectVersion = 70/' vocabphone.xcodeproj/project.pbxproj
+perl -i -pe 's/objectVersion = 56/objectVersion = 70/' VocabPhone.xcodeproj/project.pbxproj
 
 cd ..
+
+# Build to /tmp to avoid xattr code signing issues (see note below)
+xcodebuild -workspace ios/VocabPhone.xcworkspace -scheme vocabphone -configuration Debug \
+  -destination 'platform=iOS Simulator,name=iPhone 17 Pro' -derivedDataPath /tmp/vocab-build
+
+# Install and launch on simulator
+xcrun simctl install "iPhone 17 Pro" /tmp/vocab-build/Build/Products/Debug-iphonesimulator/vocabphone.app
+xcrun simctl launch "iPhone 17 Pro" com.anonymous.vocab-phone
+```
+
+### macOS xattr Code Signing Issue
+
+If builds fail with "resource fork, Finder information, or similar detritus not allowed" during CodeSign:
+
+**Cause**: The project directory has `com.apple.provenance` or `com.apple.macl` extended attributes that get inherited by build outputs, causing code signing to fail.
+
+**Workaround**: Build to a location outside the project directory (e.g., `/tmp`):
+```bash
+xcodebuild -workspace ios/VocabPhone.xcworkspace -scheme vocabphone \
+  -configuration Debug -destination 'platform=iOS Simulator,name=iPhone 17 Pro' \
+  -derivedDataPath /tmp/vocab-build
+```
+
+**Alternative**: Clear xattrs from project directory (may require repeated clearing):
+```bash
+xattr -d com.apple.provenance /path/to/project 2>/dev/null
+xattr -d com.apple.macl /path/to/project 2>/dev/null
 npx expo run:ios
 ```
 
@@ -272,6 +299,23 @@ The VocabWidget extension target was manually added in Xcode (not automated by t
 
 **CRITICAL: Do NOT run `npx expo prebuild --clean`** - this will delete the VocabWidgetExtension target from the Xcode project. The config plugin only creates widget files but doesn't add the Xcode target. If you accidentally run it, restore from git: `git checkout HEAD -- ios/`
 
+### Workspace Duplicate Project Fix
+
+If Xcode shows two project entries (e.g., "vocabphone" and "VocabPhone"), the workspace file has duplicate references. Fix by editing `ios/VocabPhone.xcworkspace/contents.xcworkspacedata` to only include the actual project:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace version = "1.0">
+   <FileRef location = "group:VocabPhone.xcodeproj"/>
+   <FileRef location = "group:Pods/Pods.xcodeproj"/>
+</Workspace>
+```
+
+**IMPORTANT**: Always use capitalized names for build commands:
+- Workspace: `VocabPhone.xcworkspace`
+- Scheme: `vocabphone`
+- Project folder: `VocabPhone.xcodeproj`
+
 ### Widget on Physical Devices
 
 If widget shows blurred/placeholder content on physical device:
@@ -409,6 +453,75 @@ Stored in App Groups as `widget_stats` JSON key.
 - `eslint.config.js`: ESLint 9 flat config
 - `jest.config.js`: Jest test configuration
 - `src/__mocks__/`: Test mocks for native modules
+
+## Verification
+
+### Quick Validation
+
+Run all checks with a single command:
+
+```bash
+npm run validate
+```
+
+**Expected output:**
+```
+> vocab-phone@1.0.0 validate
+> npm run typecheck && npm run lint && npm run test
+
+> vocab-phone@1.0.0 typecheck
+> tsc --noEmit
+
+> vocab-phone@1.0.0 lint
+> eslint src --ext .ts,.tsx
+
+> vocab-phone@1.0.0 test
+> jest
+
+PASS src/services/__tests__/MasteryService.test.ts
+PASS src/services/__tests__/mmkvStorage.test.ts
+
+Test Suites: 2 passed, 2 total
+Tests:       37 passed, 37 total
+```
+
+Note: `console.error` output during tests is expected - these are from tests verifying corrupted data handling.
+
+### Individual Checks
+
+```bash
+npm run typecheck    # TypeScript compilation (should complete with no errors)
+npm run lint         # ESLint (should complete with no errors)
+npm run test         # Jest tests (37 tests should pass)
+```
+
+### iOS Simulator Build
+
+```bash
+cd ios
+perl -i -pe 's/objectVersion = 70/objectVersion = 56/' vocabphone.xcodeproj/project.pbxproj
+pod install
+perl -i -pe 's/objectVersion = 56/objectVersion = 70/' vocabphone.xcodeproj/project.pbxproj
+cd ..
+npx expo run:ios
+```
+
+**Success indicators:**
+- Build completes without errors
+- App launches in simulator
+- HomeScreen shows "Today" with word count
+- LearnScreen shows word card with speaker button
+- Widget appears in simulator widget gallery
+
+### Manual Testing Checklist
+
+1. **Fresh install**: Uninstall app, reinstall, verify default state (0 streak, 0 progress)
+2. **Learn flow**: Tap "Start Learning", reveal word, tap "Got It!" - verify progress increments
+3. **Review flow**: Tap "Review Again" - verify word returns to queue
+4. **Streak**: Complete daily goal, verify streak badge appears on HomeScreen
+5. **Widget sync**: Navigate through words, verify widget updates in real-time
+6. **Silent mode**: Enable silent mode, tap speaker button, verify audio plays
+7. **Day rollover**: Change device date, reopen app, verify new words are selected
 
 ## Future Plans
 
