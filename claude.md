@@ -26,17 +26,21 @@ src/
 │   └── ProgressContext.tsx    # Mastery tracking context (v2.0)
 ├── navigation/AppNavigator.tsx # Stack navigation (Home → Learn → Settings)
 ├── screens/
-│   ├── HomeScreen.tsx         # Landing page
+│   ├── HomeScreen.tsx         # Landing page with quiz CTA
 │   ├── LearnScreen.tsx        # Word learning UI with card layout
+│   ├── QuizScreen.tsx         # End-of-day quiz with multiple choice (v2.3)
+│   ├── QuizSummaryScreen.tsx  # Quiz results screen (v2.3)
 │   └── SettingsScreen.tsx     # Daily goal selector (3/5/10 words)
 ├── services/
 │   ├── MasteryService.ts      # Mastery calculation & answer recording (v2.0)
 │   ├── QueueService.ts        # Daily word queue generation (v2.0)
+│   ├── QuizService.ts         # Quiz generation with Fisher-Yates shuffle (v2.3)
 │   └── storage/
-│       └── mmkvStorage.ts     # MMKV persistence helpers (v2.0)
+│       └── mmkvStorage.ts     # MMKV persistence + quiz storage (v2.3)
 ├── types/
 │   ├── word.ts                # Word and vocabulary types
-│   └── wordProgress.ts        # Progress and mastery types (v2.0)
+│   ├── wordProgress.ts        # Progress and mastery types (v2.0)
+│   └── quiz.ts                # Quiz types (v2.3)
 ├── theme/index.ts             # Centralized theme (colors, typography, spacing)
 ├── data/seedWords.ts          # Vocabulary database (100 words)
 ├── utils/storage.ts           # AsyncStorage helpers (settings)
@@ -199,7 +203,7 @@ Supports home screen widgets with real-time sync:
 
 - **App Name**: LexiStack
 - **Bundle ID**: `com.anonymous.vocab-phone`
-- **Version**: 2.2.0
+- **Version**: 2.3.0
 - **EAS Project ID**: `5243863b-0f29-42d2-9036-b7050e129397`
 - **iOS Deployment Target**: 16.0
 - **Widget Families**: systemMedium, systemLarge
@@ -522,6 +526,108 @@ npx expo run:ios
 5. **Widget sync**: Navigate through words, verify widget updates in real-time
 6. **Silent mode**: Enable silent mode, tap speaker button, verify audio plays
 7. **Day rollover**: Change device date, reopen app, verify new words are selected
+
+## v2.3 End-of-Day Quiz
+
+An interactive quiz feature that tests users on words they've seen during the day.
+
+### Quiz Flow
+
+1. **Track Seen Words**: When user reveals a word in LearnScreen, it's added to `seenWordIds` for today
+2. **Quiz Availability**: "Take Today's Quiz" button appears on HomeScreen when words have been seen
+3. **Quiz Generation**: Creates multiple-choice questions from seen words
+4. **Answer Feedback**: Green/red highlighting for correct/incorrect answers
+5. **Results**: Summary screen showing score and per-question breakdown
+
+### Quiz Types (`src/types/quiz.ts`)
+
+```typescript
+export interface QuizQuestion {
+  wordId: string;
+  term: string;
+  correctDefinition: string;
+  options: string[];  // 4 shuffled options
+  correctIndex: number;
+}
+
+export interface DailyQuizStatus {
+  date: string;
+  seenWordIds: string[];
+  quizTaken: boolean;
+  quizScore: number | null;
+}
+```
+
+### Quiz Generation (`src/services/QuizService.ts`)
+
+**Algorithm**:
+1. For each seen word, create a question with the term and correct definition
+2. Select 3 random distractor definitions from other words (avoiding duplicates)
+3. Shuffle all 4 options using Fisher-Yates algorithm
+4. Track the correct answer's new index
+5. Shuffle question order for variety
+
+```typescript
+function generateQuiz(seenWordIds: string[], allWords: Word[]): QuizQuestion[]
+function shuffleArray<T>(array: T[]): T[]  // Fisher-Yates shuffle
+function selectDistractors(correctWordId: string, correctDefinition: string, allWords: Word[]): string[]
+```
+
+### Storage Functions (`src/services/storage/mmkvStorage.ts`)
+
+New functions for quiz persistence:
+- `getDailyQuizStatus()`: Get today's quiz status (resets on new day)
+- `setDailyQuizStatus(status)`: Save quiz status
+- `addSeenWord(wordId)`: Track word as seen for today's quiz
+- `getSeenWordIds()`: Get list of seen word IDs for today
+- `getQuizSession()`: Get current quiz session
+- `setQuizSession(session)`: Save quiz session
+- `markQuizComplete(score)`: Mark quiz as taken with score
+
+### UI Components
+
+**QuizScreen** (`src/screens/QuizScreen.tsx`):
+- Progress indicator ("3 of 5")
+- Term displayed prominently in glass card
+- 4 option buttons with letter labels (A, B, C, D)
+- Color feedback on selection: green (correct), red (incorrect)
+- "Next" button after answer, "See Results" on last question
+
+**QuizSummaryScreen** (`src/screens/QuizSummaryScreen.tsx`):
+- Large score display with percentage
+- Contextual message based on score (100% = "Perfect!", <60% = "Keep learning!")
+- Per-question breakdown with checkmark/X icons
+- "Done" button returns to HomeScreen
+
+**HomeScreen Changes**:
+- "Take Today's Quiz" button (visible when seenWords > 0 && !quizTaken)
+- "Quiz Complete: X/Y" badge after quiz is taken
+
+### Navigation Routes
+
+```typescript
+// Added to RootStackParamList
+Quiz: undefined;
+QuizSummary: {
+  score: number;
+  total: number;
+  results: QuizQuestionResult[];
+};
+```
+
+### Mastery Integration
+
+Quiz answers update mastery tracking:
+- Correct answer: `recordAnswer(wordId, true)` - increments consecutiveCorrect
+- Incorrect answer: `recordAnswer(wordId, false)` - resets consecutiveCorrect
+
+### Edge Cases Handled
+
+- **No words seen**: Quiz button hidden on HomeScreen
+- **Quiz already taken**: Shows "Quiz Complete: X/Y" badge instead of button
+- **Day rollover**: Quiz status resets, fresh quiz available
+- **<4 words in database**: Uses available words for distractors
+- **Duplicate definitions**: Filtered when selecting distractors
 
 ## Future Plans
 

@@ -5,6 +5,7 @@ import * as Speech from "expo-speech";
 import { useWords } from "../context/WordsContext";
 import { useProgress } from "../context/ProgressContext";
 import { setWidgetState } from "../native/appGroup";
+import { addSeenWord } from "../services/storage/mmkvStorage";
 import {
   GradientBackground,
   GlassCard,
@@ -53,6 +54,14 @@ export default function LearnScreen() {
       setWidgetState(currentWord);
     }
   }, [idx, todayWords]);
+
+  // Track seen words for quiz when revealed
+  useEffect(() => {
+    const currentWord = todayWords[idx];
+    if (currentWord && revealed) {
+      addSeenWord(currentWord.id);
+    }
+  }, [idx, todayWords, revealed]);
 
   const speakWord = (term: string) => {
     Speech.speak(term, {

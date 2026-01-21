@@ -1,0 +1,334 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useWords } from '../context/WordsContext';
+import { useProgress } from '../context/ProgressContext';
+import {
+  getSeenWordIds,
+  setQuizSession,
+  markQuizComplete,
+} from '../services/storage/mmkvStorage';
+import { generateQuiz } from '../services/QuizService';
+import { QuizQuestion, QuizQuestionResult, QuizSession } from '../types/quiz';
+import {
+  GradientBackground,
+  GlassCard,
+  GradientButton,
+} from '../components';
+import {
+  colors,
+  typography,
+  spacing,
+  borderRadius,
+} from '../theme';
+import { RootStackParamList } from '../navigation/AppNavigator';
+
+type Props = NativeStackScreenProps<RootStackParamList, 'Quiz'>;
+
+export default function QuizScreen({ navigation }: Props) {
+  const { words: allWords } = useWords();
+  const { recordAnswer } = useProgress();
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [isRevealed, setIsRevealed] = useState(false);
+  const [results, setResults] = useState<QuizQuestionResult[]>([]);
+
+  // Generate quiz questions once on mount
+  const questions = useMemo(() => {
+    const seenWordIds = getSeenWordIds();
+    return generateQuiz(seenWordIds, allWords);
+  }, [allWords]);
+
+  const currentQuestion = questions[currentIndex];
+  const isLastQuestion = currentIndex === questions.length - 1;
+
+  // Handle no questions (shouldn't happen, but safety check)
+  useEffect(() => {
+    if (questions.length === 0) {
+      navigation.goBack();
+    }
+  }, [questions, navigation]);
+
+  const handleOptionSelect = (index: number) => {
+    if (isRevealed) return; // Prevent re-selection after reveal
+
+    setSelectedIndex(index);
+    setIsRevealed(true);
+
+    const isCorrect = index === currentQuestion.correctIndex;
+
+    // Record the result
+    const result: QuizQuestionResult = {
+      wordId: currentQuestion.wordId,
+      term: currentQuestion.term,
+      selectedIndex: index,
+      correctIndex: currentQuestion.correctIndex,
+      isCorrect,
+    };
+
+    setResults((prev) => [...prev, result]);
+
+    // Update mastery tracking
+    recordAnswer(currentQuestion.wordId, isCorrect);
+  };
+
+  const handleNext = () => {
+    if (isLastQuestion) {
+      // Calculate final score
+      const score = results.length > 0
+        ? results.filter((r) => r.isCorrect).length
+        : (selectedIndex === currentQuestion.correctIndex ? 1 : 0);
+
+      const finalResults = [...results];
+      if (results.length < questions.length) {
+        // Include current question result
+        finalResults.push({
+          wordId: currentQuestion.wordId,
+          term: currentQuestion.term,
+          selectedIndex: selectedIndex ?? -1,
+          correctIndex: currentQuestion.correctIndex,
+          isCorrect: selectedIndex === currentQuestion.correctIndex,
+        });
+      }
+
+      const finalScore = finalResults.filter((r) => r.isCorrect).length;
+
+      // Save quiz session
+      const session: QuizSession = {
+        date: new Date().toISOString().split('T')[0],
+        questions,
+        results: finalResults,
+        completedAt: new Date().toISOString(),
+        score: finalScore,
+        totalQuestions: questions.length,
+      };
+      setQuizSession(session);
+      markQuizComplete(finalScore);
+
+      // Navigate to summary
+      navigation.replace('QuizSummary', {
+        score: finalScore,
+        total: questions.length,
+        results: finalResults,
+      });
+    } else {
+      // Move to next question
+      setCurrentIndex((prev) => prev + 1);
+      setSelectedIndex(null);
+      setIsRevealed(false);
+    }
+  };
+
+  if (!currentQuestion) {
+    return (
+      <GradientBackground>
+        <View style={styles.container}>
+          <Text style={styles.emptyText}>No questions available</Text>
+        </View>
+      </GradientBackground>
+    );
+  }
+
+  const getOptionStyle = (index: number) => {
+    if (!isRevealed) {
+      return selectedIndex === index ? styles.optionSelected : styles.option;
+    }
+
+    // After reveal
+    if (index === currentQuestion.correctIndex) {
+      return styles.optionCorrect;
+    }
+    if (index === selectedIndex && index !== currentQuestion.correctIndex) {
+      return styles.optionIncorrect;
+    }
+    return styles.option;
+  };
+
+  const getOptionTextStyle = (index: number) => {
+    if (!isRevealed) {
+      return styles.optionText;
+    }
+
+    if (index === currentQuestion.correctIndex) {
+      return styles.optionTextCorrect;
+    }
+    if (index === selectedIndex && index !== currentQuestion.correctIndex) {
+      return styles.optionTextIncorrect;
+    }
+    return styles.optionText;
+  };
+
+  return (
+    <GradientBackground>
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <Text style={styles.progress}>
+          {currentIndex + 1} of {questions.length}
+        </Text>
+
+        <GlassCard elevated style={styles.questionCard}>
+          <Text style={styles.questionLabel}>What does this word mean?</Text>
+          <Text style={styles.term}>{currentQuestion.term}</Text>
+        </GlassCard>
+
+        <View style={styles.optionsContainer}>
+          {currentQuestion.options.map((option, index) => (
+            <TouchableOpacity
+              key={index}
+              style={getOptionStyle(index)}
+              onPress={() => handleOptionSelect(index)}
+              activeOpacity={isRevealed ? 1 : 0.7}
+              disabled={isRevealed}
+            >
+              <View style={styles.optionLetter}>
+                <Text style={styles.optionLetterText}>
+                  {String.fromCharCode(65 + index)}
+                </Text>
+              </View>
+              <Text style={getOptionTextStyle(index)} numberOfLines={3}>
+                {option}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {isRevealed && (
+          <View style={styles.actions}>
+            <GradientButton
+              title={isLastQuestion ? 'See Results' : 'Next'}
+              onPress={handleNext}
+              variant="primary"
+            />
+          </View>
+        )}
+      </ScrollView>
+    </GradientBackground>
+  );
+}
+
+const styles = StyleSheet.create({
+  scrollContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    padding: spacing.lg,
+    paddingTop: spacing.xxl + spacing.xl,
+  },
+  container: {
+    flex: 1,
+    padding: spacing.lg,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    ...typography.body,
+    color: colors.textMuted,
+  },
+  progress: {
+    ...typography.label,
+    color: colors.textMuted,
+    textAlign: 'center',
+    marginBottom: spacing.md,
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
+  },
+  questionCard: {
+    marginBottom: spacing.lg,
+    alignItems: 'center',
+  },
+  questionLabel: {
+    ...typography.label,
+    color: colors.textMuted,
+    marginBottom: spacing.sm,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  term: {
+    ...typography.displayMedium,
+    color: colors.text,
+    textAlign: 'center',
+  },
+  optionsContainer: {
+    gap: spacing.sm,
+    marginBottom: spacing.lg,
+  },
+  option: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+  },
+  optionSelected: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    borderWidth: 2,
+    borderColor: colors.accentPurple,
+  },
+  optionCorrect: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(76, 175, 80, 0.15)',
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    borderWidth: 2,
+    borderColor: '#4CAF50',
+  },
+  optionIncorrect: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(244, 67, 54, 0.15)',
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    borderWidth: 2,
+    borderColor: '#F44336',
+  },
+  optionLetter: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.accentPurple + '30',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing.sm,
+  },
+  optionLetterText: {
+    ...typography.label,
+    color: colors.accentPurple,
+    fontWeight: '700',
+  },
+  optionText: {
+    ...typography.body,
+    color: colors.text,
+    flex: 1,
+  },
+  optionTextCorrect: {
+    ...typography.body,
+    color: '#4CAF50',
+    flex: 1,
+    fontWeight: '600',
+  },
+  optionTextIncorrect: {
+    ...typography.body,
+    color: '#F44336',
+    flex: 1,
+  },
+  actions: {
+    marginTop: spacing.md,
+  },
+});

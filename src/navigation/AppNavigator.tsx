@@ -6,13 +6,22 @@ import HomeScreen from "../screens/HomeScreen";
 import LearnScreen from "../screens/LearnScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import PronunciationScreen from "../screens/PronunciationScreen";
+import QuizScreen from "../screens/QuizScreen";
+import QuizSummaryScreen from "../screens/QuizSummaryScreen";
 import { colors } from "../theme";
+import { QuizQuestionResult } from "../types/quiz";
 
 export type RootStackParamList = {
   Home: undefined;
   Learn: undefined;
   Settings: undefined;
   Pronunciation: { wordId: string };
+  Quiz: undefined;
+  QuizSummary: {
+    score: number;
+    total: number;
+    results: QuizQuestionResult[];
+  };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -38,6 +47,8 @@ const linking = {
       Home: "",
       Learn: "learn",
       Settings: "settings",
+      Quiz: "quiz",
+      QuizSummary: "quiz-summary",
     },
   },
 };
@@ -79,6 +90,16 @@ export default function AppNavigator() {
           name="Pronunciation"
           component={PronunciationScreen}
           options={{ title: "Pronunciation" }}
+        />
+        <Stack.Screen
+          name="Quiz"
+          component={QuizScreen}
+          options={{ title: "Quiz" }}
+        />
+        <Stack.Screen
+          name="QuizSummary"
+          component={QuizSummaryScreen}
+          options={{ title: "Results", headerBackVisible: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>

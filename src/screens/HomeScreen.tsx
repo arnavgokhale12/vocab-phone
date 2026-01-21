@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { useWords } from "../context/WordsContext";
 import { useProgress } from "../context/ProgressContext";
+import { getDailyQuizStatus } from "../services/storage/mmkvStorage";
 import { GradientBackground, GradientButton, GlassCard, ProgressBar } from "../components";
 import { colors, typography, spacing, borderRadius } from "../theme";
 
@@ -12,6 +14,29 @@ type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 export default function HomeScreen({ navigation }: Props) {
   const { todayGoal } = useWords();
   const { stats, todayProgress } = useProgress();
+  const [quizStatus, setQuizStatus] = useState<{
+    canTake: boolean;
+    isTaken: boolean;
+    score: number | null;
+    wordCount: number;
+  }>({ canTake: false, isTaken: false, score: null, wordCount: 0 });
+
+  // Refresh quiz status when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      const status = getDailyQuizStatus();
+      if (status) {
+        setQuizStatus({
+          canTake: status.seenWordIds.length > 0 && !status.quizTaken,
+          isTaken: status.quizTaken,
+          score: status.quizScore,
+          wordCount: status.seenWordIds.length,
+        });
+      } else {
+        setQuizStatus({ canTake: false, isTaken: false, score: null, wordCount: 0 });
+      }
+    }, [])
+  );
 
   const progress = todayProgress.goal > 0 ? todayProgress.learned / todayProgress.goal : 0;
 
@@ -48,6 +73,20 @@ export default function HomeScreen({ navigation }: Props) {
             onPress={() => navigation.navigate("Learn")}
             variant="primary"
           />
+          {quizStatus.canTake && (
+            <GradientButton
+              title="Take Today's Quiz"
+              onPress={() => navigation.navigate("Quiz")}
+              variant="glass"
+            />
+          )}
+          {quizStatus.isTaken && quizStatus.score !== null && (
+            <View style={styles.quizCompleteCard}>
+              <Text style={styles.quizCompleteText}>
+                Quiz Complete: {quizStatus.score}/{quizStatus.wordCount}
+              </Text>
+            </View>
+          )}
           <GradientButton
             title="Settings"
             onPress={() => navigation.navigate("Settings")}
@@ -101,5 +140,17 @@ const styles = StyleSheet.create({
   },
   actions: {
     gap: spacing.md,
+  },
+  quizCompleteCard: {
+    backgroundColor: colors.accentPurple + "20",
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+    alignItems: "center",
+  },
+  quizCompleteText: {
+    ...typography.label,
+    color: colors.accentPurple,
+    fontWeight: "600",
   },
 });
