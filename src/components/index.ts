@@ -6,3 +6,5 @@ export { ProgressBar } from './ProgressBar';
 export { LevelBadge } from './LevelBadge';
 export { WeeklyCalendar } from './WeeklyCalendar';
 export { MasteryBadge } from './MasteryBadge';
+export { ProgressCard } from './ProgressCard';
+export { StatsSheet } from './StatsSheet';

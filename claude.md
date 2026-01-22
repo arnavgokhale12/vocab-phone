@@ -216,7 +216,7 @@ Supports home screen widgets with real-time sync:
 
 - **App Name**: LexiStack
 - **Bundle ID**: `com.anonymous.vocab-phone`
-- **Version**: 2.13.0
+- **Version**: 2.14.0
 - **EAS Project ID**: `5243863b-0f29-42d2-9036-b7050e129397`
 - **iOS Deployment Target**: 16.0
 - **Widget Families**: systemMedium, systemLarge
@@ -1420,6 +1420,69 @@ function getAccuracyMessage(accuracy: number): string {
   return 'Room to improve!';
 }
 ```
+
+## v2.14 Home Screen Refactor
+
+Redesigned Home screen to reduce visual clutter and emphasize the primary learning action.
+
+### Layout Changes
+
+**Before:** 3 separate cards (Progress, Level, Weekly) + full-width action buttons
+**After:** Single combined ProgressCard + compact secondary actions
+
+### New Components
+
+**ProgressCard** (`src/components/ProgressCard.tsx`):
+Combined card displaying:
+- Row 1: "Today" label + "3/10" count + progress bar
+- Row 2: Streak chip (left) + "2/5 days this week" (right)
+- Row 3: Compact week calendar (M T W T F S S) with checkmarks
+
+**StatsSheet** (`src/components/StatsSheet.tsx`):
+Bottom sheet modal containing:
+- Full LevelBadge with progress to next level
+- Stats grid: Mastered count, Total Reviews, Mastery %
+- Full WeeklyCalendar
+
+### HomeScreen Structure
+
+```
+┌─────────────────────────────────┐
+│ [🥉 Bronze]         [📊] [📚]  │  ← Header: level chip + icons
+├─────────────────────────────────┤
+│ Today                           │
+│ 10 words to learn              │  ← Hero section
+├─────────────────────────────────┤
+│ ┌─ Start Today's Session ─────┐ │  ← Primary CTA
+│ └─────────────────────────────┘ │
+├─────────────────────────────────┤
+│ ┌─────────────────────────────┐ │
+│ │ Today           3 / 10      │ │
+│ │ ████████░░░░░░░░░░░░░░░░░░ │ │  ← Combined ProgressCard
+│ │ 🔥 2 days    2/5 this week │ │
+│ │ M  T  W  T  F  S  S        │ │
+│ └─────────────────────────────┘ │
+├─────────────────────────────────┤
+│ [❓ Take Quiz] [⚙️ Settings]    │  ← Compact secondary actions
+└─────────────────────────────────┘
+```
+
+### Key Changes
+
+1. **Hero Focus**: Single primary CTA "Start Today's Session" / "Continue Learning"
+2. **Merged Progress**: Today's progress, streak, and weekly goal in one card
+3. **Level Moved**: Large level card replaced with compact chip in header
+4. **Stats Sheet**: Tap level chip or stats icon to see full level details
+5. **Compact Actions**: Quiz and Settings as small text buttons
+6. **Removed Redundancy**: Bookmarks icon removed (accessible from Library)
+
+### Navigation
+
+- Level chip / Stats icon → Opens StatsSheet (bottom sheet)
+- Library icon → LibraryScreen (includes Bookmarks filter)
+- Primary button → LearnScreen
+- Take Quiz → QuizScreen
+- Settings → SettingsScreen
 
 ## Future Plans
 

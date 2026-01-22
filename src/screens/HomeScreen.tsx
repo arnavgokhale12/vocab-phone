@@ -6,9 +6,20 @@ import { useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { useWords } from "../context/WordsContext";
 import { useProgress } from "../context/ProgressContext";
-import { getDailyQuizStatus, getCurrentWeekCompletions, getWeeklyTargetDays, WeekDayData } from "../services/storage/mmkvStorage";
+import {
+  getDailyQuizStatus,
+  getCurrentWeekCompletions,
+  getWeeklyTargetDays,
+  WeekDayData,
+} from "../services/storage/mmkvStorage";
 import { getLevelProgress, LevelProgress } from "../services/LevelService";
-import { GradientBackground, GradientButton, GlassCard, ProgressBar, LevelBadge, WeeklyCalendar } from "../components";
+import {
+  GradientBackground,
+  GradientButton,
+  GlassCard,
+  ProgressCard,
+  StatsSheet,
+} from "../components";
 import { colors, typography, spacing, borderRadius } from "../theme";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
@@ -16,6 +27,8 @@ type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 export default function HomeScreen({ navigation }: Props) {
   const { todayGoal } = useWords();
   const { stats, todayProgress } = useProgress();
+  const [statsSheetVisible, setStatsSheetVisible] = useState(false);
+
   const [quizStatus, setQuizStatus] = useState<{
     canTake: boolean;
     isTaken: boolean;
@@ -23,7 +36,9 @@ export default function HomeScreen({ navigation }: Props) {
     wordCount: number;
   }>({ canTake: false, isTaken: false, score: null, wordCount: 0 });
 
-  const [levelProgress, setLevelProgress] = useState<LevelProgress>(getLevelProgress());
+  const [levelProgress, setLevelProgress] = useState<LevelProgress>(
+    getLevelProgress()
+  );
   const [weeklyData, setWeeklyData] = useState<{
     weekData: WeekDayData[];
     targetDays: number;
@@ -33,11 +48,11 @@ export default function HomeScreen({ navigation }: Props) {
     return {
       weekData,
       targetDays: getWeeklyTargetDays(),
-      completedCount: weekData.filter(d => d.completed).length,
+      completedCount: weekData.filter((d) => d.completed).length,
     };
   });
 
-  // Refresh quiz status and level progress when screen comes into focus
+  // Refresh data when screen comes into focus
   useFocusEffect(
     useCallback(() => {
       // Refresh quiz status
@@ -50,10 +65,15 @@ export default function HomeScreen({ navigation }: Props) {
           wordCount: status.seenWordIds.length,
         });
       } else {
-        setQuizStatus({ canTake: false, isTaken: false, score: null, wordCount: 0 });
+        setQuizStatus({
+          canTake: false,
+          isTaken: false,
+          score: null,
+          wordCount: 0,
+        });
       }
 
-      // Refresh level progress (updates after quizzes/sessions)
+      // Refresh level progress
       setLevelProgress(getLevelProgress());
 
       // Refresh weekly data
@@ -61,101 +81,110 @@ export default function HomeScreen({ navigation }: Props) {
       setWeeklyData({
         weekData,
         targetDays: getWeeklyTargetDays(),
-        completedCount: weekData.filter(d => d.completed).length,
+        completedCount: weekData.filter((d) => d.completed).length,
       });
     }, [])
   );
 
-  const progress = todayProgress.goal > 0 ? todayProgress.learned / todayProgress.goal : 0;
-
   return (
     <GradientBackground>
       <View style={styles.container}>
-        {/* Header with icons */}
+        {/* Header with Level Badge and Icons */}
         <View style={styles.header}>
-          <View style={styles.headerSpacer} />
+          {/* Compact Level Badge */}
+          <TouchableOpacity
+            style={styles.levelChip}
+            onPress={() => setStatsSheetVisible(true)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.levelIcon}>{levelProgress.currentLevel.icon}</Text>
+            <Text style={styles.levelName}>{levelProgress.currentLevel.name}</Text>
+          </TouchableOpacity>
+
+          {/* Header Icons */}
           <View style={styles.headerIcons}>
+            <TouchableOpacity
+              style={styles.headerIcon}
+              onPress={() => setStatsSheetVisible(true)}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="stats-chart" size={20} color={colors.accentBlue} />
+            </TouchableOpacity>
             <TouchableOpacity
               style={styles.headerIcon}
               onPress={() => navigation.navigate("Library")}
               activeOpacity={0.7}
             >
-              <Ionicons name="library" size={24} color={colors.accentBlue} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.headerIcon}
-              onPress={() => navigation.navigate("Bookmarks")}
-              activeOpacity={0.7}
-            >
-              <Ionicons name="heart" size={24} color={colors.accentPurple} />
+              <Ionicons name="library" size={20} color={colors.accentBlue} />
             </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.content}>
+        {/* Hero Section */}
+        <View style={styles.hero}>
           <Text style={styles.title}>Today</Text>
           <Text style={styles.subtitle}>{todayGoal} words to learn</Text>
-
-          {/* Streak Badge */}
-          {stats.currentStreak > 0 && (
-            <View style={styles.streakBadge}>
-              <Text style={styles.streakIcon}>🔥</Text>
-              <Text style={styles.streakText}>
-                {stats.currentStreak} day{stats.currentStreak !== 1 ? "s" : ""} streak
-              </Text>
-            </View>
-          )}
         </View>
 
-        {/* Progress Card */}
+        {/* Primary CTA */}
+        <GradientButton
+          title={todayProgress.learned > 0 ? "Continue Learning" : "Start Today's Session"}
+          onPress={() => navigation.navigate("Learn")}
+          variant="primary"
+        />
+
+        {/* Combined Progress Card */}
         <GlassCard style={styles.progressCard}>
-          <ProgressBar
-            progress={progress}
+          <ProgressCard
             learned={todayProgress.learned}
             goal={todayProgress.goal}
-          />
-        </GlassCard>
-
-        {/* Level Badge */}
-        <GlassCard style={styles.levelCard}>
-          <LevelBadge levelProgress={levelProgress} />
-        </GlassCard>
-
-        {/* Weekly Calendar */}
-        <GlassCard style={styles.weeklyCard}>
-          <WeeklyCalendar
+            streak={stats.currentStreak}
             weekData={weeklyData.weekData}
-            targetDays={weeklyData.targetDays}
-            completedCount={weeklyData.completedCount}
+            weeklyTarget={weeklyData.targetDays}
+            weeklyCompleted={weeklyData.completedCount}
           />
         </GlassCard>
 
-        <View style={styles.actions}>
-          <GradientButton
-            title={todayProgress.learned > 0 ? "Continue Learning" : "Start Learning"}
-            onPress={() => navigation.navigate("Learn")}
-            variant="primary"
-          />
+        {/* Secondary Actions */}
+        <View style={styles.secondaryActions}>
           {quizStatus.canTake && (
-            <GradientButton
-              title="Take Today's Quiz"
+            <TouchableOpacity
+              style={styles.secondaryButton}
               onPress={() => navigation.navigate("Quiz")}
-              variant="glass"
-            />
+              activeOpacity={0.7}
+            >
+              <Ionicons name="help-circle-outline" size={18} color={colors.accentPurple} />
+              <Text style={styles.secondaryButtonText}>Take Quiz</Text>
+            </TouchableOpacity>
           )}
           {quizStatus.isTaken && quizStatus.score !== null && (
-            <View style={styles.quizCompleteCard}>
+            <View style={styles.quizCompleteBadge}>
+              <Ionicons name="checkmark-circle" size={16} color={colors.success} />
               <Text style={styles.quizCompleteText}>
-                Quiz Complete: {quizStatus.score}/{quizStatus.wordCount}
+                Quiz: {quizStatus.score}/{quizStatus.wordCount}
               </Text>
             </View>
           )}
-          <GradientButton
-            title="Settings"
+          <TouchableOpacity
+            style={styles.secondaryButton}
             onPress={() => navigation.navigate("Settings")}
-            variant="glass"
-          />
+            activeOpacity={0.7}
+          >
+            <Ionicons name="settings-outline" size={18} color={colors.textSecondary} />
+            <Text style={styles.secondaryButtonText}>Settings</Text>
+          </TouchableOpacity>
         </View>
+
+        {/* Stats Bottom Sheet */}
+        <StatsSheet
+          visible={statsSheetVisible}
+          onClose={() => setStatsSheetVisible(false)}
+          levelProgress={levelProgress}
+          weekData={weeklyData.weekData}
+          weeklyTarget={weeklyData.targetDays}
+          weeklyCompleted={weeklyData.completedCount}
+          totalWordsReviewed={stats.totalWordsReviewed}
+        />
       </View>
     </GradientBackground>
   );
@@ -165,85 +194,92 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: spacing.lg,
-    justifyContent: "center",
+    paddingTop: spacing.xxl + spacing.lg,
   },
   header: {
-    position: "absolute",
-    top: spacing.xxl + spacing.lg,
-    left: spacing.lg,
-    right: spacing.lg,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: spacing.xl,
   },
-  headerSpacer: {
-    width: 40,
+  levelChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.glassOverlay,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.xl,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+  },
+  levelIcon: {
+    fontSize: 14,
+    marginRight: 4,
+  },
+  levelName: {
+    ...typography.caption,
+    color: colors.text,
+    fontWeight: "600",
   },
   headerIcons: {
     flexDirection: "row",
-    gap: spacing.sm,
+    gap: spacing.xs,
   },
   headerIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: colors.glassOverlay,
     justifyContent: "center",
     alignItems: "center",
   },
-  content: {
+  hero: {
     marginBottom: spacing.lg,
   },
   title: {
     ...typography.displayLarge,
     color: colors.text,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.xs,
   },
   subtitle: {
     ...typography.h3,
     color: colors.textSecondary,
   },
-  streakBadge: {
+  progressCard: {
+    marginTop: spacing.lg,
+    marginBottom: spacing.md,
+  },
+  secondaryActions: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.sm,
+    marginTop: spacing.sm,
+  },
+  secondaryButton: {
     flexDirection: "row",
     alignItems: "center",
-    marginTop: spacing.md,
-    backgroundColor: colors.accentPurple + "20",
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: borderRadius.xl,
-    alignSelf: "flex-start",
-  },
-  streakIcon: {
-    fontSize: 16,
-    marginRight: spacing.xs,
-  },
-  streakText: {
-    ...typography.label,
-    color: colors.accentPurple,
-    fontWeight: "600",
-  },
-  progressCard: {
-    marginBottom: spacing.md,
-  },
-  levelCard: {
-    marginBottom: spacing.md,
-  },
-  weeklyCard: {
-    marginBottom: spacing.lg,
-  },
-  actions: {
-    gap: spacing.md,
-  },
-  quizCompleteCard: {
-    backgroundColor: colors.accentPurple + "20",
+    backgroundColor: colors.glassOverlay,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.md,
+    gap: spacing.xs,
+  },
+  secondaryButtonText: {
+    ...typography.label,
+    color: colors.textSecondary,
+  },
+  quizCompleteBadge: {
+    flexDirection: "row",
     alignItems: "center",
+    backgroundColor: colors.success + "15",
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+    gap: spacing.xs,
   },
   quizCompleteText: {
     ...typography.label,
-    color: colors.accentPurple,
+    color: colors.success,
     fontWeight: "600",
   },
 });
