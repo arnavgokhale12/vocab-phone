@@ -18,7 +18,27 @@ const KEYS = {
   STATS: 'user_stats',
   DAILY_QUIZ_STATUS: 'daily_quiz_status',
   QUIZ_SESSION: 'quiz_session',
+  LEARN_SESSION: 'learn_session',
+  BOOKMARKS: 'bookmarks',
 } as const;
+
+// --- Learn Session State ---
+
+export interface LearnSessionState {
+  dateKey: string;
+  lastIndex: number;
+  lastWordId: string | null;
+  completed: boolean;
+}
+
+// --- Bookmarks ---
+
+export interface BookmarkEntry {
+  wordId: string;
+  term: string;
+  definition: string;
+  bookmarkedAt: number;
+}
 
 // --- Word Progress ---
 
@@ -213,6 +233,154 @@ export function markQuizComplete(score: number): void {
     status.quizTaken = true;
     status.quizScore = score;
     setDailyQuizStatus(status);
+  }
+}
+
+// --- Learn Session ---
+
+function getLocalDateString(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+export function getLearnSession(): LearnSessionState | null {
+  const json = storage.getString(KEYS.LEARN_SESSION);
+  if (!json) return null;
+
+  try {
+    const parsed = JSON.parse(json) as LearnSessionState;
+    const today = getLocalDateString();
+    // Reset if it's a new day
+    if (parsed.dateKey !== today) {
+      return null;
+    }
+    return parsed;
+  } catch (e) {
+    console.error('Failed to parse learn session:', e);
+    return null;
+  }
+}
+
+export function setLearnSession(state: LearnSessionState): void {
+  storage.set(KEYS.LEARN_SESSION, JSON.stringify(state));
+}
+
+export function updateLearnSessionIndex(index: number, wordId: string | null): void {
+  const today = getLocalDateString();
+  const current = getLearnSession();
+
+  if (current && current.dateKey === today && !current.completed) {
+    current.lastIndex = index;
+    current.lastWordId = wordId;
+    setLearnSession(current);
+  } else {
+    // Create new session for today
+    setLearnSession({
+      dateKey: today,
+      lastIndex: index,
+      lastWordId: wordId,
+      completed: false,
+    });
+  }
+}
+
+export function markLearnSessionComplete(): void {
+  const today = getLocalDateString();
+  const current = getLearnSession();
+
+  if (current && current.dateKey === today) {
+    current.completed = true;
+    setLearnSession(current);
+  } else {
+    setLearnSession({
+      dateKey: today,
+      lastIndex: 0,
+      lastWordId: null,
+      completed: true,
+    });
+  }
+}
+
+export function clearLearnSession(): void {
+  storage.remove(KEYS.LEARN_SESSION);
+}
+
+// --- Bookmarks ---
+
+function validateBookmarkEntry(data: unknown): BookmarkEntry | null {
+  if (!data || typeof data !== 'object') return null;
+  const b = data as Partial<BookmarkEntry>;
+
+  if (typeof b.wordId !== 'string' || !b.wordId) return null;
+  if (typeof b.term !== 'string') return null;
+  if (typeof b.definition !== 'string') return null;
+
+  return {
+    wordId: b.wordId,
+    term: b.term,
+    definition: b.definition,
+    bookmarkedAt: typeof b.bookmarkedAt === 'number' ? b.bookmarkedAt : Date.now(),
+  };
+}
+
+export function getBookmarks(): Map<string, BookmarkEntry> {
+  const json = storage.getString(KEYS.BOOKMARKS);
+  if (!json) return new Map();
+
+  try {
+    const obj = JSON.parse(json) as Record<string, unknown>;
+    const result = new Map<string, BookmarkEntry>();
+
+    for (const [key, value] of Object.entries(obj)) {
+      const validated = validateBookmarkEntry(value);
+      if (validated) {
+        result.set(key, validated);
+      }
+    }
+
+    return result;
+  } catch (e) {
+    console.error('Failed to parse bookmarks:', e);
+    return new Map();
+  }
+}
+
+export function setBookmark(wordId: string, term: string, definition: string): void {
+  const all = getBookmarks();
+  all.set(wordId, {
+    wordId,
+    term,
+    definition,
+    bookmarkedAt: Date.now(),
+  });
+
+  const obj = Object.fromEntries(all);
+  storage.set(KEYS.BOOKMARKS, JSON.stringify(obj));
+}
+
+export function removeBookmark(wordId: string): void {
+  const all = getBookmarks();
+  all.delete(wordId);
+
+  const obj = Object.fromEntries(all);
+  storage.set(KEYS.BOOKMARKS, JSON.stringify(obj));
+}
+
+export function isBookmarked(wordId: string): boolean {
+  const all = getBookmarks();
+  return all.has(wordId);
+}
+
+export function toggleBookmark(wordId: string, term: string, definition: string): boolean {
+  if (isBookmarked(wordId)) {
+    removeBookmark(wordId);
+    return false;
+  } else {
+    setBookmark(wordId, term, definition);
+    return true;
   }
 }
 

@@ -5,7 +5,14 @@ import * as Speech from "expo-speech";
 import { useWords } from "../context/WordsContext";
 import { useProgress } from "../context/ProgressContext";
 import { setWidgetState } from "../native/appGroup";
-import { addSeenWord } from "../services/storage/mmkvStorage";
+import {
+  addSeenWord,
+  getLearnSession,
+  updateLearnSessionIndex,
+  markLearnSessionComplete,
+  isBookmarked,
+  toggleBookmark,
+} from "../services/storage/mmkvStorage";
 import {
   GradientBackground,
   GlassCard,
@@ -21,14 +28,39 @@ import {
 } from "../theme";
 
 export default function LearnScreen() {
-  const { todayWords, refreshTodayIfNeeded } = useWords();
+  const { todayWords, todayKey, refreshTodayIfNeeded } = useWords();
   const { recordAnswer } = useProgress();
   const [idx, setIdx] = useState(0);
   const [revealed, setRevealed] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
     refreshTodayIfNeeded();
   }, [refreshTodayIfNeeded]);
+
+  // Load session state on mount (resume from last index)
+  useEffect(() => {
+    if (todayWords.length === 0 || initialized) return;
+
+    const session = getLearnSession();
+    if (session && session.dateKey === todayKey && !session.completed) {
+      // Resume from last index, clamped to valid range
+      const resumeIdx = Math.min(session.lastIndex, todayWords.length - 1);
+      setIdx(Math.max(0, resumeIdx));
+    }
+    setInitialized(true);
+  }, [todayWords, todayKey, initialized]);
+
+  // Persist index changes
+  useEffect(() => {
+    if (!initialized || todayWords.length === 0) return;
+
+    const currentWord = todayWords[idx];
+    if (currentWord) {
+      updateLearnSessionIndex(idx, currentWord.id);
+    }
+  }, [idx, todayWords, initialized]);
 
   // Reset idx if it exceeds todayWords length (can happen on goal/date change)
   useEffect(() => {
@@ -63,6 +95,22 @@ export default function LearnScreen() {
     }
   }, [idx, todayWords, revealed]);
 
+  // Update bookmark state when current word changes
+  useEffect(() => {
+    const currentWord = todayWords[idx];
+    if (currentWord) {
+      setBookmarked(isBookmarked(currentWord.id));
+    }
+  }, [idx, todayWords]);
+
+  const handleToggleBookmark = () => {
+    const currentWord = todayWords[idx];
+    if (currentWord) {
+      const newState = toggleBookmark(currentWord.id, currentWord.term, currentWord.definition);
+      setBookmarked(newState);
+    }
+  };
+
   const speakWord = (term: string) => {
     Speech.speak(term, {
       language: "en-US",
@@ -72,6 +120,13 @@ export default function LearnScreen() {
   };
 
   const w = todayWords[idx];
+
+  // Mark session complete when all words are done
+  useEffect(() => {
+    if (initialized && todayWords.length > 0 && idx >= todayWords.length) {
+      markLearnSessionComplete();
+    }
+  }, [idx, todayWords.length, initialized]);
 
   if (!w) {
     return (
@@ -112,6 +167,17 @@ export default function LearnScreen() {
               activeOpacity={0.7}
             >
               <Ionicons name="volume-high" size={20} color={colors.accentBlue} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.bookmarkButton}
+              onPress={handleToggleBookmark}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name={bookmarked ? "heart" : "heart-outline"}
+                size={20}
+                color={bookmarked ? colors.accentPurple : colors.textMuted}
+              />
             </TouchableOpacity>
           </View>
 
@@ -213,6 +279,11 @@ const styles = StyleSheet.create({
     padding: spacing.xs,
     borderRadius: borderRadius.sm,
     backgroundColor: colors.accentBlue + "20",
+  },
+  bookmarkButton: {
+    padding: spacing.xs,
+    borderRadius: borderRadius.sm,
+    backgroundColor: colors.accentPurple + "20",
   },
   hint: {
     ...typography.body,

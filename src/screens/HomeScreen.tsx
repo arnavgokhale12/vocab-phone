@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../navigation/AppNavigator";
@@ -43,6 +44,18 @@ export default function HomeScreen({ navigation }: Props) {
   return (
     <GradientBackground>
       <View style={styles.container}>
+        {/* Header with bookmark icon */}
+        <View style={styles.header}>
+          <View style={styles.headerSpacer} />
+          <TouchableOpacity
+            style={styles.bookmarkIcon}
+            onPress={() => navigation.navigate("Bookmarks")}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="heart" size={24} color={colors.accentPurple} />
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.content}>
           <Text style={styles.title}>Today</Text>
           <Text style={styles.subtitle}>{todayGoal} words to learn</Text>
@@ -103,6 +116,26 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: spacing.lg,
     justifyContent: "center",
+  },
+  header: {
+    position: "absolute",
+    top: spacing.xxl + spacing.lg,
+    left: spacing.lg,
+    right: spacing.lg,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  headerSpacer: {
+    width: 40,
+  },
+  bookmarkIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.accentPurple + "20",
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     marginBottom: spacing.lg,

@@ -8,6 +8,7 @@ import SettingsScreen from "../screens/SettingsScreen";
 import PronunciationScreen from "../screens/PronunciationScreen";
 import QuizScreen from "../screens/QuizScreen";
 import QuizSummaryScreen from "../screens/QuizSummaryScreen";
+import BookmarksScreen from "../screens/BookmarksScreen";
 import { colors } from "../theme";
 import { QuizQuestionResult } from "../types/quiz";
 
@@ -22,6 +23,7 @@ export type RootStackParamList = {
     total: number;
     results: QuizQuestionResult[];
   };
+  Bookmarks: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -49,6 +51,7 @@ const linking = {
       Settings: "settings",
       Quiz: "quiz",
       QuizSummary: "quiz-summary",
+      Bookmarks: "bookmarks",
     },
   },
 };
@@ -100,6 +103,11 @@ export default function AppNavigator() {
           name="QuizSummary"
           component={QuizSummaryScreen}
           options={{ title: "Results", headerBackVisible: false }}
+        />
+        <Stack.Screen
+          name="Bookmarks"
+          component={BookmarksScreen}
+          options={{ title: "Bookmarks" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
