@@ -40,6 +40,7 @@ describe('mmkvStorage', () => {
           consecutiveCorrect: 2,
           lastSeenAt: '2024-01-15T10:00:00Z',
           nextReviewDate: null,
+          numericMasteryLevel: 1,
         };
 
         setProgress('test-word', testProgress);

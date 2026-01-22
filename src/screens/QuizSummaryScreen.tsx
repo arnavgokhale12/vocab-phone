@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
 } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
 import { getScoreMessage } from '../services/QuizService';
+import { SEED_WORDS } from '../data/seedWords';
+import { WeakWord } from '../types/sessionSummary';
 import {
   GradientBackground,
   GlassCard,
@@ -27,6 +30,33 @@ export default function QuizSummaryScreen({ route, navigation }: Props) {
   const { score, total, results } = route.params;
   const percentage = total > 0 ? Math.round((score / total) * 100) : 0;
   const message = getScoreMessage(score, total);
+
+  // Build weak words list from incorrect answers
+  const weakWords = useMemo<WeakWord[]>(() => {
+    const incorrectResults = results.filter(r => !r.isCorrect);
+    const wordMap = new Map(SEED_WORDS.map(w => [w.id, w]));
+
+    return incorrectResults.slice(0, 2).map(r => {
+      const word = wordMap.get(r.wordId);
+      return {
+        wordId: r.wordId,
+        term: r.term,
+        definition: word?.definition ?? '',
+        reason: 'incorrect' as const,
+      };
+    });
+  }, [results]);
+
+  // Trigger success haptic on quiz completion
+  useEffect(() => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  }, []);
+
+  const handleReviewWeakWords = () => {
+    if (weakWords.length > 0) {
+      navigation.replace('WeakWordsQuiz', { weakWords });
+    }
+  };
 
   const handleDone = () => {
     navigation.popToTop();
@@ -72,6 +102,13 @@ export default function QuizSummaryScreen({ route, navigation }: Props) {
         </View>
 
         <View style={styles.actions}>
+          {weakWords.length > 0 && (
+            <GradientButton
+              title="Review Weak Words"
+              onPress={handleReviewWeakWords}
+              variant="glass"
+            />
+          )}
           <GradientButton
             title="Done"
             onPress={handleDone}

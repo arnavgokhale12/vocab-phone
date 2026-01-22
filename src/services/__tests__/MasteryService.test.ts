@@ -3,7 +3,7 @@ import { __resetMockStorage } from '../../__mocks__/react-native-mmkv';
 // Must import after mocks are set up
 jest.mock('react-native-mmkv');
 
-import { recordAnswer, getWordProgress, checkGoalMet, getAllWordProgress } from '../MasteryService';
+import { recordAnswer, getWordProgress, checkGoalMet, getAllWordProgress, updateNumericMastery } from '../MasteryService';
 import { getStats, setStats } from '../storage/mmkvStorage';
 
 describe('MasteryService', () => {
@@ -207,6 +207,68 @@ describe('MasteryService', () => {
       expect(all.has('word-1')).toBe(true);
       expect(all.has('word-2')).toBe(true);
       expect(all.has('word-3')).toBe(true);
+    });
+  });
+
+  describe('updateNumericMastery', () => {
+    it('should increment on correct answer', () => {
+      expect(updateNumericMastery(0, true)).toBe(1);
+      expect(updateNumericMastery(1, true)).toBe(2);
+      expect(updateNumericMastery(2, true)).toBe(3);
+    });
+
+    it('should decrement on incorrect answer', () => {
+      expect(updateNumericMastery(3, false)).toBe(2);
+      expect(updateNumericMastery(2, false)).toBe(1);
+      expect(updateNumericMastery(1, false)).toBe(0);
+    });
+
+    it('should clamp to 3 at maximum', () => {
+      expect(updateNumericMastery(3, true)).toBe(3);
+    });
+
+    it('should clamp to 0 at minimum', () => {
+      expect(updateNumericMastery(0, false)).toBe(0);
+    });
+
+    it('should handle invalid input gracefully', () => {
+      expect(updateNumericMastery(-5, true)).toBe(1); // Starts from 0, +1
+      expect(updateNumericMastery(10, false)).toBe(2); // Clamped to 3, -1
+      expect(updateNumericMastery(NaN, true)).toBe(1); // Defaults to 0, +1
+    });
+  });
+
+  describe('numericMasteryLevel in recordAnswer', () => {
+    it('should start at 0 for new words', () => {
+      const result = recordAnswer('word-1', false);
+      expect(result.progress.numericMasteryLevel).toBe(0);
+    });
+
+    it('should increment on correct answer', () => {
+      const result = recordAnswer('word-1', true);
+      expect(result.progress.numericMasteryLevel).toBe(1);
+    });
+
+    it('should increment progressively', () => {
+      recordAnswer('word-1', true);
+      recordAnswer('word-1', true);
+      const result = recordAnswer('word-1', true);
+      expect(result.progress.numericMasteryLevel).toBe(3);
+    });
+
+    it('should cap at 3', () => {
+      recordAnswer('word-1', true);
+      recordAnswer('word-1', true);
+      recordAnswer('word-1', true);
+      const result = recordAnswer('word-1', true);
+      expect(result.progress.numericMasteryLevel).toBe(3);
+    });
+
+    it('should decrement on incorrect answer', () => {
+      recordAnswer('word-1', true);
+      recordAnswer('word-1', true);
+      const result = recordAnswer('word-1', false);
+      expect(result.progress.numericMasteryLevel).toBe(1);
     });
   });
 });

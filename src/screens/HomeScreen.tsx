@@ -6,8 +6,9 @@ import { useFocusEffect } from "@react-navigation/native";
 import { RootStackParamList } from "../navigation/AppNavigator";
 import { useWords } from "../context/WordsContext";
 import { useProgress } from "../context/ProgressContext";
-import { getDailyQuizStatus } from "../services/storage/mmkvStorage";
-import { GradientBackground, GradientButton, GlassCard, ProgressBar } from "../components";
+import { getDailyQuizStatus, getCurrentWeekCompletions, getWeeklyTargetDays, WeekDayData } from "../services/storage/mmkvStorage";
+import { getLevelProgress, LevelProgress } from "../services/LevelService";
+import { GradientBackground, GradientButton, GlassCard, ProgressBar, LevelBadge, WeeklyCalendar } from "../components";
 import { colors, typography, spacing, borderRadius } from "../theme";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
@@ -22,9 +23,24 @@ export default function HomeScreen({ navigation }: Props) {
     wordCount: number;
   }>({ canTake: false, isTaken: false, score: null, wordCount: 0 });
 
-  // Refresh quiz status when screen comes into focus
+  const [levelProgress, setLevelProgress] = useState<LevelProgress>(getLevelProgress());
+  const [weeklyData, setWeeklyData] = useState<{
+    weekData: WeekDayData[];
+    targetDays: number;
+    completedCount: number;
+  }>(() => {
+    const weekData = getCurrentWeekCompletions();
+    return {
+      weekData,
+      targetDays: getWeeklyTargetDays(),
+      completedCount: weekData.filter(d => d.completed).length,
+    };
+  });
+
+  // Refresh quiz status and level progress when screen comes into focus
   useFocusEffect(
     useCallback(() => {
+      // Refresh quiz status
       const status = getDailyQuizStatus();
       if (status) {
         setQuizStatus({
@@ -36,6 +52,17 @@ export default function HomeScreen({ navigation }: Props) {
       } else {
         setQuizStatus({ canTake: false, isTaken: false, score: null, wordCount: 0 });
       }
+
+      // Refresh level progress (updates after quizzes/sessions)
+      setLevelProgress(getLevelProgress());
+
+      // Refresh weekly data
+      const weekData = getCurrentWeekCompletions();
+      setWeeklyData({
+        weekData,
+        targetDays: getWeeklyTargetDays(),
+        completedCount: weekData.filter(d => d.completed).length,
+      });
     }, [])
   );
 
@@ -44,16 +71,25 @@ export default function HomeScreen({ navigation }: Props) {
   return (
     <GradientBackground>
       <View style={styles.container}>
-        {/* Header with bookmark icon */}
+        {/* Header with icons */}
         <View style={styles.header}>
           <View style={styles.headerSpacer} />
-          <TouchableOpacity
-            style={styles.bookmarkIcon}
-            onPress={() => navigation.navigate("Bookmarks")}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="heart" size={24} color={colors.accentPurple} />
-          </TouchableOpacity>
+          <View style={styles.headerIcons}>
+            <TouchableOpacity
+              style={styles.headerIcon}
+              onPress={() => navigation.navigate("Library")}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="library" size={24} color={colors.accentBlue} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.headerIcon}
+              onPress={() => navigation.navigate("Bookmarks")}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="heart" size={24} color={colors.accentPurple} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.content}>
@@ -77,6 +113,20 @@ export default function HomeScreen({ navigation }: Props) {
             progress={progress}
             learned={todayProgress.learned}
             goal={todayProgress.goal}
+          />
+        </GlassCard>
+
+        {/* Level Badge */}
+        <GlassCard style={styles.levelCard}>
+          <LevelBadge levelProgress={levelProgress} />
+        </GlassCard>
+
+        {/* Weekly Calendar */}
+        <GlassCard style={styles.weeklyCard}>
+          <WeeklyCalendar
+            weekData={weeklyData.weekData}
+            targetDays={weeklyData.targetDays}
+            completedCount={weeklyData.completedCount}
           />
         </GlassCard>
 
@@ -129,11 +179,15 @@ const styles = StyleSheet.create({
   headerSpacer: {
     width: 40,
   },
-  bookmarkIcon: {
+  headerIcons: {
+    flexDirection: "row",
+    gap: spacing.sm,
+  },
+  headerIcon: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.accentPurple + "20",
+    backgroundColor: colors.glassOverlay,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -169,6 +223,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   progressCard: {
+    marginBottom: spacing.md,
+  },
+  levelCard: {
+    marginBottom: spacing.md,
+  },
+  weeklyCard: {
     marginBottom: spacing.lg,
   },
   actions: {

@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Speech from "expo-speech";
+import * as Haptics from "expo-haptics";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/AppNavigator";
 import { useWords } from "../context/WordsContext";
 import { useProgress } from "../context/ProgressContext";
 import { setWidgetState } from "../native/appGroup";
@@ -12,7 +15,17 @@ import {
   markLearnSessionComplete,
   isBookmarked,
   toggleBookmark,
+  hasAskedNotificationPermission,
+  markNotificationPermissionAsked,
+  setNotificationsEnabled,
+  setLastSessionSummary,
+  getAllProgress,
 } from "../services/storage/mmkvStorage";
+import { SessionSummary, WordSessionResult, WeakWord } from "../types/sessionSummary";
+import {
+  requestPermission,
+  scheduleDailyReminder,
+} from "../services/NotificationService";
 import {
   GradientBackground,
   GlassCard,
@@ -27,7 +40,9 @@ import {
   glassmorphism,
 } from "../theme";
 
-export default function LearnScreen() {
+type Props = NativeStackScreenProps<RootStackParamList, "Learn">;
+
+export default function LearnScreen({ navigation }: Props) {
   const { todayWords, todayKey, refreshTodayIfNeeded } = useWords();
   const { recordAnswer } = useProgress();
   const [idx, setIdx] = useState(0);
@@ -35,9 +50,25 @@ export default function LearnScreen() {
   const [bookmarked, setBookmarked] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
+  // Track session results for summary
+  const sessionResults = useRef<WordSessionResult[]>([]);
+  const firstSeenDatesRef = useRef<Map<string, string>>(new Map());
+
   useEffect(() => {
     refreshTodayIfNeeded();
   }, [refreshTodayIfNeeded]);
+
+  // Capture word progress at session start to determine new vs review
+  useEffect(() => {
+    if (todayWords.length > 0 && firstSeenDatesRef.current.size === 0) {
+      const allProgress = getAllProgress();
+      for (const [wordId, progress] of allProgress.entries()) {
+        if (progress.lastSeenAt) {
+          firstSeenDatesRef.current.set(wordId, progress.lastSeenAt.split('T')[0]);
+        }
+      }
+    }
+  }, [todayWords]);
 
   // Load session state on mount (resume from last index)
   useEffect(() => {
@@ -74,6 +105,18 @@ export default function LearnScreen() {
     const currentWord = todayWords[idx];
     if (currentWord) {
       recordAnswer(currentWord.id, correct);
+
+      // Track result for session summary
+      const lastSeenDate = firstSeenDatesRef.current.get(currentWord.id);
+      const isFirstSeenToday = !lastSeenDate || lastSeenDate === todayKey;
+
+      sessionResults.current.push({
+        wordId: currentWord.id,
+        term: currentWord.term,
+        definition: currentWord.definition,
+        isCorrect: correct,
+        isFirstSeenToday,
+      });
     }
     setRevealed(false);
     setIdx((i) => i + 1);
@@ -121,25 +164,79 @@ export default function LearnScreen() {
 
   const w = todayWords[idx];
 
+  // Build session summary and navigate
+  const buildAndNavigateToSummary = useCallback(() => {
+    const results = sessionResults.current;
+    const correctCount = results.filter(r => r.isCorrect).length;
+    const incorrectCount = results.filter(r => !r.isCorrect).length;
+    const newWords = results.filter(r => r.isFirstSeenToday).length;
+    const reviewWords = results.filter(r => !r.isFirstSeenToday).length;
+    const accuracy = results.length > 0 ? (correctCount / results.length) * 100 : 0;
+
+    // Find weak words (incorrect answers + lowest accuracy)
+    const weakWords: WeakWord[] = results
+      .filter(r => !r.isCorrect)
+      .slice(0, 2)
+      .map(r => ({
+        wordId: r.wordId,
+        term: r.term,
+        definition: r.definition,
+        reason: 'incorrect' as const,
+      }));
+
+    const summary: SessionSummary = {
+      sessionType: 'learn',
+      date: todayKey,
+      timestamp: Date.now(),
+      totalWords: results.length,
+      newWords,
+      reviewWords,
+      correctCount,
+      incorrectCount,
+      accuracy,
+      results,
+      weakWords,
+    };
+
+    // Persist for app reload case
+    setLastSessionSummary(summary);
+
+    // Navigate to summary
+    navigation.replace('SessionSummary', { summary });
+  }, [todayKey, navigation]);
+
   // Mark session complete when all words are done
   useEffect(() => {
     if (initialized && todayWords.length > 0 && idx >= todayWords.length) {
       markLearnSessionComplete();
-    }
-  }, [idx, todayWords.length, initialized]);
 
+      // Ask for notification permission after first session completion
+      if (!hasAskedNotificationPermission()) {
+        promptForNotificationPermission();
+      }
+
+      // Navigate to session summary
+      buildAndNavigateToSummary();
+    }
+  }, [idx, todayWords.length, initialized, buildAndNavigateToSummary]);
+
+  async function promptForNotificationPermission() {
+    markNotificationPermissionAsked();
+    const granted = await requestPermission();
+    if (granted) {
+      setNotificationsEnabled(true);
+      await scheduleDailyReminder();
+    }
+  }
+
+  // When session is complete, we navigate to summary - show empty state while transitioning
   if (!w) {
     return (
       <GradientBackground>
         <View style={styles.container}>
           <GlassCard elevated style={styles.doneCard}>
-            <Text style={styles.doneTitle}>All Done!</Text>
-            <Text style={styles.doneSubtitle}>
-              You've completed today's vocabulary.
-            </Text>
-            <Text style={styles.doneCount}>
-              {todayWords.length} words learned
-            </Text>
+            <Text style={styles.doneTitle}>Session Complete!</Text>
+            <Text style={styles.doneSubtitle}>Loading summary...</Text>
           </GlassCard>
         </View>
       </GradientBackground>
@@ -352,10 +449,5 @@ const styles = StyleSheet.create({
     ...typography.bodyLarge,
     color: colors.textSecondary,
     textAlign: "center",
-    marginBottom: spacing.md,
-  },
-  doneCount: {
-    ...typography.h3,
-    color: colors.accentPurple,
   },
 });

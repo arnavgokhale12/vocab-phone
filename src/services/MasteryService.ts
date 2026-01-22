@@ -19,6 +19,34 @@ function calculateMasteryLevel(consecutiveCorrect: number): MasteryLevel {
 }
 
 /**
+ * Update numeric mastery level (0-3) based on answer correctness.
+ *
+ * Rule (simple deterministic):
+ * - Correct answer: numericMasteryLevel = min(current + 1, 3)
+ * - Incorrect answer: numericMasteryLevel = max(current - 1, 0)
+ *
+ * Levels:
+ *   0 = new (never answered correctly)
+ *   1 = learning (some correct answers)
+ *   2 = familiar (progressing well)
+ *   3 = mastered (highest level)
+ *
+ * @param currentLevel - Current numeric mastery level (0-3)
+ * @param isCorrect - Whether the answer was correct
+ * @returns Updated numeric mastery level, clamped to [0, 3]
+ */
+export function updateNumericMastery(currentLevel: number, isCorrect: boolean): number {
+  // Ensure current level is valid (handle corrupted data)
+  const safeLevel = Math.max(0, Math.min(3, Math.floor(currentLevel || 0)));
+
+  if (isCorrect) {
+    return Math.min(safeLevel + 1, 3);
+  } else {
+    return Math.max(safeLevel - 1, 0);
+  }
+}
+
+/**
  * Get today's date as YYYY-MM-DD string in local timezone
  * IMPORTANT: Uses local timezone to ensure consistent day boundaries for users
  */
@@ -31,7 +59,8 @@ function getTodayString(): string {
 }
 
 /**
- * Record an answer for a word and update its progress
+ * Record an answer for a word and update its progress.
+ * Updates both string-based masteryLevel (for UI) and numericMasteryLevel (0-3).
  */
 export function recordAnswer(
   wordId: string,
@@ -40,23 +69,31 @@ export function recordAnswer(
   const progress = getProgress(wordId);
   const previousMastery = progress.masteryLevel;
 
-  // Update counts
+  // Update counts (validated to be non-negative)
   if (isCorrect) {
-    progress.correctCount += 1;
-    progress.consecutiveCorrect += 1;
+    progress.correctCount = Math.max(0, progress.correctCount) + 1;
+    progress.consecutiveCorrect = Math.max(0, progress.consecutiveCorrect) + 1;
   } else {
-    progress.incorrectCount += 1;
+    progress.incorrectCount = Math.max(0, progress.incorrectCount) + 1;
     progress.consecutiveCorrect = 0; // Reset streak on incorrect
   }
 
-  // Update mastery level
+  // Update string-based mastery level (for backward compatibility)
   progress.masteryLevel = calculateMasteryLevel(progress.consecutiveCorrect);
+
+  // Update numeric mastery level (0-3) using simple rule
+  progress.numericMasteryLevel = updateNumericMastery(
+    progress.numericMasteryLevel,
+    isCorrect
+  );
+
+  // Update lastSeenAt timestamp
   progress.lastSeenAt = new Date().toISOString();
 
   // Persist
   setProgress(wordId, progress);
 
-  // Check if newly mastered
+  // Check if newly mastered (string-based for UI)
   const wasNewlyMastered =
     previousMastery !== 'mastered' && progress.masteryLevel === 'mastered';
 

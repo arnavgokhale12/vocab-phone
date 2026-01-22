@@ -4,18 +4,22 @@ import React, {
   useEffect,
   useState,
   useCallback,
+  useRef,
 } from 'react';
-import { Platform } from 'react-native';
+import { Platform, AppState, AppStateStatus } from 'react-native';
 import { WordProgress, UserStats, createDefaultStats } from '../types/wordProgress';
 import {
   getAllProgress,
   getStats,
+  markDayCompleted,
+  isDayCompleted,
 } from '../services/storage/mmkvStorage';
 import {
   recordAnswer as recordAnswerService,
   checkGoalMet,
 } from '../services/MasteryService';
 import { setWidgetStats } from '../native/appGroup';
+import { scheduleDailyReminder } from '../services/NotificationService';
 
 interface ProgressContextValue {
   // Progress data
@@ -95,6 +99,33 @@ export function ProgressProvider({ children, todayGoal }: ProviderProps) {
     learned: stats.todayReviewedCount,
     goal: todayGoal,
   };
+
+  // Mark day as completed when daily goal is met
+  useEffect(() => {
+    if (todayProgress.goal > 0 && todayProgress.learned >= todayProgress.goal) {
+      const today = new Date();
+      const dateKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      if (!isDayCompleted(dateKey)) {
+        markDayCompleted(dateKey);
+      }
+    }
+  }, [todayProgress.learned, todayProgress.goal]);
+
+  // Reschedule notification when app comes to foreground (streak state may have changed)
+  const appState = useRef(AppState.currentState);
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextAppState: AppStateStatus) => {
+      if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+        // App has come to the foreground - reschedule notification with current streak state
+        scheduleDailyReminder();
+      }
+      appState.current = nextAppState;
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 
   return (
     <ProgressContext.Provider

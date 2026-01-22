@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { NavigationContainer, DarkTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as Linking from "expo-linking";
@@ -9,10 +9,20 @@ import PronunciationScreen from "../screens/PronunciationScreen";
 import QuizScreen from "../screens/QuizScreen";
 import QuizSummaryScreen from "../screens/QuizSummaryScreen";
 import BookmarksScreen from "../screens/BookmarksScreen";
+import PlacementTestScreen from "../screens/PlacementTestScreen";
+import LibraryScreen from "../screens/LibraryScreen";
+import WordDetailScreen from "../screens/WordDetailScreen";
+import CustomListsScreen from "../screens/CustomListsScreen";
+import CustomListDetailScreen from "../screens/CustomListDetailScreen";
+import SessionSummaryScreen from "../screens/SessionSummaryScreen";
+import WeakWordsQuizScreen from "../screens/WeakWordsQuizScreen";
+import { SessionSummary, WeakWord } from "../types/sessionSummary";
+import { hasCompletedPlacementTest } from "../services/storage/mmkvStorage";
 import { colors } from "../theme";
 import { QuizQuestionResult } from "../types/quiz";
 
 export type RootStackParamList = {
+  PlacementTest: undefined;
   Home: undefined;
   Learn: undefined;
   Settings: undefined;
@@ -24,6 +34,12 @@ export type RootStackParamList = {
     results: QuizQuestionResult[];
   };
   Bookmarks: undefined;
+  Library: undefined;
+  WordDetail: { wordId: string };
+  CustomLists: undefined;
+  CustomListDetail: { listId?: string };
+  SessionSummary: { summary?: SessionSummary };
+  WeakWordsQuiz: { weakWords: WeakWord[] };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -45,6 +61,7 @@ const linking = {
   prefixes: [Linking.createURL("/"), "vocabphone://"],
   config: {
     screens: {
+      PlacementTest: "placement",
       Pronunciation: "pronounce/:wordId",
       Home: "",
       Learn: "learn",
@@ -52,15 +69,36 @@ const linking = {
       Quiz: "quiz",
       QuizSummary: "quiz-summary",
       Bookmarks: "bookmarks",
+      Library: "library",
+      WordDetail: "word/:wordId",
+      CustomLists: "custom-lists",
+      CustomListDetail: "custom-list/:listId?",
+      SessionSummary: "session-summary",
+      WeakWordsQuiz: "weak-words-quiz",
     },
   },
 };
 
 export default function AppNavigator() {
+  const [isReady, setIsReady] = useState(false);
+  const [needsPlacement, setNeedsPlacement] = useState(false);
+
+  useEffect(() => {
+    // Check if placement test has been completed
+    const completed = hasCompletedPlacementTest();
+    setNeedsPlacement(!completed);
+    setIsReady(true);
+  }, []);
+
+  // Don't render until we know the initial route
+  if (!isReady) {
+    return null;
+  }
+
   return (
     <NavigationContainer theme={CustomDarkTheme} linking={linking}>
       <Stack.Navigator
-        initialRouteName="Home"
+        initialRouteName={needsPlacement ? "PlacementTest" : "Home"}
         screenOptions={{
           headerStyle: {
             backgroundColor: "transparent",
@@ -74,6 +112,11 @@ export default function AppNavigator() {
           headerShadowVisible: false,
         }}
       >
+        <Stack.Screen
+          name="PlacementTest"
+          component={PlacementTestScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="Home"
           component={HomeScreen}
@@ -108,6 +151,36 @@ export default function AppNavigator() {
           name="Bookmarks"
           component={BookmarksScreen}
           options={{ title: "Bookmarks" }}
+        />
+        <Stack.Screen
+          name="Library"
+          component={LibraryScreen}
+          options={{ title: "Library" }}
+        />
+        <Stack.Screen
+          name="WordDetail"
+          component={WordDetailScreen}
+          options={{ title: "Word Details" }}
+        />
+        <Stack.Screen
+          name="CustomLists"
+          component={CustomListsScreen}
+          options={{ title: "My Lists" }}
+        />
+        <Stack.Screen
+          name="CustomListDetail"
+          component={CustomListDetailScreen}
+          options={{ title: "" }}
+        />
+        <Stack.Screen
+          name="SessionSummary"
+          component={SessionSummaryScreen}
+          options={{ title: "Session Summary", headerBackVisible: false }}
+        />
+        <Stack.Screen
+          name="WeakWordsQuiz"
+          component={WeakWordsQuizScreen}
+          options={{ title: "Review" }}
         />
       </Stack.Navigator>
     </NavigationContainer>

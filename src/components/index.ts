@@ -3,3 +3,6 @@ export { GlassCard } from './GlassCard';
 export { GradientButton } from './GradientButton';
 export { CapsuleBadge } from './CapsuleBadge';
 export { ProgressBar } from './ProgressBar';
+export { LevelBadge } from './LevelBadge';
+export { WeeklyCalendar } from './WeeklyCalendar';
+export { MasteryBadge } from './MasteryBadge';

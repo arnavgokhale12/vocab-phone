@@ -39,7 +39,14 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "./plugins/withVocabWidget/withVocabWidget.js"
+      "./plugins/withVocabWidget/withVocabWidget.js",
+      "@react-native-community/datetimepicker",
+      [
+        "expo-notifications",
+        {
+          "sounds": []
+        }
+      ]
     ],
     "extra": {
       "eas": {

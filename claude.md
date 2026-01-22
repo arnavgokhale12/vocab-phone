@@ -21,6 +21,8 @@ LexiStack helps users learn vocabulary through a daily learning flow. Each day, 
 
 ```
 src/
+├── constants/
+│   └── levels.ts              # Lexi Levels thresholds and definitions (v2.8)
 ├── context/
 │   ├── WordsContext.tsx       # Global state, seeded word selection
 │   └── ProgressContext.tsx    # Mastery tracking context (v2.0)
@@ -28,19 +30,30 @@ src/
 ├── screens/
 │   ├── HomeScreen.tsx         # Landing page with quiz CTA
 │   ├── LearnScreen.tsx        # Word learning UI with card layout
+│   ├── BookmarksScreen.tsx    # Bookmarked words list (v2.4)
+│   ├── PlacementTestScreen.tsx # Onboarding placement quiz (v2.7)
 │   ├── QuizScreen.tsx         # End-of-day quiz with multiple choice (v2.3)
 │   ├── QuizSummaryScreen.tsx  # Quiz results screen (v2.3)
+│   ├── LibraryScreen.tsx      # All words with progress filters (v2.11)
+│   ├── WordDetailScreen.tsx   # Individual word stats (v2.11)
+│   ├── CustomListsScreen.tsx  # Custom list management (v2.12)
+│   ├── CustomListDetailScreen.tsx # Create/edit custom list (v2.12)
+│   ├── SessionSummaryScreen.tsx # Post-session stats summary (v2.13)
+│   ├── WeakWordsQuizScreen.tsx # Mini-quiz for weak words review (v2.13)
 │   └── SettingsScreen.tsx     # Daily goal selector (3/5/10 words)
 ├── services/
 │   ├── MasteryService.ts      # Mastery calculation & answer recording (v2.0)
 │   ├── QueueService.ts        # Daily word queue generation (v2.0)
 │   ├── QuizService.ts         # Quiz generation with Fisher-Yates shuffle (v2.3)
+│   ├── LevelService.ts        # Lexi Levels progression computation (v2.8)
 │   └── storage/
-│       └── mmkvStorage.ts     # MMKV persistence + quiz storage (v2.3)
+│       └── mmkvStorage.ts     # MMKV persistence + quiz/session/bookmark/placement storage (v2.7)
 ├── types/
 │   ├── word.ts                # Word and vocabulary types
 │   ├── wordProgress.ts        # Progress and mastery types (v2.0)
-│   └── quiz.ts                # Quiz types (v2.3)
+│   ├── quiz.ts                # Quiz types (v2.3)
+│   ├── customList.ts          # Custom list types (v2.12)
+│   └── sessionSummary.ts      # Session summary types (v2.13)
 ├── theme/index.ts             # Centralized theme (colors, typography, spacing)
 ├── data/seedWords.ts          # Vocabulary database (100 words)
 ├── utils/storage.ts           # AsyncStorage helpers (settings)
@@ -203,7 +216,7 @@ Supports home screen widgets with real-time sync:
 
 - **App Name**: LexiStack
 - **Bundle ID**: `com.anonymous.vocab-phone`
-- **Version**: 2.3.0
+- **Version**: 2.13.0
 - **EAS Project ID**: `5243863b-0f29-42d2-9036-b7050e129397`
 - **iOS Deployment Target**: 16.0
 - **Widget Families**: systemMedium, systemLarge
@@ -370,6 +383,8 @@ The app was rebranded to **LexiStack** with a premium dark aesthetic:
 - `GlassCard`: Semi-transparent card with glass borders
 - `GradientButton`: Purple-to-blue gradient or glass variant
 - `CapsuleBadge`: Rounded pill for part-of-speech labels
+- `LevelBadge`: Level progress display with gradient bar (v2.8)
+- `WeeklyCalendar`: Mon-Sun calendar row with completion status (v2.9)
 
 ### Widget Updates
 - Home screen: systemMedium + systemLarge with word, pronunciation, definition, synonyms
@@ -386,6 +401,7 @@ The app was rebranded to **LexiStack** with a premium dark aesthetic:
 ### Dependencies Added
 - `expo-linear-gradient`: For gradient backgrounds and buttons
 - `expo-speech`: For text-to-speech pronunciation
+- `expo-haptics`: For tactile feedback on quiz answers and session completion
 
 ## v2.2 Spaced Repetition & Progress Tracking
 
@@ -629,10 +645,785 @@ Quiz answers update mastery tracking:
 - **<4 words in database**: Uses available words for distractors
 - **Duplicate definitions**: Filtered when selecting distractors
 
+## v2.4 Resume Learning & Bookmarks
+
+### Resume Learning
+
+Session state is persisted so users can resume from where they left off:
+
+**Storage** (`src/services/storage/mmkvStorage.ts`):
+```typescript
+interface LearnSessionState {
+  dateKey: string;      // Local date YYYY-MM-DD
+  lastIndex: number;    // 0-based index into todayWords
+  lastWordId: string | null;
+  completed: boolean;
+}
+
+// Functions
+getLearnSession(): LearnSessionState | null
+updateLearnSessionIndex(index: number, wordId: string | null): void
+markLearnSessionComplete(): void
+clearLearnSession(): void
+```
+
+**LearnScreen Behavior**:
+- On mount: loads session, resumes from `lastIndex` if same day and not completed
+- On index change: persists via `updateLearnSessionIndex()`
+- When all words done: calls `markLearnSessionComplete()`
+
+**Edge Cases**:
+- List length changes: index clamped to valid range
+- Session completed: starts fresh from index 0
+- New day: session resets automatically
+
+### Bookmarks
+
+Users can favorite words for later review:
+
+**Storage** (`src/services/storage/mmkvStorage.ts`):
+```typescript
+interface BookmarkEntry {
+  wordId: string;
+  term: string;
+  definition: string;
+  bookmarkedAt: number;
+}
+
+// Functions
+getBookmarks(): Map<string, BookmarkEntry>
+setBookmark(wordId: string, term: string, definition: string): void
+removeBookmark(wordId: string): void
+isBookmarked(wordId: string): boolean
+toggleBookmark(wordId: string, term: string, definition: string): boolean
+```
+
+**UI Changes**:
+- **LearnScreen**: Heart icon next to speaker button toggles bookmark
+- **HomeScreen**: Heart icon in header navigates to BookmarksScreen
+- **BookmarksScreen**: Lists all bookmarked words (newest first) with remove button
+
+**Navigation**: Added `Bookmarks: undefined` route to `RootStackParamList`
+
+## v2.5 Haptics & Animations
+
+Subtle polish for quiz and session completion flows using native haptic feedback and React Native's Animated API.
+
+### Haptic Feedback
+
+Uses `expo-haptics` for tactile feedback:
+
+**Quiz Answers** (`src/screens/QuizScreen.tsx`):
+- `ImpactFeedbackStyle.Light`: Correct answer selection
+- `ImpactFeedbackStyle.Heavy`: Incorrect answer selection
+
+**Session Completion**:
+- `NotificationFeedbackType.Success`: Daily session complete (LearnScreen "All Done!")
+- `NotificationFeedbackType.Success`: Quiz complete (QuizSummaryScreen)
+
+### Card Transition Animations
+
+Uses React Native's `Animated` API (no Reanimated dependency):
+
+**QuizScreen**:
+- Question card slides left and fades out on "Next"
+- New question slides in from right with fade-in
+- Subtle scale micro-animation on option selection (0.98 → 1.0)
+
+**Implementation**:
+```typescript
+// Animation values
+const cardOpacity = useRef(new Animated.Value(1)).current;
+const cardTranslateX = useRef(new Animated.Value(0)).current;
+const optionScale = useRef(new Animated.Value(1)).current;
+
+// Card transition: slide out left, slide in from right
+Animated.parallel([
+  Animated.timing(cardOpacity, { toValue: 0, duration: 150, useNativeDriver: true }),
+  Animated.timing(cardTranslateX, { toValue: -30, duration: 150, useNativeDriver: true }),
+]).start(() => {
+  // Update state, then animate in
+  cardTranslateX.setValue(30);
+  Animated.parallel([...]).start();
+});
+```
+
+All animations use `useNativeDriver: true` for 60fps performance.
+
+## v2.6 Numeric Mastery Level
+
+Added integer-based mastery tracking (0-3) alongside the existing string-based system.
+
+### Data Model
+
+New field added to `WordProgress` (`src/types/wordProgress.ts`):
+
+```typescript
+interface WordProgress {
+  // ... existing fields
+  /**
+   * Numeric mastery level (0-3) for simpler tracking.
+   * Rule: correct +1, incorrect -1, clamped to [0, 3].
+   * 0 = new, 1 = learning, 2 = familiar, 3 = mastered
+   */
+  numericMasteryLevel: number;
+}
+```
+
+### Mastery Update Rule
+
+Simple deterministic rule (`src/services/MasteryService.ts`):
+
+```typescript
+/**
+ * Update numeric mastery level (0-3) based on answer correctness.
+ *
+ * Rule:
+ * - Correct answer: numericMasteryLevel = min(current + 1, 3)
+ * - Incorrect answer: numericMasteryLevel = max(current - 1, 0)
+ *
+ * Levels:
+ *   0 = new (never answered correctly)
+ *   1 = learning (some correct answers)
+ *   2 = familiar (progressing well)
+ *   3 = mastered (highest level)
+ */
+export function updateNumericMastery(currentLevel: number, isCorrect: boolean): number
+```
+
+### Storage Validation & Migration
+
+Storage validation in `mmkvStorage.ts`:
+- Clamps numericMasteryLevel to [0, 3]
+- Defaults to 0 for existing users (migration)
+- Validates counts are non-negative
+- Handles corrupted storage gracefully
+
+### Integration
+
+The `recordAnswer()` function in MasteryService now:
+1. Updates `correctCount` / `incorrectCount`
+2. Updates `consecutiveCorrect` (for string-based masteryLevel)
+3. Updates `masteryLevel` (string: 'new' | 'learning' | 'mastered')
+4. Updates `numericMasteryLevel` (integer: 0-3)
+5. Updates `lastSeenAt` (ISO timestamp)
+
+Quiz and Learn screens already call `recordAnswer()`, so stats are automatically tracked.
+
+## v2.7 Placement Test & Difficulty Bias
+
+Onboarding placement quiz shown on first launch to estimate user vocabulary level.
+
+### Placement Test Flow
+
+1. **First Launch Detection**: AppNavigator checks `hasCompletedPlacementTest()`
+2. **Initial Route**: PlacementTest if not completed, Home otherwise
+3. **10 Questions**: 2 questions per difficulty level (1-5) for balanced assessment
+4. **Level Estimation**: Score 0-10 mapped to estimated level 1-5
+
+### Storage (`src/services/storage/mmkvStorage.ts`)
+
+```typescript
+interface PlacementTestResult {
+  hasCompleted: boolean;
+  score: number;        // 0-10
+  estimatedLevel: number; // 1-5
+  completedAt: string | null;
+}
+
+// Functions
+hasCompletedPlacementTest(): boolean
+getEstimatedLevel(): number
+completePlacementTest(score: number): PlacementTestResult
+calculateEstimatedLevel(score: number): number
+```
+
+**Score to Level Mapping**:
+- Score 0-2: Level 1 (beginner)
+- Score 3-4: Level 2
+- Score 5-6: Level 3
+- Score 7-8: Level 4
+- Score 9-10: Level 5 (advanced)
+
+### Difficulty-Biased Word Selection
+
+Daily word selection biased by estimated level (`src/context/WordsContext.tsx`):
+
+```typescript
+seededPickWithDifficultyBias(words, seed, count, estimatedLevel)
+```
+
+**Distribution for level k**:
+- 70% from difficulty k-1 to k+1 (comfort zone)
+- 20% from difficulty k+2 (stretch words)
+- 10% from other difficulties
+
+**Properties**:
+- Deterministic: Same seed always produces same selection
+- Maintains daily seed behavior for consistency across devices
+- Gracefully handles edge cases (levels 1 and 5)
+
+### PlacementTestScreen
+
+- 10 multiple-choice questions
+- Difficulty indicator (stars) for each question
+- Haptic feedback on answers
+- Card transition animations
+- Navigates to Home on completion
+
+### Navigation Changes
+
+Added `PlacementTest` route to `RootStackParamList`:
+- Initial route when placement test not completed
+- Replaced to Home after completion (no back navigation)
+
+### Migration
+
+Existing users default to:
+- `hasCompleted: false` (will see placement test)
+- `estimatedLevel: 3` (middle level as default)
+
+To skip placement test for existing users, manually set:
+```typescript
+setPlacementTestResult({ hasCompleted: true, score: 5, estimatedLevel: 3, completedAt: null });
+```
+
+## v2.8 Lexi Levels Progression
+
+Gamification system based on total mastered words (numericMasteryLevel == 3).
+
+### Level Definitions (`src/constants/levels.ts`)
+
+```typescript
+type LevelId = 'bronze' | 'silver' | 'gold' | 'platinum' | 'diamond';
+
+interface LevelDefinition {
+  id: LevelId;
+  name: string;
+  minMastered: number;
+  color: string;
+  icon: string;
+}
+```
+
+**Thresholds (based on 100 total words):**
+| Level | Min Mastered | Icon |
+|-------|--------------|------|
+| Bronze | 0 | 🥉 |
+| Silver | 10 | 🥈 |
+| Gold | 25 | 🥇 |
+| Platinum | 50 | 💎 |
+| Diamond | 75 | 👑 |
+
+### LevelService (`src/services/LevelService.ts`)
+
+```typescript
+interface LevelProgress {
+  currentLevel: LevelDefinition;
+  nextLevel: LevelDefinition | null;
+  masteredCount: number;
+  progressToNext: number;      // 0-1
+  wordsToNextLevel: number;
+  totalWords: number;
+  overallMasteryPercent: number;
+}
+
+// Functions
+getMasteredWordCount(): number
+getCurrentLevel(masteredCount): LevelDefinition
+getNextLevel(masteredCount): LevelDefinition | null
+getProgressToNextLevel(masteredCount): number
+getLevelProgress(): LevelProgress
+```
+
+### LevelBadge Component (`src/components/LevelBadge.tsx`)
+
+Displays:
+- Level icon and name
+- Mastered word count
+- Progress bar toward next level (gradient from current to next level color)
+- "Maximum Level Achieved!" badge when at Diamond
+
+### HomeScreen Integration
+
+Level badge shown in a GlassCard between daily progress and actions:
+- Updates immediately when screen gains focus (after quizzes/sessions)
+- Uses `useFocusEffect` to refresh `getLevelProgress()`
+
+### Immediate Updates
+
+Level progress updates immediately after:
+- Quiz completion (recordAnswer updates numericMasteryLevel)
+- Learn session answers (recordAnswer updates numericMasteryLevel)
+- HomeScreen refresh on focus
+
+## v2.9 Weekly Goals
+
+Track weekly learning consistency alongside daily goals.
+
+### Storage (`src/services/storage/mmkvStorage.ts`)
+
+```typescript
+interface WeeklyGoalState {
+  weeklyTargetDays: number;  // 1-7, default 5
+  dailyCompletions: Record<string, boolean>;  // dateKey (YYYY-MM-DD) -> completed
+}
+
+// Functions
+getWeeklyTargetDays(): number
+setWeeklyTargetDays(days: number): void
+getDailyCompletions(): Record<string, boolean>
+markDayCompleted(dateKey: string): void
+isDayCompleted(dateKey: string): boolean
+getCurrentWeekCompletions(): WeekDayData[]
+pruneOldCompletions(): void  // Keeps last 4 weeks
+```
+
+### WeeklyCalendar Component (`src/components/WeeklyCalendar.tsx`)
+
+Displays Mon-Sun row with completion status:
+- Completed days: filled purple circle with checkmark
+- Today (not completed): purple outlined circle
+- Future days: muted/grayed out
+- Past incomplete days: muted circle
+- Progress text: "3/5 days completed"
+
+### Completion Trigger
+
+Day is marked complete when daily goal is reached (`src/context/ProgressContext.tsx`):
+```typescript
+useEffect(() => {
+  if (todayProgress.learned >= todayProgress.goal && todayProgress.goal > 0) {
+    markDayCompleted(dateKey);
+  }
+}, [todayProgress.learned, todayProgress.goal]);
+```
+
+### Settings Integration
+
+Weekly target selector in SettingsScreen:
+- Options: 3, 4, 5, 6, 7 days per week
+- Horizontal button row with glassmorphism styling
+- Persisted immediately to MMKV storage
+
+### HomeScreen Changes
+
+WeeklyCalendar displayed below LevelBadge:
+- Refreshes on screen focus via `useFocusEffect`
+- Shows current week's progress (Mon-Sun)
+- Highlights today with distinct styling
+
+### Week Handling
+
+- Week starts Monday (ISO standard)
+- Uses local time for date calculations
+- Old completion data pruned (keeps last 4 weeks)
+- No external dependencies (pure date math)
+
+## v2.10 Streak Notifications
+
+Local push notifications to help users maintain their learning streak.
+
+### Dependencies
+
+```bash
+npx expo install expo-notifications expo-device @react-native-community/datetimepicker
+```
+
+### Storage (`src/services/storage/mmkvStorage.ts`)
+
+```typescript
+interface NotificationSettings {
+  enabled: boolean;           // Default false until permission granted
+  reminderHour: number;       // 0-23, default 19 (7 PM)
+  reminderMinute: number;     // 0-59, default 0
+  permissionAsked: boolean;   // Track if we've asked for permission
+}
+
+// Functions
+getNotificationSettings(): NotificationSettings
+setNotificationSettings(settings: NotificationSettings): void
+setNotificationsEnabled(enabled: boolean): void
+setReminderTime(hour: number, minute: number): void
+hasAskedNotificationPermission(): boolean
+markNotificationPermissionAsked(): void
+```
+
+### NotificationService (`src/services/NotificationService.ts`)
+
+```typescript
+// Core functions
+requestPermission(): Promise<boolean>
+hasPermission(): Promise<boolean>
+scheduleDailyReminder(): Promise<void>
+cancelAllNotifications(): Promise<void>
+getNotificationContent(streak: number, completedToday: boolean): NotificationContent | null
+```
+
+**Notification Content Logic**:
+- Streak > 0 and not completed: "Don't break your streak! 🔥" with streak count
+- Streak = 0: "Ready for today's words? 📚"
+- Already completed today: No notification scheduled
+
+### Permission Flow
+
+Permission is requested after first session completion (`LearnScreen.tsx`):
+1. User completes their first daily session
+2. App calls `requestPermission()` via expo-notifications
+3. If granted, notifications are enabled and daily reminder scheduled
+4. Permission is only asked once (tracked via `permissionAsked` flag)
+
+### Settings UI (`src/screens/SettingsScreen.tsx`)
+
+New "Notifications" section with:
+- Toggle switch to enable/disable daily reminders
+- Time picker (visible when enabled) to set reminder time
+- Default reminder time: 7:00 PM local
+
+### App State Reschedule
+
+Notifications are rescheduled when app comes to foreground (`ProgressContext.tsx`):
+- Uses `AppState.addEventListener('change', ...)`
+- Updates notification content based on current streak state
+- Ensures notification reflects whether user has completed today
+
+### App Configuration
+
+`app.json` plugins:
+```json
+["expo-notifications", { "sounds": [] }]
+```
+
+## v2.11 Library
+
+View all vocabulary words with progress tracking and detailed statistics.
+
+### LibraryScreen (`src/screens/LibraryScreen.tsx`)
+
+Displays all 100 vocabulary words with filtering:
+
+**Filters:**
+- All: Shows all words
+- Bookmarked: Words user has bookmarked
+- Needs Work: numericMasteryLevel 0-1 OR accuracy < 50%
+- Mastered: numericMasteryLevel = 3
+
+**Word Card Display:**
+- Term
+- MasteryBadge (color-coded by level)
+- Last seen date (relative: "Today", "2 days ago", etc.)
+- Accuracy percentage (if has attempts)
+
+### WordDetailScreen (`src/screens/WordDetailScreen.tsx`)
+
+Detailed view for individual words:
+
+**Word Info:**
+- Term, pronunciation, part of speech
+- Definition and example sentence
+- Synonyms (if available)
+- Speaker and bookmark buttons
+
+**Statistics Card:**
+- Accuracy: % (correctCount / totalAttempts)
+- Times Correct (green)
+- Times Incorrect (red)
+- Times Seen (total attempts)
+- Last Seen (formatted date)
+- Next Review (if SRS date exists)
+
+**Difficulty Display:**
+- Star rating (1-5)
+
+### MasteryBadge Component (`src/components/MasteryBadge.tsx`)
+
+Color-coded badge showing mastery level:
+- Level 0 (New): gray
+- Level 1 (Learning): orange/warning
+- Level 2 (Familiar): blue
+- Level 3 (Mastered): green/success
+
+### Navigation
+
+Library accessible from HomeScreen header:
+- Library icon (blue) next to Bookmarks icon (purple)
+- Routes: `Library`, `WordDetail`
+
+### Data Flow
+
+```typescript
+interface EnrichedWord extends Word {
+  numericMasteryLevel: number;
+  masteryLevel: MasteryLevel;
+  correctCount: number;
+  incorrectCount: number;
+  lastSeenAt: string | null;
+  nextReviewDate: string | null;
+  totalAttempts: number;
+  accuracy: number; // 0-1
+  hasProgress: boolean;
+  isBookmarked: boolean;
+}
+```
+
+## v2.12 Custom Lists
+
+User-created vocabulary lists that can be mixed into daily learning.
+
+### Types (`src/types/customList.ts`)
+
+```typescript
+interface CustomWord {
+  id: string;           // UUID
+  term: string;
+  definition: string;
+  addedAt: number;      // timestamp
+}
+
+interface CustomList {
+  id: string;           // UUID
+  name: string;
+  words: CustomWord[];  // Max 20
+  includeInDaily: boolean;
+  createdAt: number;
+  updatedAt: number;
+}
+
+interface CustomListSettings {
+  mixCount: number;     // 0-5, default 2
+}
+
+const MAX_WORDS_PER_LIST = 20;
+const DEFAULT_MIX_COUNT = 2;
+const MAX_MIX_COUNT = 5;
+```
+
+### Storage (`src/services/storage/mmkvStorage.ts`)
+
+```typescript
+// List CRUD
+getCustomLists(): Map<string, CustomList>
+getCustomList(listId: string): CustomList | null
+saveCustomList(list: CustomList): void
+deleteCustomList(listId: string): void
+createNewCustomList(name: string): CustomList
+
+// Word operations
+addWordToCustomList(listId: string, term: string, definition: string): boolean
+removeWordFromCustomList(listId: string, wordId: string): void
+
+// Toggle settings
+toggleCustomListInDaily(listId: string): boolean
+setCustomListIncludeInDaily(listId: string, include: boolean): void
+getEnabledCustomWords(): CustomWord[]
+
+// Mix count settings
+getCustomListSettings(): CustomListSettings
+setCustomListMixCount(count: number): void
+getCustomListMixCount(): number
+```
+
+### Daily Selection Integration
+
+Custom words are mixed into daily learning (`src/context/WordsContext.tsx`):
+
+**Algorithm:**
+1. Get mix count from settings (default 2)
+2. Get all enabled custom words (`includeInDaily = true`)
+3. Calculate seed word slots: `todayGoal - mixCount`
+4. Select seed words using `seededPickWithDifficultyBias()`
+5. Select custom words using seeded shuffle for determinism
+6. Combine into daily word list
+
+**Custom Word → Word Conversion:**
+```typescript
+function customWordToWord(cw: CustomWord): Word {
+  return {
+    id: cw.id,
+    term: cw.term,
+    definition: cw.definition,
+    partOfSpeech: 'other',
+    pronunciation: '',
+    example: '',
+    difficulty: 3,
+    tags: ['custom'],
+  };
+}
+```
+
+### Screens
+
+**CustomListsScreen** (`src/screens/CustomListsScreen.tsx`):
+- Header "+" button to create new list
+- FlatList of all custom lists
+- Each card shows: name, word count (X/20), toggle for "Include in Daily"
+- Delete button with confirmation
+- Tap card → navigate to edit
+
+**CustomListDetailScreen** (`src/screens/CustomListDetailScreen.tsx`):
+- Name input field
+- "Include in Daily" toggle
+- Words list with remove button per word
+- Add word form (term + definition)
+- Create mode: "Create List" button
+- Edit mode: saves automatically
+
+### Settings Integration
+
+New "Custom Lists" section in SettingsScreen:
+- "Manage Lists" row → navigates to CustomListsScreen
+- "Words per Day" stepper (0-5) for mix count
+
+### Navigation Routes
+
+```typescript
+// Added to RootStackParamList
+CustomLists: undefined;
+CustomListDetail: { listId?: string };
+```
+
+### Edge Cases
+
+- **No custom lists enabled**: Normal daily selection works
+- **Fewer custom words than mix count**: Fills remaining slots with seed words
+- **Mix count set to 0**: No custom words mixed in
+- **Empty list**: Can be created but won't contribute words
+- **Max 20 words per list**: Enforced in UI and storage
+
+## v2.13 Session Summary
+
+Summary screen shown after learning sessions and quiz completion with performance metrics and weak words review.
+
+### Types (`src/types/sessionSummary.ts`)
+
+```typescript
+interface WordSessionResult {
+  wordId: string;
+  term: string;
+  definition: string;
+  isCorrect: boolean;
+  isFirstSeenToday: boolean;  // New word vs review
+}
+
+interface SessionSummary {
+  sessionType: 'learn' | 'quiz';
+  date: string;
+  timestamp: number;
+  totalWords: number;
+  newWords: number;        // First seen today
+  reviewWords: number;     // Previously seen
+  correctCount: number;
+  incorrectCount: number;
+  accuracy: number;        // 0-100
+  results: WordSessionResult[];
+  weakWords: WeakWord[];   // Up to 2 words for review
+}
+
+interface WeakWord {
+  wordId: string;
+  term: string;
+  definition: string;
+  reason: 'incorrect' | 'low_accuracy';
+}
+```
+
+### Storage (`src/services/storage/mmkvStorage.ts`)
+
+```typescript
+// Session summary persistence (survives app reload)
+getLastSessionSummary(): SessionSummary | null
+setLastSessionSummary(summary: SessionSummary): void
+clearLastSessionSummary(): void
+```
+
+### SessionSummaryScreen
+
+Displays after learning session completion:
+
+**Main Stats Card:**
+- Session type label ("Learning Session Complete!" / "Quiz Complete!")
+- Accuracy percentage (large display)
+- Contextual message based on accuracy
+
+**Stats Breakdown:**
+- Total words reviewed
+- Correct count (green)
+- Incorrect count (red)
+- New words (sparkle icon)
+- Review words (refresh icon)
+
+**Weak Words Section:**
+- Shows up to 2 words that need practice
+- Words identified by incorrect answers
+- Alert icon with reason ("Answered incorrectly")
+
+**Actions:**
+- "Review Weak Words" → launches WeakWordsQuizScreen
+- "Done" → clears summary and returns Home
+
+### WeakWordsQuizScreen
+
+Mini-quiz for reviewing 1-2 weak words:
+
+- Multiple choice format (4 options)
+- Card transition animations
+- Haptic feedback on answers
+- Records answers for mastery tracking
+- Returns to Home on completion
+
+### Session Stats Tracking
+
+**LearnScreen Integration:**
+- Tracks results in `sessionResults` ref during session
+- Captures word progress at session start for new/review classification
+- Builds summary and navigates on session completion
+
+**QuizSummaryScreen Integration:**
+- Builds weak words list from incorrect quiz answers
+- "Review Weak Words" button navigates to WeakWordsQuizScreen
+
+### Daily Counter Reset Fix
+
+Fixed bug where `todayReviewedCount` wasn't resetting on new day:
+
+**Before:** Counter only reset when `recordAnswer()` was called on new day
+**After:** `getStats()` now checks date and returns reset values if it's a new day
+
+```typescript
+// In getStats()
+const today = getLocalTodayString();
+if (validated.lastActiveDate && validated.lastActiveDate !== today) {
+  return {
+    ...validated,
+    todayReviewedCount: 0,
+    todayGoalMet: false,
+  };
+}
+```
+
+### Navigation Routes
+
+```typescript
+// Added to RootStackParamList
+SessionSummary: { summary?: SessionSummary };
+WeakWordsQuiz: { weakWords: WeakWord[] };
+```
+
+### Accuracy Message Logic
+
+```typescript
+function getAccuracyMessage(accuracy: number): string {
+  if (accuracy >= 100) return 'Perfect session!';
+  if (accuracy >= 80) return 'Great work!';
+  if (accuracy >= 60) return 'Good progress!';
+  if (accuracy >= 40) return 'Keep practicing!';
+  return 'Room to improve!';
+}
+```
+
 ## Future Plans
 
 ### Potential Enhancements
-- Statistics dashboard showing learning progress
 - More word categories and difficulty levels
 - Android widget support
 - Cloud sync for progress across devices

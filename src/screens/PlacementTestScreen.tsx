@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,15 +9,9 @@ import {
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useWords } from '../context/WordsContext';
-import { useProgress } from '../context/ProgressContext';
-import {
-  getSeenWordIds,
-  setQuizSession,
-  markQuizComplete,
-} from '../services/storage/mmkvStorage';
-import { generateQuiz } from '../services/QuizService';
-import { QuizQuestion, QuizQuestionResult, QuizSession } from '../types/quiz';
+import { SEED_WORDS } from '../data/seedWords';
+import { Word } from '../types/word';
+import { completePlacementTest } from '../services/storage/mmkvStorage';
 import {
   GradientBackground,
   GlassCard,
@@ -31,54 +25,118 @@ import {
 } from '../theme';
 import { RootStackParamList } from '../navigation/AppNavigator';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Quiz'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'PlacementTest'>;
 
-export default function QuizScreen({ navigation }: Props) {
-  const { words: allWords } = useWords();
-  const { recordAnswer } = useProgress();
+interface PlacementQuestion {
+  word: Word;
+  options: string[];
+  correctIndex: number;
+}
+
+/**
+ * Generate 10 placement test questions spanning difficulty 1-5.
+ * Selects 2 words per difficulty level for balanced assessment.
+ */
+function generatePlacementQuestions(): PlacementQuestion[] {
+  const questions: PlacementQuestion[] = [];
+
+  // Group words by difficulty
+  const byDifficulty: Map<number, Word[]> = new Map();
+  for (let d = 1; d <= 5; d++) {
+    byDifficulty.set(d, SEED_WORDS.filter(w => w.difficulty === d));
+  }
+
+  // Select 2 words per difficulty level (10 total)
+  for (let difficulty = 1; difficulty <= 5; difficulty++) {
+    const words = byDifficulty.get(difficulty) ?? [];
+    // Use deterministic selection based on index
+    const selected = words.slice(0, 2);
+
+    for (const word of selected) {
+      // Generate 3 distractor definitions
+      const otherWords = SEED_WORDS.filter(w => w.id !== word.id);
+      const distractors: string[] = [];
+
+      // Pick distractors from different difficulty levels for variety
+      for (let i = 0; i < 3 && distractors.length < 3; i++) {
+        const idx = (difficulty * 7 + i * 13) % otherWords.length;
+        const distractor = otherWords[idx].definition;
+        if (!distractors.includes(distractor) && distractor !== word.definition) {
+          distractors.push(distractor);
+        }
+      }
+
+      // Fill remaining if needed
+      while (distractors.length < 3) {
+        const idx = distractors.length * 11 % otherWords.length;
+        const def = otherWords[idx].definition;
+        if (!distractors.includes(def) && def !== word.definition) {
+          distractors.push(def);
+        }
+      }
+
+      // Shuffle options deterministically
+      const options = [word.definition, ...distractors];
+      const correctDef = word.definition;
+
+      // Simple deterministic shuffle based on word id
+      const seed = word.id.charCodeAt(0) + word.id.length;
+      for (let i = options.length - 1; i > 0; i--) {
+        const j = (seed + i * 7) % (i + 1);
+        [options[i], options[j]] = [options[j], options[i]];
+      }
+
+      questions.push({
+        word,
+        options,
+        correctIndex: options.indexOf(correctDef),
+      });
+    }
+  }
+
+  // Shuffle questions so they're not ordered by difficulty
+  // Use deterministic shuffle
+  for (let i = questions.length - 1; i > 0; i--) {
+    const j = (i * 13 + 7) % (i + 1);
+    [questions[i], questions[j]] = [questions[j], questions[i]];
+  }
+
+  return questions;
+}
+
+export default function PlacementTestScreen({ navigation }: Props) {
+  const questions = useMemo(() => generatePlacementQuestions(), []);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isRevealed, setIsRevealed] = useState(false);
-  const [results, setResults] = useState<QuizQuestionResult[]>([]);
+  const [correctCount, setCorrectCount] = useState(0);
 
   // Animation values
   const cardOpacity = useRef(new Animated.Value(1)).current;
   const cardTranslateX = useRef(new Animated.Value(0)).current;
   const optionScale = useRef(new Animated.Value(1)).current;
 
-  // Generate quiz questions once on mount
-  const questions = useMemo(() => {
-    const seenWordIds = getSeenWordIds();
-    return generateQuiz(seenWordIds, allWords);
-  }, [allWords]);
-
   const currentQuestion = questions[currentIndex];
   const isLastQuestion = currentIndex === questions.length - 1;
 
-  // Handle no questions (shouldn't happen, but safety check)
-  useEffect(() => {
-    if (questions.length === 0) {
-      navigation.goBack();
-    }
-  }, [questions, navigation]);
-
   const handleOptionSelect = (index: number) => {
-    if (isRevealed) return; // Prevent re-selection after reveal
+    if (isRevealed) return;
 
     setSelectedIndex(index);
     setIsRevealed(true);
 
     const isCorrect = index === currentQuestion.correctIndex;
 
-    // Haptic feedback - light for correct, heavy for incorrect
+    // Haptic feedback
     if (isCorrect) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setCorrectCount(prev => prev + 1);
     } else {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     }
 
-    // Subtle scale animation on selection
+    // Subtle scale animation
     Animated.sequence([
       Animated.timing(optionScale, {
         toValue: 0.98,
@@ -91,24 +149,9 @@ export default function QuizScreen({ navigation }: Props) {
         useNativeDriver: true,
       }),
     ]).start();
-
-    // Record the result
-    const result: QuizQuestionResult = {
-      wordId: currentQuestion.wordId,
-      term: currentQuestion.term,
-      selectedIndex: index,
-      correctIndex: currentQuestion.correctIndex,
-      isCorrect,
-    };
-
-    setResults((prev) => [...prev, result]);
-
-    // Update mastery tracking
-    recordAnswer(currentQuestion.wordId, isCorrect);
   };
 
   const animateToNextQuestion = (callback: () => void) => {
-    // Slide out to left and fade
     Animated.parallel([
       Animated.timing(cardOpacity, {
         toValue: 0,
@@ -122,9 +165,7 @@ export default function QuizScreen({ navigation }: Props) {
       }),
     ]).start(() => {
       callback();
-      // Reset position to right side
       cardTranslateX.setValue(30);
-      // Slide in from right and fade in
       Animated.parallel([
         Animated.timing(cardOpacity, {
           toValue: 1,
@@ -142,69 +183,30 @@ export default function QuizScreen({ navigation }: Props) {
 
   const handleNext = () => {
     if (isLastQuestion) {
-      // Calculate final score
-      const score = results.length > 0
-        ? results.filter((r) => r.isCorrect).length
-        : (selectedIndex === currentQuestion.correctIndex ? 1 : 0);
+      // Calculate final score (include current answer)
+      const finalScore = correctCount + (selectedIndex === currentQuestion.correctIndex ? 1 : 0);
 
-      const finalResults = [...results];
-      if (results.length < questions.length) {
-        // Include current question result
-        finalResults.push({
-          wordId: currentQuestion.wordId,
-          term: currentQuestion.term,
-          selectedIndex: selectedIndex ?? -1,
-          correctIndex: currentQuestion.correctIndex,
-          isCorrect: selectedIndex === currentQuestion.correctIndex,
-        });
-      }
+      // Complete placement test and save result
+      completePlacementTest(finalScore);
 
-      const finalScore = finalResults.filter((r) => r.isCorrect).length;
+      // Trigger success haptic
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-      // Save quiz session
-      const session: QuizSession = {
-        date: new Date().toISOString().split('T')[0],
-        questions,
-        results: finalResults,
-        completedAt: new Date().toISOString(),
-        score: finalScore,
-        totalQuestions: questions.length,
-      };
-      setQuizSession(session);
-      markQuizComplete(finalScore);
-
-      // Navigate to summary
-      navigation.replace('QuizSummary', {
-        score: finalScore,
-        total: questions.length,
-        results: finalResults,
-      });
+      // Navigate to home
+      navigation.replace('Home');
     } else {
-      // Animate transition to next question
       animateToNextQuestion(() => {
-        setCurrentIndex((prev) => prev + 1);
+        setCurrentIndex(prev => prev + 1);
         setSelectedIndex(null);
         setIsRevealed(false);
       });
     }
   };
 
-  if (!currentQuestion) {
-    return (
-      <GradientBackground>
-        <View style={styles.container}>
-          <Text style={styles.emptyText}>No questions available</Text>
-        </View>
-      </GradientBackground>
-    );
-  }
-
   const getOptionStyle = (index: number) => {
     if (!isRevealed) {
       return selectedIndex === index ? styles.optionSelected : styles.option;
     }
-
-    // After reveal
     if (index === currentQuestion.correctIndex) {
       return styles.optionCorrect;
     }
@@ -218,7 +220,6 @@ export default function QuizScreen({ navigation }: Props) {
     if (!isRevealed) {
       return styles.optionText;
     }
-
     if (index === currentQuestion.correctIndex) {
       return styles.optionTextCorrect;
     }
@@ -234,6 +235,13 @@ export default function QuizScreen({ navigation }: Props) {
         style={styles.scrollContainer}
         contentContainerStyle={styles.scrollContent}
       >
+        <View style={styles.header}>
+          <Text style={styles.title}>Placement Quiz</Text>
+          <Text style={styles.subtitle}>
+            Let's find your vocabulary level
+          </Text>
+        </View>
+
         <Text style={styles.progress}>
           {currentIndex + 1} of {questions.length}
         </Text>
@@ -246,7 +254,10 @@ export default function QuizScreen({ navigation }: Props) {
         >
           <GlassCard elevated style={styles.questionCard}>
             <Text style={styles.questionLabel}>What does this word mean?</Text>
-            <Text style={styles.term}>{currentQuestion.term}</Text>
+            <Text style={styles.term}>{currentQuestion.word.term}</Text>
+            <Text style={styles.difficulty}>
+              Difficulty: {'★'.repeat(currentQuestion.word.difficulty)}{'☆'.repeat(5 - currentQuestion.word.difficulty)}
+            </Text>
           </GlassCard>
 
           <Animated.View
@@ -279,7 +290,7 @@ export default function QuizScreen({ navigation }: Props) {
         {isRevealed && (
           <View style={styles.actions}>
             <GradientButton
-              title={isLastQuestion ? 'See Results' : 'Next'}
+              title={isLastQuestion ? 'See My Level' : 'Next'}
               onPress={handleNext}
               variant="primary"
             />
@@ -297,17 +308,19 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     padding: spacing.lg,
-    paddingTop: spacing.xxl + spacing.xl,
+    paddingTop: spacing.xxl + spacing.lg,
   },
-  container: {
-    flex: 1,
-    padding: spacing.lg,
-    justifyContent: 'center',
-    alignItems: 'center',
+  header: {
+    marginBottom: spacing.lg,
   },
-  emptyText: {
+  title: {
+    ...typography.displayMedium,
+    color: colors.text,
+    marginBottom: spacing.xs,
+  },
+  subtitle: {
     ...typography.body,
-    color: colors.textMuted,
+    color: colors.textSecondary,
   },
   progress: {
     ...typography.label,
@@ -332,6 +345,12 @@ const styles = StyleSheet.create({
     ...typography.displayMedium,
     color: colors.text,
     textAlign: 'center',
+    marginBottom: spacing.sm,
+  },
+  difficulty: {
+    ...typography.label,
+    color: colors.accentPurple,
+    letterSpacing: 2,
   },
   optionsContainer: {
     gap: spacing.sm,

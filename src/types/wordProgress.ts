@@ -10,6 +10,12 @@ export interface WordProgress {
   consecutiveCorrect: number; // streak for mastery calculation
   lastSeenAt: string | null; // ISO date
   nextReviewDate: string | null; // ISO date (for SM-2, v2.1)
+  /**
+   * Numeric mastery level (0-3) for simpler tracking.
+   * Rule: correct +1, incorrect -1, clamped to [0, 3].
+   * 0 = new, 1 = learning, 2 = familiar, 3 = mastered
+   */
+  numericMasteryLevel: number;
 }
 
 export interface UserStats {
@@ -45,6 +51,7 @@ export function createDefaultProgress(wordId: string): WordProgress {
     consecutiveCorrect: 0,
     lastSeenAt: null,
     nextReviewDate: null,
+    numericMasteryLevel: 0,
   };
 }
 
