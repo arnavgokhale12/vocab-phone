@@ -16,12 +16,14 @@ import CustomListsScreen from "../screens/CustomListsScreen";
 import CustomListDetailScreen from "../screens/CustomListDetailScreen";
 import SessionSummaryScreen from "../screens/SessionSummaryScreen";
 import WeakWordsQuizScreen from "../screens/WeakWordsQuizScreen";
+import WelcomeScreen from "../screens/WelcomeScreen";
 import { SessionSummary, WeakWord } from "../types/sessionSummary";
-import { hasCompletedPlacementTest } from "../services/storage/mmkvStorage";
+import { hasCompletedPlacementTest, hasSeenWelcome } from "../services/storage/mmkvStorage";
 import { colors } from "../theme";
 import { QuizQuestionResult } from "../types/quiz";
 
 export type RootStackParamList = {
+  Welcome: undefined;
   PlacementTest: undefined;
   Home: undefined;
   Learn: undefined;
@@ -61,6 +63,7 @@ const linking = {
   prefixes: [Linking.createURL("/"), "vocabphone://"],
   config: {
     screens: {
+      Welcome: "welcome",
       PlacementTest: "placement",
       Pronunciation: "pronounce/:wordId",
       Home: "",
@@ -81,14 +84,25 @@ const linking = {
 
 export default function AppNavigator() {
   const [isReady, setIsReady] = useState(false);
+  const [needsWelcome, setNeedsWelcome] = useState(false);
   const [needsPlacement, setNeedsPlacement] = useState(false);
 
   useEffect(() => {
-    // Check if placement test has been completed
-    const completed = hasCompletedPlacementTest();
-    setNeedsPlacement(!completed);
+    // Check onboarding state
+    const seenWelcome = hasSeenWelcome();
+    const completedPlacement = hasCompletedPlacementTest();
+
+    setNeedsWelcome(!seenWelcome);
+    setNeedsPlacement(!completedPlacement);
     setIsReady(true);
   }, []);
+
+  // Determine initial route
+  const getInitialRoute = (): keyof RootStackParamList => {
+    if (needsWelcome) return 'Welcome';
+    if (needsPlacement) return 'PlacementTest';
+    return 'Home';
+  };
 
   // Don't render until we know the initial route
   if (!isReady) {
@@ -98,7 +112,7 @@ export default function AppNavigator() {
   return (
     <NavigationContainer theme={CustomDarkTheme} linking={linking}>
       <Stack.Navigator
-        initialRouteName={needsPlacement ? "PlacementTest" : "Home"}
+        initialRouteName={getInitialRoute()}
         screenOptions={{
           headerStyle: {
             backgroundColor: "transparent",
@@ -112,6 +126,11 @@ export default function AppNavigator() {
           headerShadowVisible: false,
         }}
       >
+        <Stack.Screen
+          name="Welcome"
+          component={WelcomeScreen}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="PlacementTest"
           component={PlacementTestScreen}

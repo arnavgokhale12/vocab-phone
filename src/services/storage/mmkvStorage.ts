@@ -35,6 +35,7 @@ const KEYS = {
   CUSTOM_LISTS: 'custom_lists',
   CUSTOM_LIST_SETTINGS: 'custom_list_settings',
   LAST_SESSION_SUMMARY: 'last_session_summary',
+  WELCOME_SEEN: 'has_seen_welcome',
 } as const;
 
 // --- Learn Session State ---
@@ -1005,6 +1006,16 @@ export function getWordFirstSeenDates(): Map<string, string> {
   }
 
   return result;
+}
+
+// --- Welcome Screen ---
+
+export function hasSeenWelcome(): boolean {
+  return storage.getString(KEYS.WELCOME_SEEN) === 'true';
+}
+
+export function markWelcomeSeen(): void {
+  storage.set(KEYS.WELCOME_SEEN, 'true');
 }
 
 // --- Utility ---

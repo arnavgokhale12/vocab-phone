@@ -38,13 +38,14 @@ export default function CustomListsScreen({ navigation }: Props) {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
+      headerBlurEffect: undefined,
       headerRight: () => (
         <TouchableOpacity
           onPress={() => navigation.navigate('CustomListDetail', {})}
-          style={styles.headerButton}
+          style={styles.addButton}
           activeOpacity={0.7}
         >
-          <Ionicons name="add" size={28} color={colors.accentPurple} />
+          <Ionicons name="add" size={22} color={colors.accentPurple} />
         </TouchableOpacity>
       ),
     });
@@ -141,9 +142,13 @@ export default function CustomListsScreen({ navigation }: Props) {
 }
 
 const styles = StyleSheet.create({
-  headerButton: {
-    padding: spacing.sm,
-    marginRight: spacing.sm,
+  addButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.glassOverlay,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   listContent: {
     padding: spacing.lg,

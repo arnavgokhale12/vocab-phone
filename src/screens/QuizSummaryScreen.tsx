@@ -205,5 +205,6 @@ const styles = StyleSheet.create({
   actions: {
     marginTop: 'auto',
     paddingBottom: spacing.lg,
+    gap: spacing.md,
   },
 });

@@ -178,11 +178,17 @@ export default function QuizScreen({ navigation }: Props) {
       markQuizComplete(finalScore);
 
       // Navigate to summary
-      navigation.replace('QuizSummary', {
-        score: finalScore,
-        total: questions.length,
-        results: finalResults,
-      });
+      try {
+        navigation.replace('QuizSummary', {
+          score: finalScore,
+          total: questions.length,
+          results: finalResults,
+        });
+      } catch (error) {
+        console.error('Failed to navigate to QuizSummary:', error);
+        // Fallback: go home if navigation fails
+        navigation.navigate('Home');
+      }
     } else {
       // Animate transition to next question
       animateToNextQuestion(() => {
