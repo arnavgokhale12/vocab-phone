@@ -201,8 +201,9 @@ export function setStats(stats: UserStats): void {
 
 // --- Daily Quiz Status ---
 
+// Use local timezone for consistent day boundaries
 function getTodayDateString(): string {
-  return new Date().toISOString().split('T')[0];
+  return getLocalTodayString();
 }
 
 export function getDailyQuizStatus(): DailyQuizStatus | null {
@@ -286,13 +287,7 @@ export function markQuizComplete(score: number): void {
 
 // --- Learn Session ---
 
-function getLocalDateString(): string {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
+// Reuse getLocalTodayString() - removed duplicate getLocalTodayString()
 
 export function getLearnSession(): LearnSessionState | null {
   const json = storage.getString(KEYS.LEARN_SESSION);
@@ -300,7 +295,7 @@ export function getLearnSession(): LearnSessionState | null {
 
   try {
     const parsed = JSON.parse(json) as LearnSessionState;
-    const today = getLocalDateString();
+    const today = getLocalTodayString();
     // Reset if it's a new day
     if (parsed.dateKey !== today) {
       return null;
@@ -317,7 +312,7 @@ export function setLearnSession(state: LearnSessionState): void {
 }
 
 export function updateLearnSessionIndex(index: number, wordId: string | null): void {
-  const today = getLocalDateString();
+  const today = getLocalTodayString();
   const current = getLearnSession();
 
   if (current && current.dateKey === today && !current.completed) {
@@ -336,7 +331,7 @@ export function updateLearnSessionIndex(index: number, wordId: string | null): v
 }
 
 export function markLearnSessionComplete(): void {
-  const today = getLocalDateString();
+  const today = getLocalTodayString();
   const current = getLearnSession();
 
   if (current && current.dateKey === today) {
@@ -353,7 +348,7 @@ export function markLearnSessionComplete(): void {
 }
 
 export function clearLearnSession(): void {
-  storage.remove(KEYS.LEARN_SESSION);
+  storage.set(KEYS.LEARN_SESSION, '');
 }
 
 // --- Bookmarks ---

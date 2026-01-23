@@ -16,6 +16,7 @@ import {
   setQuizSession,
   markQuizComplete,
 } from '../services/storage/mmkvStorage';
+import { Word } from '../types/word';
 import { generateQuiz } from '../services/QuizService';
 import { QuizQuestion, QuizQuestionResult, QuizSession } from '../types/quiz';
 import {
@@ -34,7 +35,7 @@ import { RootStackParamList } from '../navigation/AppNavigator';
 type Props = NativeStackScreenProps<RootStackParamList, 'Quiz'>;
 
 export default function QuizScreen({ navigation }: Props) {
-  const { words: allWords } = useWords();
+  const { words: allWords, todayWords } = useWords();
   const { recordAnswer } = useProgress();
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -47,11 +48,14 @@ export default function QuizScreen({ navigation }: Props) {
   const cardTranslateX = useRef(new Animated.Value(0)).current;
   const optionScale = useRef(new Animated.Value(1)).current;
 
-  // Generate quiz questions once on mount
+  // Generate quiz questions - validate seenWordIds against current todayWords
   const questions = useMemo(() => {
     const seenWordIds = getSeenWordIds();
-    return generateQuiz(seenWordIds, allWords);
-  }, [allWords]);
+    // Only quiz on words that are both seen AND still in today's word list
+    const todayWordIds = new Set(todayWords.map((w: Word) => w.id));
+    const validSeenIds = seenWordIds.filter((id: string) => todayWordIds.has(id));
+    return generateQuiz(validSeenIds, allWords);
+  }, [allWords, todayWords]);
 
   const currentQuestion = questions[currentIndex];
   const isLastQuestion = currentIndex === questions.length - 1;

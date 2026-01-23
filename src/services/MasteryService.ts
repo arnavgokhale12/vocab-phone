@@ -116,16 +116,23 @@ function updateStatsOnReview(wasNewlyMastered: boolean): void {
     if (stats.lastActiveDate) {
       const lastDate = new Date(stats.lastActiveDate);
       const todayDate = new Date(today);
-      const daysDiff = Math.floor(
-        (todayDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24)
-      );
 
-      if (daysDiff === 1) {
-        // Consecutive day
-        stats.currentStreak += 1;
-      } else if (daysDiff > 1) {
-        // Gap in streak
+      // Handle invalid dates (empty string creates Invalid Date)
+      if (isNaN(lastDate.getTime()) || isNaN(todayDate.getTime())) {
         stats.currentStreak = 1;
+      } else {
+        const daysDiff = Math.floor(
+          (todayDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
+
+        if (daysDiff === 1) {
+          // Consecutive day
+          stats.currentStreak += 1;
+        } else if (daysDiff > 1) {
+          // Gap in streak
+          stats.currentStreak = 1;
+        }
+        // daysDiff === 0 means same day, keep current streak
       }
     } else {
       // First ever review

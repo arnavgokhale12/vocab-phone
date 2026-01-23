@@ -53,6 +53,19 @@ export default function LearnScreen({ navigation }: Props) {
   // Track session results for summary
   const sessionResults = useRef<WordSessionResult[]>([]);
   const firstSeenDatesRef = useRef<Map<string, string>>(new Map());
+  const lastTodayKeyRef = useRef<string>(todayKey);
+
+  // Clear session data when day changes to prevent stale data
+  useEffect(() => {
+    if (lastTodayKeyRef.current !== todayKey) {
+      sessionResults.current = [];
+      firstSeenDatesRef.current.clear();
+      setIdx(0);
+      setRevealed(false);
+      setInitialized(false);
+      lastTodayKeyRef.current = todayKey;
+    }
+  }, [todayKey]);
 
   useEffect(() => {
     refreshTodayIfNeeded();
