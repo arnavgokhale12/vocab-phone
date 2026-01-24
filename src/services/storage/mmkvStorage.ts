@@ -36,6 +36,7 @@ const KEYS = {
   CUSTOM_LIST_SETTINGS: 'custom_list_settings',
   LAST_SESSION_SUMMARY: 'last_session_summary',
   WELCOME_SEEN: 'has_seen_welcome',
+  YESTERDAY_QUIZ_STATUS: 'yesterday_quiz_status',
 } as const;
 
 // --- Learn Session State ---
@@ -230,7 +231,7 @@ export function setDailyQuizStatus(status: DailyQuizStatus): void {
 
 export function addSeenWord(wordId: string): void {
   const today = getTodayDateString();
-  const current = getDailyQuizStatus();
+  const current = getRawDailyQuizStatus();
 
   if (current && current.date === today) {
     // Only add if not already in the list
@@ -239,13 +240,78 @@ export function addSeenWord(wordId: string): void {
       setDailyQuizStatus(current);
     }
   } else {
-    // New day, create fresh status
+    // New day - save current as yesterday's before overwriting
+    if (current && current.date) {
+      saveYesterdayQuizStatus(current);
+    }
+    // Create fresh status for today
     setDailyQuizStatus({
       date: today,
       seenWordIds: [wordId],
       quizTaken: false,
       quizScore: null,
     });
+  }
+}
+
+// Get raw status without date filtering (for internal use)
+function getRawDailyQuizStatus(): DailyQuizStatus | null {
+  const json = storage.getString(KEYS.DAILY_QUIZ_STATUS);
+  if (!json) return null;
+  try {
+    return JSON.parse(json) as DailyQuizStatus;
+  } catch (e) {
+    return null;
+  }
+}
+
+// Save yesterday's quiz status
+function saveYesterdayQuizStatus(status: DailyQuizStatus): void {
+  storage.set(KEYS.YESTERDAY_QUIZ_STATUS, JSON.stringify(status));
+}
+
+// Get yesterday's quiz status (only if it was actually yesterday)
+export function getYesterdayQuizStatus(): DailyQuizStatus | null {
+  const json = storage.getString(KEYS.YESTERDAY_QUIZ_STATUS);
+  if (!json) return null;
+
+  try {
+    const parsed = JSON.parse(json) as DailyQuizStatus;
+    // Verify it's actually yesterday
+    const yesterday = getYesterdayDateString();
+    if (parsed.date !== yesterday) {
+      return null;
+    }
+    return parsed;
+  } catch (e) {
+    return null;
+  }
+}
+
+// Get yesterday's date string
+function getYesterdayDateString(): string {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+// Check if yesterday's quiz was missed (had seen words but didn't take quiz)
+export function wasYesterdayQuizMissed(): boolean {
+  const yesterday = getYesterdayQuizStatus();
+  if (!yesterday) return false;
+  return yesterday.seenWordIds.length > 0 && !yesterday.quizTaken;
+}
+
+// Mark yesterday's quiz as taken
+export function markYesterdayQuizTaken(score: number): void {
+  const yesterday = getYesterdayQuizStatus();
+  if (yesterday) {
+    yesterday.quizTaken = true;
+    yesterday.quizScore = score;
+    storage.set(KEYS.YESTERDAY_QUIZ_STATUS, JSON.stringify(yesterday));
   }
 }
 

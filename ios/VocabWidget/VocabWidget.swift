@@ -73,12 +73,43 @@ struct Provider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<WordEntry>) -> Void) {
+        // Cycle to next word on refresh (if queue available)
+        cycleToNextWord()
+
         let entry = getCurrentEntry()
         let timeline = Timeline(
             entries: [entry],
             policy: .after(Date().addingTimeInterval(60 * 60 * 4))
         )
         completion(timeline)
+    }
+
+    /// Cycles to the next word in the queue on automatic refresh
+    private func cycleToNextWord() {
+        guard let defaults = suite,
+              let jsonString = defaults.string(forKey: "widget_word_queue"),
+              let queueData = jsonString.data(using: .utf8),
+              var queue = try? JSONDecoder().decode([[String: String]].self, from: queueData),
+              queue.count > 1 else {
+            return
+        }
+
+        // Move first word to end (cycle through)
+        let currentWord = queue.removeFirst()
+        queue.append(currentWord)
+
+        // Update current word to the new first item
+        if let nextWord = queue.first,
+           let wordData = try? JSONEncoder().encode(nextWord),
+           let wordString = String(data: wordData, encoding: .utf8) {
+            defaults.set(wordString, forKey: "widget_current_word")
+        }
+
+        // Save updated queue
+        if let newQueueData = try? JSONEncoder().encode(queue),
+           let queueString = String(data: newQueueData, encoding: .utf8) {
+            defaults.set(queueString, forKey: "widget_word_queue")
+        }
     }
 
     private func getCurrentStats() -> WidgetStats {

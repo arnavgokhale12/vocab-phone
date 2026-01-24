@@ -29,7 +29,7 @@ export type RootStackParamList = {
   Learn: undefined;
   Settings: undefined;
   Pronunciation: { wordId: string };
-  Quiz: undefined;
+  Quiz: { wordIds?: string[]; isYesterdayQuiz?: boolean } | undefined;
   QuizSummary: {
     score: number;
     total: number;

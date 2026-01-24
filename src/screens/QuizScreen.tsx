@@ -15,6 +15,7 @@ import {
   getSeenWordIds,
   setQuizSession,
   markQuizComplete,
+  markYesterdayQuizTaken,
 } from '../services/storage/mmkvStorage';
 import { Word } from '../types/word';
 import { generateQuiz } from '../services/QuizService';
@@ -34,8 +35,9 @@ import { RootStackParamList } from '../navigation/AppNavigator';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Quiz'>;
 
-export default function QuizScreen({ navigation }: Props) {
+export default function QuizScreen({ navigation, route }: Props) {
   const { words: allWords, todayWords } = useWords();
+  const { wordIds: providedWordIds, isYesterdayQuiz } = route.params ?? {};
   const { recordAnswer } = useProgress();
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -48,14 +50,18 @@ export default function QuizScreen({ navigation }: Props) {
   const cardTranslateX = useRef(new Animated.Value(0)).current;
   const optionScale = useRef(new Animated.Value(1)).current;
 
-  // Generate quiz questions - validate seenWordIds against current todayWords
+  // Generate quiz questions - use provided wordIds or today's seen words
   const questions = useMemo(() => {
+    if (providedWordIds && providedWordIds.length > 0) {
+      // Use provided word IDs (e.g., for yesterday's quiz)
+      return generateQuiz(providedWordIds, allWords);
+    }
+    // Default: use today's seen words validated against today's word list
     const seenWordIds = getSeenWordIds();
-    // Only quiz on words that are both seen AND still in today's word list
     const todayWordIds = new Set(todayWords.map((w: Word) => w.id));
     const validSeenIds = seenWordIds.filter((id: string) => todayWordIds.has(id));
     return generateQuiz(validSeenIds, allWords);
-  }, [allWords, todayWords]);
+  }, [allWords, todayWords, providedWordIds]);
 
   const currentQuestion = questions[currentIndex];
   const isLastQuestion = currentIndex === questions.length - 1;
@@ -175,7 +181,13 @@ export default function QuizScreen({ navigation }: Props) {
         totalQuestions: questions.length,
       };
       setQuizSession(session);
-      markQuizComplete(finalScore);
+
+      // Mark appropriate quiz as complete
+      if (isYesterdayQuiz) {
+        markYesterdayQuizTaken(finalScore);
+      } else {
+        markQuizComplete(finalScore);
+      }
 
       // Navigate to summary
       try {

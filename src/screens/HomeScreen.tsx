@@ -11,6 +11,8 @@ import {
   getCurrentWeekCompletions,
   getWeeklyTargetDays,
   WeekDayData,
+  wasYesterdayQuizMissed,
+  getYesterdayQuizStatus,
 } from "../services/storage/mmkvStorage";
 import { getLevelProgress, LevelProgress } from "../services/LevelService";
 import {
@@ -35,6 +37,12 @@ export default function HomeScreen({ navigation }: Props) {
     score: number | null;
     wordCount: number;
   }>({ canTake: false, isTaken: false, score: null, wordCount: 0 });
+
+  const [yesterdayQuiz, setYesterdayQuiz] = useState<{
+    missed: boolean;
+    wordIds: string[];
+    wordCount: number;
+  }>({ missed: false, wordIds: [], wordCount: 0 });
 
   const [levelProgress, setLevelProgress] = useState<LevelProgress>(
     getLevelProgress()
@@ -75,6 +83,20 @@ export default function HomeScreen({ navigation }: Props) {
 
       // Refresh level progress
       setLevelProgress(getLevelProgress());
+
+      // Check for missed yesterday's quiz
+      if (wasYesterdayQuizMissed()) {
+        const yesterdayStatus = getYesterdayQuizStatus();
+        if (yesterdayStatus) {
+          setYesterdayQuiz({
+            missed: true,
+            wordIds: yesterdayStatus.seenWordIds,
+            wordCount: yesterdayStatus.seenWordIds.length,
+          });
+        }
+      } else {
+        setYesterdayQuiz({ missed: false, wordIds: [], wordCount: 0 });
+      }
 
       // Refresh weekly data
       const weekData = getCurrentWeekCompletions();
@@ -138,6 +160,21 @@ export default function HomeScreen({ navigation }: Props) {
 
         {/* Secondary Actions */}
         <View style={styles.secondaryActions}>
+          {yesterdayQuiz.missed && (
+            <TouchableOpacity
+              style={[styles.secondaryButton, styles.yesterdayQuizButton]}
+              onPress={() => navigation.navigate("Quiz", {
+                wordIds: yesterdayQuiz.wordIds,
+                isYesterdayQuiz: true,
+              })}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="time-outline" size={18} color={colors.warning} />
+              <Text style={[styles.secondaryButtonText, styles.yesterdayQuizText]}>
+                Yesterday's Quiz ({yesterdayQuiz.wordCount})
+              </Text>
+            </TouchableOpacity>
+          )}
           {quizStatus.canTake && (
             <TouchableOpacity
               style={styles.secondaryButton}
@@ -268,5 +305,13 @@ const styles = StyleSheet.create({
     ...typography.label,
     color: colors.success,
     fontWeight: "600",
+  },
+  yesterdayQuizButton: {
+    backgroundColor: colors.warningLight,
+    borderWidth: 1,
+    borderColor: colors.warning + "40",
+  },
+  yesterdayQuizText: {
+    color: colors.warning,
   },
 });
