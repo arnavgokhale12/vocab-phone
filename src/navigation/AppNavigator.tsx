@@ -17,6 +17,7 @@ import CustomListDetailScreen from "../screens/CustomListDetailScreen";
 import SessionSummaryScreen from "../screens/SessionSummaryScreen";
 import WeakWordsQuizScreen from "../screens/WeakWordsQuizScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 import { SessionSummary, WeakWord } from "../types/sessionSummary";
 import { hasCompletedPlacementTest, hasSeenWelcome } from "../services/storage/mmkvStorage";
 import { colors } from "../theme";
@@ -42,6 +43,8 @@ export type RootStackParamList = {
   CustomListDetail: { listId?: string };
   SessionSummary: { summary?: SessionSummary };
   WeakWordsQuiz: { weakWords: WeakWord[] };
+  Profile: undefined;
+  Account: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -78,6 +81,8 @@ const linking = {
       CustomListDetail: "custom-list/:listId?",
       SessionSummary: "session-summary",
       WeakWordsQuiz: "weak-words-quiz",
+      Profile: "profile",
+      Account: "account",
     },
   },
 };
@@ -200,6 +205,11 @@ export default function AppNavigator() {
           name="WeakWordsQuiz"
           component={WeakWordsQuizScreen}
           options={{ title: "Review" }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{ title: "Profile" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
