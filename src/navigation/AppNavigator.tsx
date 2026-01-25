@@ -18,6 +18,7 @@ import SessionSummaryScreen from "../screens/SessionSummaryScreen";
 import WeakWordsQuizScreen from "../screens/WeakWordsQuizScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import AccountScreen from "../screens/AccountScreen";
 import { SessionSummary, WeakWord } from "../types/sessionSummary";
 import { hasCompletedPlacementTest, hasSeenWelcome } from "../services/storage/mmkvStorage";
 import { colors } from "../theme";
@@ -210,6 +211,11 @@ export default function AppNavigator() {
           name="Profile"
           component={ProfileScreen}
           options={{ title: "Profile" }}
+        />
+        <Stack.Screen
+          name="Account"
+          component={AccountScreen}
+          options={{ title: "Account" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
