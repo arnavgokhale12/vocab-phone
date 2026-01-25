@@ -15,6 +15,14 @@ import {
   MAX_WORDS_PER_LIST,
 } from '../../types/customList';
 import { SessionSummary } from '../../types/sessionSummary';
+import {
+  UserProfile,
+  AppPreferences,
+  AccuracyStats,
+  ExportData,
+  createDefaultUserProfile,
+  createDefaultAppPreferences,
+} from '../../types/userProfile';
 
 // Initialize MMKV instance
 export const storage = createMMKV({
@@ -37,6 +45,8 @@ const KEYS = {
   LAST_SESSION_SUMMARY: 'last_session_summary',
   WELCOME_SEEN: 'has_seen_welcome',
   YESTERDAY_QUIZ_STATUS: 'yesterday_quiz_status',
+  USER_PROFILE: 'user_profile',
+  APP_PREFERENCES: 'app_preferences',
 } as const;
 
 // --- Learn Session State ---
@@ -1082,6 +1092,160 @@ export function hasSeenWelcome(): boolean {
 
 export function markWelcomeSeen(): void {
   storage.set(KEYS.WELCOME_SEEN, 'true');
+}
+
+// --- User Profile ---
+
+function validateUserProfile(data: unknown): UserProfile | null {
+  if (!data || typeof data !== 'object') return null;
+  const p = data as Partial<UserProfile>;
+
+  return {
+    appleUserId: typeof p.appleUserId === 'string' ? p.appleUserId : null,
+    email: typeof p.email === 'string' ? p.email : null,
+    displayName: typeof p.displayName === 'string' ? p.displayName : null,
+    givenName: typeof p.givenName === 'string' ? p.givenName : null,
+    familyName: typeof p.familyName === 'string' ? p.familyName : null,
+    signedInAt: typeof p.signedInAt === 'string' ? p.signedInAt : null,
+  };
+}
+
+export function getUserProfile(): UserProfile | null {
+  const json = storage.getString(KEYS.USER_PROFILE);
+  if (!json) return null;
+
+  try {
+    const parsed = JSON.parse(json);
+    return validateUserProfile(parsed);
+  } catch (e) {
+    console.error('Failed to parse user profile:', e);
+    return null;
+  }
+}
+
+export function setUserProfile(profile: UserProfile): void {
+  storage.set(KEYS.USER_PROFILE, JSON.stringify(profile));
+}
+
+export function clearUserProfile(): void {
+  storage.set(KEYS.USER_PROFILE, '');
+}
+
+export function isSignedIn(): boolean {
+  const profile = getUserProfile();
+  return profile?.appleUserId !== null && profile?.appleUserId !== undefined;
+}
+
+// --- App Preferences ---
+
+function validateAppPreferences(data: unknown): AppPreferences {
+  if (!data || typeof data !== 'object') {
+    return createDefaultAppPreferences();
+  }
+
+  const p = data as Partial<AppPreferences>;
+
+  return {
+    pronunciationAccent:
+      p.pronunciationAccent === 'american' || p.pronunciationAccent === 'british'
+        ? p.pronunciationAccent
+        : 'american',
+    autoplayPronunciation:
+      typeof p.autoplayPronunciation === 'boolean' ? p.autoplayPronunciation : false,
+    hapticsEnabled:
+      typeof p.hapticsEnabled === 'boolean' ? p.hapticsEnabled : true,
+    difficultyPreference:
+      typeof p.difficultyPreference === 'number' &&
+      p.difficultyPreference >= 1 &&
+      p.difficultyPreference <= 5
+        ? (Math.floor(p.difficultyPreference) as 1 | 2 | 3 | 4 | 5)
+        : 3,
+  };
+}
+
+export function getAppPreferences(): AppPreferences {
+  const json = storage.getString(KEYS.APP_PREFERENCES);
+  if (!json) return createDefaultAppPreferences();
+
+  try {
+    const parsed = JSON.parse(json);
+    return validateAppPreferences(parsed);
+  } catch (e) {
+    console.error('Failed to parse app preferences:', e);
+    return createDefaultAppPreferences();
+  }
+}
+
+export function setAppPreferences(prefs: Partial<AppPreferences>): void {
+  const current = getAppPreferences();
+  const updated = { ...current, ...prefs };
+  storage.set(KEYS.APP_PREFERENCES, JSON.stringify(updated));
+}
+
+// --- Accuracy Stats (calculated from WordProgress) ---
+
+export function calculateAccuracyStats(): AccuracyStats {
+  const allProgress = getAllProgress();
+  const now = new Date();
+  const sevenDaysAgo = new Date(now);
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const sevenDaysAgoStr = sevenDaysAgo.toISOString().split('T')[0];
+
+  let last7DaysCorrect = 0;
+  let last7DaysTotal = 0;
+  let lifetimeCorrect = 0;
+  let lifetimeTotal = 0;
+
+  for (const progress of allProgress.values()) {
+    const correct = progress.correctCount;
+    const total = progress.correctCount + progress.incorrectCount;
+
+    lifetimeCorrect += correct;
+    lifetimeTotal += total;
+
+    // Check if word was seen in last 7 days
+    if (progress.lastSeenAt) {
+      const lastSeenDate = progress.lastSeenAt.split('T')[0];
+      if (lastSeenDate >= sevenDaysAgoStr) {
+        last7DaysCorrect += correct;
+        last7DaysTotal += total;
+      }
+    }
+  }
+
+  return {
+    last7Days: {
+      correct: last7DaysCorrect,
+      total: last7DaysTotal,
+      percentage: last7DaysTotal > 0 ? Math.round((last7DaysCorrect / last7DaysTotal) * 100) : 0,
+    },
+    lifetime: {
+      correct: lifetimeCorrect,
+      total: lifetimeTotal,
+      percentage: lifetimeTotal > 0 ? Math.round((lifetimeCorrect / lifetimeTotal) * 100) : 0,
+    },
+  };
+}
+
+// --- Data Export ---
+
+export function exportAllData(): ExportData {
+  const progressMap = getAllProgress();
+  const bookmarksMap = getBookmarks();
+  const customListsMap = getCustomLists();
+
+  return {
+    exportedAt: new Date().toISOString(),
+    appVersion: '2.2.0', // Update as needed
+    profile: getUserProfile(),
+    stats: getStats(),
+    preferences: getAppPreferences(),
+    wordProgress: Object.fromEntries(progressMap),
+    bookmarks: Object.fromEntries(bookmarksMap),
+    customLists: Object.fromEntries(customListsMap),
+    dailyCompletions: getDailyCompletions(),
+    placementTest: getPlacementTestResult(),
+  };
 }
 
 // --- Utility ---
