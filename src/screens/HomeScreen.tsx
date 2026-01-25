@@ -123,14 +123,23 @@ export default function HomeScreen({ navigation }: Props) {
             <Text style={styles.levelName}>{levelProgress.currentLevel.name}</Text>
           </TouchableOpacity>
 
-          {/* Header Icon */}
-          <TouchableOpacity
-            style={styles.headerIcon}
-            onPress={() => navigation.navigate("Library")}
-            activeOpacity={0.7}
-          >
-            <Ionicons name="library" size={20} color={colors.accentBlue} />
-          </TouchableOpacity>
+          {/* Header Icons */}
+          <View style={styles.headerIcons}>
+            <TouchableOpacity
+              style={styles.headerIcon}
+              onPress={() => navigation.navigate("Library")}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="library" size={20} color={colors.accentBlue} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.headerIcon}
+              onPress={() => navigation.navigate("Profile")}
+              activeOpacity={0.7}
+            >
+              <Ionicons name="person-circle-outline" size={22} color={colors.accentPurple} />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Hero Section */}
@@ -248,6 +257,10 @@ const styles = StyleSheet.create({
     ...typography.caption,
     color: colors.text,
     fontWeight: "600",
+  },
+  headerIcons: {
+    flexDirection: "row",
+    gap: spacing.sm,
   },
   headerIcon: {
     width: 36,
