@@ -94,6 +94,18 @@ export default function AccountScreen({ navigation }: Props) {
           />
         </PreferenceSection>
 
+        {/* Help Section */}
+        <PreferenceSection title="HELP">
+          <PreferenceRow
+            label="Help & Support"
+            subtitle="FAQs, feedback, and contact"
+            icon="help-circle-outline"
+            onPress={() => navigation.navigate('Support')}
+            showChevron
+            isLast
+          />
+        </PreferenceSection>
+
         {/* Legal Section */}
         <PreferenceSection title="LEGAL">
           <LegalLinks appVersion={APP_VERSION} />

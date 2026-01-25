@@ -19,6 +19,7 @@ import WeakWordsQuizScreen from "../screens/WeakWordsQuizScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import AccountScreen from "../screens/AccountScreen";
+import SupportScreen from "../screens/SupportScreen";
 import { SessionSummary, WeakWord } from "../types/sessionSummary";
 import { hasCompletedPlacementTest, hasSeenWelcome } from "../services/storage/mmkvStorage";
 import { colors } from "../theme";
@@ -46,6 +47,7 @@ export type RootStackParamList = {
   WeakWordsQuiz: { weakWords: WeakWord[] };
   Profile: undefined;
   Account: undefined;
+  Support: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -84,6 +86,7 @@ const linking = {
       WeakWordsQuiz: "weak-words-quiz",
       Profile: "profile",
       Account: "account",
+      Support: "support",
     },
   },
 };
@@ -216,6 +219,11 @@ export default function AppNavigator() {
           name="Account"
           component={AccountScreen}
           options={{ title: "Account" }}
+        />
+        <Stack.Screen
+          name="Support"
+          component={SupportScreen}
+          options={{ title: "Help & Support" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
