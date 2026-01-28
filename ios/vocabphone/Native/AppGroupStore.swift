@@ -10,8 +10,10 @@ class AppGroupStore: NSObject {
         suite?.set(value, forKey: key)
         suite?.synchronize()
 
-        // Reload widget timelines
-        WidgetCenter.shared.reloadAllTimelines()
+        // Reload widget timelines (must be on main thread)
+        DispatchQueue.main.async {
+            WidgetCenter.shared.reloadAllTimelines()
+        }
     }
 
     @objc
