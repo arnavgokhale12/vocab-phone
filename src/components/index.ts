@@ -8,6 +8,9 @@ export { WeeklyCalendar } from './WeeklyCalendar';
 export { MasteryBadge } from './MasteryBadge';
 export { ProgressCard } from './ProgressCard';
 export { StatsSheet } from './StatsSheet';
+export { HighlightedExample } from './HighlightedExample';
+export { RelatedTermPill } from './RelatedTermPill';
+export { EtymologyCard } from './EtymologyCard';
 
 // Common components
 export { default as ConfirmModal } from './common/ConfirmModal';

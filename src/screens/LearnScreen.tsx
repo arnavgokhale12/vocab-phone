@@ -26,11 +26,13 @@ import {
   requestPermission,
   scheduleDailyReminder,
 } from "../services/NotificationService";
+import { getEtymology } from "../services/EtymologyService";
 import {
   GradientBackground,
   GlassCard,
   GradientButton,
   CapsuleBadge,
+  EtymologyCard,
 } from "../components";
 import {
   colors,
@@ -176,6 +178,7 @@ export default function LearnScreen({ navigation }: Props) {
   };
 
   const w = todayWords[idx];
+  const etymology = w ? getEtymology(w.id) : null;
 
   // Build session summary and navigate
   const buildAndNavigateToSummary = useCallback(() => {
@@ -307,6 +310,11 @@ export default function LearnScreen({ navigation }: Props) {
                       </View>
                     ))}
                   </View>
+                </View>
+              )}
+              {etymology && (
+                <View style={styles.etymologySection}>
+                  <EtymologyCard etymology={etymology} compact />
                 </View>
               )}
             </View>
@@ -446,6 +454,12 @@ const styles = StyleSheet.create({
   synonymText: {
     ...typography.label,
     color: colors.accentBlue,
+  },
+  etymologySection: {
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.borderLight,
   },
   actions: {
     gap: spacing.md,

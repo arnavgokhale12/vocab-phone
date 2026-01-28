@@ -6,13 +6,20 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/AppNavigator';
 import { SEED_WORDS } from '../data/seedWords';
 import { Word } from '../types/word';
+import { WordRelationships, WordEtymology } from '../types/wordContent';
 import { getProgress, isBookmarked, toggleBookmark } from '../services/storage/mmkvStorage';
+import { getExamples, hasExamples } from '../services/ExamplesService';
+import { getRelationships, hasRelationships } from '../services/RelationshipsService';
+import { getEtymology, hasEtymology } from '../services/EtymologyService';
 import { WordProgress } from '../types/wordProgress';
 import {
   GradientBackground,
   GlassCard,
   CapsuleBadge,
   MasteryBadge,
+  HighlightedExample,
+  RelatedTermPill,
+  EtymologyCard,
 } from '../components';
 import {
   colors,
@@ -55,6 +62,10 @@ export default function WordDetailScreen({ route }: Props) {
   const [word, setWord] = useState<Word | null>(null);
   const [progress, setProgress] = useState<WordProgress | null>(null);
   const [bookmarked, setBookmarked] = useState(false);
+  const [examples, setExamples] = useState<string[]>([]);
+  const [relationships, setRelationships] = useState<WordRelationships | null>(null);
+  const [etymology, setEtymology] = useState<WordEtymology | null>(null);
+  const [showAllExamples, setShowAllExamples] = useState(false);
 
   useEffect(() => {
     const foundWord = SEED_WORDS.find((w) => w.id === wordId);
@@ -63,6 +74,25 @@ export default function WordDetailScreen({ route }: Props) {
     if (foundWord) {
       setProgress(getProgress(foundWord.id));
       setBookmarked(isBookmarked(foundWord.id));
+
+      // Load examples and relationships
+      if (hasExamples(foundWord.id)) {
+        setExamples(getExamples(foundWord.id));
+      } else {
+        setExamples([]);
+      }
+
+      if (hasRelationships(foundWord.id)) {
+        setRelationships(getRelationships(foundWord.id));
+      } else {
+        setRelationships(null);
+      }
+
+      if (hasEtymology(foundWord.id)) {
+        setEtymology(getEtymology(foundWord.id));
+      } else {
+        setEtymology(null);
+      }
     }
   }, [wordId]);
 
@@ -149,18 +179,78 @@ export default function WordDetailScreen({ route }: Props) {
           </View>
 
           {word.synonyms && word.synonyms.length > 0 && (
-            <View style={styles.synonymsContainer}>
-              <Text style={styles.synonymsLabel}>Similar:</Text>
-              <View style={styles.synonymsList}>
+            <View style={styles.relatedTermsContainer}>
+              <Text style={styles.relatedTermsLabel}>Similar:</Text>
+              <View style={styles.relatedTermsList}>
                 {word.synonyms.map((synonym, index) => (
-                  <View key={index} style={styles.synonymPill}>
-                    <Text style={styles.synonymText}>{synonym}</Text>
-                  </View>
+                  <RelatedTermPill key={index} term={synonym} variant="synonym" />
+                ))}
+              </View>
+            </View>
+          )}
+
+          {relationships?.antonyms && relationships.antonyms.length > 0 && (
+            <View style={styles.relatedTermsContainer}>
+              <Text style={styles.relatedTermsLabel}>Opposite:</Text>
+              <View style={styles.relatedTermsList}>
+                {relationships.antonyms.map((antonym, index) => (
+                  <RelatedTermPill key={index} term={antonym} variant="antonym" />
+                ))}
+              </View>
+            </View>
+          )}
+
+          {relationships?.wordFamily && relationships.wordFamily.length > 0 && (
+            <View style={styles.relatedTermsContainer}>
+              <Text style={styles.relatedTermsLabel}>Word Family:</Text>
+              <View style={styles.relatedTermsList}>
+                {relationships.wordFamily.map((member, index) => (
+                  <RelatedTermPill
+                    key={index}
+                    term={member.term}
+                    partOfSpeech={member.partOfSpeech}
+                    variant="family"
+                  />
                 ))}
               </View>
             </View>
           )}
         </GlassCard>
+
+        {/* Examples */}
+        {examples.length > 0 && (
+          <GlassCard style={styles.examplesCard}>
+            <Text style={styles.sectionTitle}>Examples</Text>
+            {(showAllExamples ? examples : examples.slice(0, 2)).map(
+              (ex, index) => (
+                <HighlightedExample
+                  key={index}
+                  sentence={ex}
+                  targetWord={word.term}
+                />
+              ),
+            )}
+            {examples.length > 2 && (
+              <TouchableOpacity
+                onPress={() => setShowAllExamples(!showAllExamples)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.showMoreText}>
+                  {showAllExamples
+                    ? 'Show less'
+                    : `Show all ${examples.length} examples`}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </GlassCard>
+        )}
+
+        {/* Etymology */}
+        {etymology && (
+          <GlassCard style={styles.etymologyCard}>
+            <EtymologyCard etymology={etymology} />
+          </GlassCard>
+        )}
 
         {/* Stats Card */}
         <GlassCard style={styles.statsCard}>
@@ -301,30 +391,38 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontStyle: 'italic',
   },
-  synonymsContainer: {
+  relatedTermsContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     flexWrap: 'wrap',
     gap: spacing.sm,
+    marginBottom: spacing.sm,
   },
-  synonymsLabel: {
+  relatedTermsLabel: {
     ...typography.label,
     color: colors.textMuted,
+    marginTop: spacing.xs,
   },
-  synonymsList: {
+  relatedTermsList: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.xs,
+    flex: 1,
   },
-  synonymPill: {
-    backgroundColor: colors.accentBlue + '25',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: borderRadius.xl,
+  examplesCard: {
+    marginBottom: spacing.md,
   },
-  synonymText: {
+  sectionTitle: {
+    ...typography.h3,
+    color: colors.text,
+    marginBottom: spacing.md,
+  },
+  showMoreText: {
     ...typography.label,
     color: colors.accentBlue,
+    marginTop: spacing.xs,
+  },
+  etymologyCard: {
+    marginBottom: spacing.md,
   },
   statsCard: {
     marginBottom: spacing.md,

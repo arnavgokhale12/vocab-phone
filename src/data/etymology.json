@@ -1,0 +1,974 @@
+{
+  "perspicacious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "per-", "language": "Latin", "literalMeaning": "through" },
+      { "root": "specere", "language": "Latin", "literalMeaning": "to look" }
+    ],
+    "evolution": "From Latin 'perspicax' meaning sharp-sighted. Originally referred to physical vision, then shifted to mental perception and discernment.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'looking through' — someone who sees right through things to the truth."
+  },
+  "loquacious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "loqui", "language": "Latin", "literalMeaning": "to speak" },
+      { "root": "-acious", "language": "Latin", "literalMeaning": "inclined to" }
+    ],
+    "evolution": "From Latin 'loquax' meaning talkative. The meaning has stayed remarkably stable — it has always meant someone who talks too much.",
+    "enteredEnglish": "Mid 17th century",
+    "plainEnglishSummary": "Straight from Latin for 'inclined to talk' — and it still means exactly that."
+  },
+  "recalcitrant": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "re-", "language": "Latin", "literalMeaning": "back" },
+      { "root": "calcitrare", "language": "Latin", "literalMeaning": "to kick" }
+    ],
+    "evolution": "From Latin 'recalcitrare' meaning to kick back, originally describing a stubborn horse. Extended to any defiant resistance to authority.",
+    "enteredEnglish": "Early 19th century",
+    "plainEnglishSummary": "From Latin for 'kicking back' — like a stubborn horse that refuses to move."
+  },
+  "sycophantic": {
+    "languageOfOrigin": "Greek → Latin → English",
+    "roots": [
+      { "root": "sykon", "language": "Greek", "literalMeaning": "fig" },
+      { "root": "phainein", "language": "Greek", "literalMeaning": "to show" }
+    ],
+    "evolution": "From Greek 'sykophantes' meaning an informer. The original connection to figs is debated — possibly referring to someone who informed on illegal fig exporters. It shifted to mean a flatterer seeking personal gain.",
+    "enteredEnglish": "Mid 16th century",
+    "plainEnglishSummary": "From a mysterious Greek word for an informer — it evolved to mean someone who flatters the powerful."
+  },
+  "pulchritudinous": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "pulchritudo", "language": "Latin", "literalMeaning": "beauty" },
+      { "root": "pulcher", "language": "Latin", "literalMeaning": "beautiful" }
+    ],
+    "evolution": "From Latin 'pulchritudo' meaning beauty. Ironically, this word for beauty is itself considered one of the ugliest-sounding words in English.",
+    "enteredEnglish": "Late 15th century",
+    "plainEnglishSummary": "Straight from Latin for 'beauty' — an ugly-sounding word that means beautiful."
+  },
+  "sesquipedalian": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "sesqui-", "language": "Latin", "literalMeaning": "one and a half" },
+      { "root": "pes", "language": "Latin", "literalMeaning": "foot" }
+    ],
+    "evolution": "From Latin 'sesquipedalis' meaning a foot and a half long. The Roman poet Horace used 'sesquipedalia verba' to mock pretentiously long words — the word itself became the joke.",
+    "enteredEnglish": "Mid 17th century",
+    "plainEnglishSummary": "Latin for 'a foot and a half long' — a big word that makes fun of big words."
+  },
+  "obsequious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "ob-", "language": "Latin", "literalMeaning": "toward" },
+      { "root": "sequi", "language": "Latin", "literalMeaning": "to follow" }
+    ],
+    "evolution": "From Latin 'obsequiosus' meaning compliant or yielding. Originally neutral, meaning simply dutiful. Over time it took on a negative sense of excessive, servile compliance.",
+    "enteredEnglish": "Late 15th century",
+    "plainEnglishSummary": "From Latin for 'following toward' — someone who follows too eagerly, trying too hard to please."
+  },
+  "truculent": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "truculentus", "language": "Latin", "literalMeaning": "fierce, savage" },
+      { "root": "trux", "language": "Latin", "literalMeaning": "fierce" }
+    ],
+    "evolution": "From Latin 'truculentus' meaning fierce or savage. Originally described physical ferocity, then broadened to include verbal aggression and a combative attitude.",
+    "enteredEnglish": "Mid 16th century",
+    "plainEnglishSummary": "From Latin for 'fierce' — someone always ready for a fight."
+  },
+  "magnanimous": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "magnus", "language": "Latin", "literalMeaning": "great" },
+      { "root": "animus", "language": "Latin", "literalMeaning": "soul, spirit" }
+    ],
+    "evolution": "From Latin 'magnanimus' meaning great-souled. Aristotle considered magnanimity the crowning virtue — a noble generosity especially toward those who might not deserve it.",
+    "enteredEnglish": "Mid 16th century",
+    "plainEnglishSummary": "From Latin for 'great soul' — generous and forgiving in a noble way."
+  },
+  "equanimity": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "aequus", "language": "Latin", "literalMeaning": "even, equal" },
+      { "root": "animus", "language": "Latin", "literalMeaning": "mind, spirit" }
+    ],
+    "evolution": "From Latin 'aequanimitas' meaning evenness of mind. The concept traces to Stoic philosophy, where maintaining an even spirit regardless of circumstances was considered the highest virtue.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'even mind' — staying calm and composed no matter what happens."
+  },
+  "perfidious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "per-", "language": "Latin", "literalMeaning": "to destruction" },
+      { "root": "fides", "language": "Latin", "literalMeaning": "faith" }
+    ],
+    "evolution": "From Latin 'perfidiosus' meaning treacherous. Literally means breaking faith. Historically used in diplomacy — 'perfidious Albion' was a French epithet for England's perceived unreliability.",
+    "enteredEnglish": "Late 16th century",
+    "plainEnglishSummary": "From Latin for 'destroying faith' — a betrayal of trust."
+  },
+  "ineffable": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "in-", "language": "Latin", "literalMeaning": "not" },
+      { "root": "effabilis", "language": "Latin", "literalMeaning": "able to be spoken" }
+    ],
+    "evolution": "From Latin 'ineffabilis' meaning unspeakable. Originally used in religious contexts for the name of God, which was too sacred to utter. Broadened to mean any experience beyond words.",
+    "enteredEnglish": "Late 14th century",
+    "plainEnglishSummary": "From Latin for 'not speakable' — something so powerful that words simply fail."
+  },
+  "lugubrious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "lugubris", "language": "Latin", "literalMeaning": "mournful" },
+      { "root": "lugere", "language": "Latin", "literalMeaning": "to mourn" }
+    ],
+    "evolution": "From Latin 'lugubris' meaning pertaining to mourning. Has always carried a sense of exaggerated or theatrical sadness, slightly more dramatic than simply 'sad'.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'to mourn' — sad in a heavy, dramatic way."
+  },
+  "obstreperous": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "ob-", "language": "Latin", "literalMeaning": "against" },
+      { "root": "strepere", "language": "Latin", "literalMeaning": "to make noise" }
+    ],
+    "evolution": "From Latin 'obstreperus' meaning making a noise against something. Has always described rowdy, uncontrollable noise and behavior.",
+    "enteredEnglish": "Late 16th century",
+    "plainEnglishSummary": "From Latin for 'making noise against' — loud, rowdy, and hard to control."
+  },
+  "pusillanimous": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "pusillus", "language": "Latin", "literalMeaning": "very small" },
+      { "root": "animus", "language": "Latin", "literalMeaning": "spirit, courage" }
+    ],
+    "evolution": "From Latin 'pusillanimis' meaning having a very small spirit. Used by medieval theologians as the opposite of magnanimous — literally a small-souled person lacking courage.",
+    "enteredEnglish": "Late 14th century",
+    "plainEnglishSummary": "From Latin for 'tiny spirit' — the opposite of brave, someone whose courage is laughably small."
+  },
+  "sanguine": {
+    "languageOfOrigin": "Latin → Old French → English",
+    "roots": [
+      { "root": "sanguineus", "language": "Latin", "literalMeaning": "of blood" },
+      { "root": "sanguis", "language": "Latin", "literalMeaning": "blood" }
+    ],
+    "evolution": "From Latin 'sanguineus' meaning blood-red. In medieval medicine, people with a 'sanguine' temperament (excess blood) were believed to be cheerful and optimistic. The medical theory died, but the personality meaning survived.",
+    "enteredEnglish": "Late 14th century",
+    "plainEnglishSummary": "From Latin for 'blood' — medieval doctors thought too much blood made you optimistic."
+  },
+  "vituperative": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "vitium", "language": "Latin", "literalMeaning": "fault" },
+      { "root": "parare", "language": "Latin", "literalMeaning": "to prepare" }
+    ],
+    "evolution": "From Latin 'vituperare' meaning to find fault with. Has always described harsh, abusive criticism — language designed to wound.",
+    "enteredEnglish": "Mid 16th century",
+    "plainEnglishSummary": "From Latin for 'preparing faults' — criticism so harsh it's meant to wound."
+  },
+  "ephemeral": {
+    "languageOfOrigin": "Greek",
+    "roots": [
+      { "root": "epi-", "language": "Greek", "literalMeaning": "on, for" },
+      { "root": "hemera", "language": "Greek", "literalMeaning": "day" }
+    ],
+    "evolution": "From Greek 'ephemeros' meaning lasting only a day. Originally described insects that live for just one day. Broadened to mean anything short-lived.",
+    "enteredEnglish": "Late 16th century",
+    "plainEnglishSummary": "From Greek for 'lasting one day' — originally about mayflies, now about anything fleeting."
+  },
+  "mercurial": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "Mercurius", "language": "Latin", "literalMeaning": "Mercury (Roman god)" }
+    ],
+    "evolution": "Named after Mercury, the Roman messenger god known for speed and unpredictability. Also connected to the liquid metal mercury (quicksilver), which moves erratically. Both associations gave us the meaning of volatile and changeable.",
+    "enteredEnglish": "Late 14th century",
+    "plainEnglishSummary": "Named after Mercury, the unpredictable Roman god — moods that shift like quicksilver."
+  },
+  "sagacious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "sagax", "language": "Latin", "literalMeaning": "keen-scented, wise" },
+      { "root": "sagire", "language": "Latin", "literalMeaning": "to perceive keenly" }
+    ],
+    "evolution": "From Latin 'sagax' originally meaning keen-scented, like a hunting dog tracking prey. Extended to mental sharpness — someone who can sniff out the truth.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'keen-scented' — like a hound on a trail, but for good judgment."
+  },
+  "verisimilitude": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "verus", "language": "Latin", "literalMeaning": "true" },
+      { "root": "similis", "language": "Latin", "literalMeaning": "similar" }
+    ],
+    "evolution": "From Latin 'verisimilitudo' meaning the appearance of truth. Aristotle discussed the concept in his Poetics — fiction doesn't need to be true, just believable.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'similar to truth' — how real something feels, even if it's made up."
+  },
+  "pernicious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "per-", "language": "Latin", "literalMeaning": "thoroughly" },
+      { "root": "nex", "language": "Latin", "literalMeaning": "death, killing" }
+    ],
+    "evolution": "From Latin 'perniciosus' meaning destructive. Literally 'thoroughly deadly.' Softened over time from outright lethal to gradually harmful.",
+    "enteredEnglish": "Late 15th century",
+    "plainEnglishSummary": "From Latin for 'thoroughly deadly' — harm that works slowly and quietly."
+  },
+  "ennui": {
+    "languageOfOrigin": "French → Latin",
+    "roots": [
+      { "root": "ennui", "language": "Old French", "literalMeaning": "annoyance" },
+      { "root": "inodiare", "language": "Latin", "literalMeaning": "to make hateful" }
+    ],
+    "evolution": "From Old French 'enui' meaning annoyance, from Latin 'in odio' (in hatred). The French refined it into a deeper existential boredom — not just annoyance but a world-weary dissatisfaction with life.",
+    "enteredEnglish": "Mid 18th century",
+    "plainEnglishSummary": "Borrowed from French, where it means a deep, sophisticated boredom — more existential than just being bored."
+  },
+  "insouciance": {
+    "languageOfOrigin": "French → Latin",
+    "roots": [
+      { "root": "in-", "language": "French", "literalMeaning": "not" },
+      { "root": "soucier", "language": "French", "literalMeaning": "to care" }
+    ],
+    "evolution": "From French 'insouciance' meaning carelessness. The French word 'soucier' comes from Latin 'sollicitare' (to disturb). In English it implies an appealing casualness rather than genuine negligence.",
+    "enteredEnglish": "Late 18th century",
+    "plainEnglishSummary": "From French for 'not caring' — but in a cool, carefree way, not a negligent one."
+  },
+  "schadenfreude": {
+    "languageOfOrigin": "German",
+    "roots": [
+      { "root": "Schaden", "language": "German", "literalMeaning": "damage, harm" },
+      { "root": "Freude", "language": "German", "literalMeaning": "joy" }
+    ],
+    "evolution": "A German compound word meaning joy from harm. English borrowed it because no single English word captures this specific guilty pleasure. The concept appears across cultures but German named it most directly.",
+    "enteredEnglish": "Late 19th century",
+    "plainEnglishSummary": "German for 'damage-joy' — the guilty pleasure of watching someone else fail."
+  },
+  "zeitgeist": {
+    "languageOfOrigin": "German",
+    "roots": [
+      { "root": "Zeit", "language": "German", "literalMeaning": "time" },
+      { "root": "Geist", "language": "German", "literalMeaning": "spirit, ghost" }
+    ],
+    "evolution": "A German compound meaning the spirit of the times. Popularized by the philosopher Hegel, who believed each era had its own defining spirit that shaped events and culture.",
+    "enteredEnglish": "Mid 19th century",
+    "plainEnglishSummary": "German for 'time-spirit' — the invisible mood that defines an entire era."
+  },
+  "apotheosis": {
+    "languageOfOrigin": "Greek → Latin → English",
+    "roots": [
+      { "root": "apo-", "language": "Greek", "literalMeaning": "from" },
+      { "root": "theos", "language": "Greek", "literalMeaning": "god" }
+    ],
+    "evolution": "From Greek 'apotheosis' meaning making into a god. Originally described the Roman practice of deifying dead emperors. Broadened to mean any elevation to the highest point or ideal form.",
+    "enteredEnglish": "Late 16th century",
+    "plainEnglishSummary": "From Greek for 'making into a god' — the absolute peak of something."
+  },
+  "antediluvian": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "ante-", "language": "Latin", "literalMeaning": "before" },
+      { "root": "diluvium", "language": "Latin", "literalMeaning": "flood" }
+    ],
+    "evolution": "From Latin meaning 'before the flood,' referring to Noah's Flood in the Bible. Used literally in 17th-century science to describe pre-Flood geology, then humorously extended to mean ridiculously outdated.",
+    "enteredEnglish": "Mid 17th century",
+    "plainEnglishSummary": "From Latin for 'before the Flood' — so old-fashioned it might predate Noah."
+  },
+  "tergiversation": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "tergum", "language": "Latin", "literalMeaning": "back" },
+      { "root": "versare", "language": "Latin", "literalMeaning": "to turn" }
+    ],
+    "evolution": "From Latin 'tergiversari' meaning to turn one's back. Originally described desertion in battle, then broadened to mean any evasive or equivocating behavior.",
+    "enteredEnglish": "Mid 16th century",
+    "plainEnglishSummary": "From Latin for 'turning your back' — dodging a question by never giving a straight answer."
+  },
+  "propinquity": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "propinquus", "language": "Latin", "literalMeaning": "near" },
+      { "root": "prope", "language": "Latin", "literalMeaning": "near" }
+    ],
+    "evolution": "From Latin 'propinquitas' meaning nearness. Used for both physical proximity and kinship. In psychology, the 'propinquity effect' describes how people form bonds with those nearby.",
+    "enteredEnglish": "Late 14th century",
+    "plainEnglishSummary": "From Latin for 'nearness' — closeness, whether in space, time, or relationship."
+  },
+  "solipsistic": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "solus", "language": "Latin", "literalMeaning": "alone" },
+      { "root": "ipse", "language": "Latin", "literalMeaning": "self" }
+    ],
+    "evolution": "From Latin 'solus ipse' meaning alone self. Coined as a philosophical term for the theory that only one's own mind is sure to exist. Extended to describe extreme self-centeredness.",
+    "enteredEnglish": "Late 19th century",
+    "plainEnglishSummary": "From Latin for 'only the self' — so self-centered that nothing else seems real."
+  },
+  "surreptitious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "sub-", "language": "Latin", "literalMeaning": "under, secretly" },
+      { "root": "rapere", "language": "Latin", "literalMeaning": "to seize" }
+    ],
+    "evolution": "From Latin 'surrepticius' meaning stolen or obtained secretly. Originally a legal term for obtaining something through fraud. Broadened to mean anything done secretly.",
+    "enteredEnglish": "Late 15th century",
+    "plainEnglishSummary": "From Latin for 'secretly seized' — doing something sneaky when no one is looking."
+  },
+  "mendacious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "mendax", "language": "Latin", "literalMeaning": "lying, deceitful" },
+      { "root": "mendum", "language": "Latin", "literalMeaning": "fault, defect" }
+    ],
+    "evolution": "From Latin 'mendax' meaning given to lying. Related to 'mendum' (a fault), suggesting that lying is itself a defect of character.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'faulty' — a liar, whose character has a built-in defect."
+  },
+  "quotidian": {
+    "languageOfOrigin": "Latin → Old French → English",
+    "roots": [
+      { "root": "quotidianus", "language": "Latin", "literalMeaning": "daily" },
+      { "root": "quotidie", "language": "Latin", "literalMeaning": "each day" }
+    ],
+    "evolution": "From Latin 'quotidianus' meaning daily. Originally a medical term for a fever that recurs daily. Broadened to mean everyday or mundane — the ordinary routines of life.",
+    "enteredEnglish": "Late 14th century",
+    "plainEnglishSummary": "From Latin for 'each day' — the unremarkable stuff that fills our everyday lives."
+  },
+  "parsimonious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "parcere", "language": "Latin", "literalMeaning": "to spare, be thrifty" },
+      { "root": "parsimonia", "language": "Latin", "literalMeaning": "thrift, frugality" }
+    ],
+    "evolution": "From Latin 'parsimonia' meaning economy or thrift. The Latin word was neutral or even positive, but in English it shifted to imply excessive stinginess.",
+    "enteredEnglish": "Late 16th century",
+    "plainEnglishSummary": "From Latin for 'thrift' — but pushed past frugal into painfully cheap."
+  },
+  "desultory": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "desultor", "language": "Latin", "literalMeaning": "a leaper" },
+      { "root": "desilire", "language": "Latin", "literalMeaning": "to leap down" }
+    ],
+    "evolution": "From Latin 'desultorius,' describing a circus rider who jumped between horses. Extended to mean anything that jumps erratically from one thing to another without purpose.",
+    "enteredEnglish": "Late 16th century",
+    "plainEnglishSummary": "From Latin for 'a horse-jumper' — bouncing from topic to topic without landing anywhere."
+  },
+  "laconic": {
+    "languageOfOrigin": "Greek → Latin → English",
+    "roots": [
+      { "root": "Lakonikos", "language": "Greek", "literalMeaning": "of Laconia (Sparta)" }
+    ],
+    "evolution": "From Greek 'Lakonikos' meaning Spartan. The Spartans were famous for using few words. When Philip II of Macedon threatened 'If I invade Laconia, I shall destroy Sparta,' the Spartans replied with one word: 'If.'",
+    "enteredEnglish": "Mid 16th century",
+    "plainEnglishSummary": "Named after the Spartans, who were famous for saying as little as possible."
+  },
+  "ebullient": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "e-", "language": "Latin", "literalMeaning": "out" },
+      { "root": "bullire", "language": "Latin", "literalMeaning": "to bubble, boil" }
+    ],
+    "evolution": "From Latin 'ebullientem' meaning boiling over. Originally described liquids bubbling up. Extended to describe people who bubble over with enthusiasm and energy.",
+    "enteredEnglish": "Late 16th century",
+    "plainEnglishSummary": "From Latin for 'boiling over' — someone bubbling with so much energy it spills out."
+  },
+  "penurious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "penuria", "language": "Latin", "literalMeaning": "want, need, scarcity" }
+    ],
+    "evolution": "From Latin 'penuria' meaning scarcity or want. Carries a double meaning: extremely poor, or extremely unwilling to spend money even if you have it.",
+    "enteredEnglish": "Late 16th century",
+    "plainEnglishSummary": "From Latin for 'scarcity' — either truly broke or acting like it."
+  },
+  "obstinate": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "obstinare", "language": "Latin", "literalMeaning": "to persist, stand firm" },
+      { "root": "ob-", "language": "Latin", "literalMeaning": "against" }
+    ],
+    "evolution": "From Latin 'obstinatus' meaning resolved or determined. Originally somewhat positive (firm resolve), but shifted in English toward negative stubbornness and pigheadedness.",
+    "enteredEnglish": "Late 14th century",
+    "plainEnglishSummary": "From Latin for 'standing against' — stubbornly refusing to budge, no matter what."
+  },
+  "obfuscate": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "ob-", "language": "Latin", "literalMeaning": "over" },
+      { "root": "fuscare", "language": "Latin", "literalMeaning": "to darken" }
+    ],
+    "evolution": "From Latin 'obfuscare' meaning to darken or obscure. Originally about literal darkness, then became a metaphor for deliberately making things unclear or confusing.",
+    "enteredEnglish": "Late 15th century",
+    "plainEnglishSummary": "From Latin for 'to darken over' — throwing a fog of confusion over something clear."
+  },
+  "garrulous": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "garrulus", "language": "Latin", "literalMeaning": "chattering, talkative" },
+      { "root": "garrire", "language": "Latin", "literalMeaning": "to chatter" }
+    ],
+    "evolution": "From Latin 'garrulus' meaning chattering. In Latin it was also used for the sound of babbling water and chattering birds. The sense of tedious, trivial chatter has always been central.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'chattering' — talking on and on, usually about nothing important."
+  },
+  "supercilious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "supercilium", "language": "Latin", "literalMeaning": "eyebrow" },
+      { "root": "super-", "language": "Latin", "literalMeaning": "above" }
+    ],
+    "evolution": "From Latin 'supercilium' meaning eyebrow. The raised eyebrow has always been a universal sign of contempt. The Latin word itself came to mean haughtiness, and English kept that figurative meaning.",
+    "enteredEnglish": "Early 16th century",
+    "plainEnglishSummary": "From Latin for 'eyebrow' — the look of someone raising a brow in contempt."
+  },
+  "grandiloquent": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "grandis", "language": "Latin", "literalMeaning": "grand, great" },
+      { "root": "loqui", "language": "Latin", "literalMeaning": "to speak" }
+    ],
+    "evolution": "From Latin 'grandiloquus' meaning speaking grandly. Has always been slightly mocking — describing speech that is more pompous than the occasion warrants.",
+    "enteredEnglish": "Late 16th century",
+    "plainEnglishSummary": "From Latin for 'grand speaking' — using fancy words to sound more impressive than you are."
+  },
+  "intransigent": {
+    "languageOfOrigin": "Spanish → Latin",
+    "roots": [
+      { "root": "in-", "language": "Latin", "literalMeaning": "not" },
+      { "root": "transigere", "language": "Latin", "literalMeaning": "to come to an agreement" }
+    ],
+    "evolution": "From Spanish 'los intransigentes,' the name adopted by extreme republicans in the 1870s who refused to compromise. Entered French then English as a general term for anyone who won't budge.",
+    "enteredEnglish": "Late 19th century",
+    "plainEnglishSummary": "Named after Spanish politicians who refused to compromise — and still means exactly that."
+  },
+  "erstwhile": {
+    "languageOfOrigin": "Old English",
+    "roots": [
+      { "root": "aer", "language": "Old English", "literalMeaning": "before, formerly" },
+      { "root": "hwil", "language": "Old English", "literalMeaning": "while, time" }
+    ],
+    "evolution": "From Old English 'aer' (before) and 'hwil' (time). One of the rare English words with pure Germanic roots that survived without Latin influence. Simply means 'of a former time.'",
+    "enteredEnglish": "Old English (before 12th century)",
+    "plainEnglishSummary": "Pure Old English for 'before-time' — a once-was that no longer is."
+  },
+  "legerdemain": {
+    "languageOfOrigin": "French",
+    "roots": [
+      { "root": "leger", "language": "French", "literalMeaning": "light" },
+      { "root": "de main", "language": "French", "literalMeaning": "of hand" }
+    ],
+    "evolution": "From French 'leger de main' meaning light of hand, describing a magician's quick fingers. Extended from stage magic to any kind of clever trickery or deception.",
+    "enteredEnglish": "Late 15th century",
+    "plainEnglishSummary": "From French for 'light of hand' — sleight of hand, whether with cards or contracts."
+  },
+  "malfeasance": {
+    "languageOfOrigin": "French → Latin",
+    "roots": [
+      { "root": "mal-", "language": "French", "literalMeaning": "bad, wrong" },
+      { "root": "faisance", "language": "French", "literalMeaning": "doing, action" }
+    ],
+    "evolution": "From Anglo-French 'malfaisance' meaning wrongdoing. Became a legal term specifically for wrongdoing by public officials — not just bad behavior, but abuse of a position of trust.",
+    "enteredEnglish": "Late 17th century",
+    "plainEnglishSummary": "From French for 'bad doing' — wrongdoing by someone in power who should know better."
+  },
+  "nascent": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "nasci", "language": "Latin", "literalMeaning": "to be born" }
+    ],
+    "evolution": "From Latin 'nascens' meaning being born. Used first in chemistry for elements in their freshly formed, highly reactive state. Extended to anything just beginning to develop.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'being born' — something brand new and still taking shape."
+  },
+  "vicissitude": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "vicis", "language": "Latin", "literalMeaning": "change, alternation" },
+      { "root": "vicissim", "language": "Latin", "literalMeaning": "in turn" }
+    ],
+    "evolution": "From Latin 'vicissitudo' meaning change or alternation. Usually implies unwelcome or difficult changes — the ups and downs of life, with emphasis on the downs.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'taking turns' — life's unpredictable ups and downs."
+  },
+  "quixotic": {
+    "languageOfOrigin": "Spanish (literary)",
+    "roots": [
+      { "root": "Quixote", "language": "Spanish", "literalMeaning": "from Don Quixote" }
+    ],
+    "evolution": "From Cervantes' novel 'Don Quixote' (1605), about a man so obsessed with chivalric romances he attacks windmills thinking they're giants. The word captures noble but hopelessly impractical idealism.",
+    "enteredEnglish": "Early 18th century",
+    "plainEnglishSummary": "Named after Don Quixote, who fought windmills — idealistic to the point of delusion."
+  },
+  "specious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "speciosus", "language": "Latin", "literalMeaning": "fair, beautiful" },
+      { "root": "species", "language": "Latin", "literalMeaning": "appearance" }
+    ],
+    "evolution": "From Latin 'speciosus' meaning beautiful or fair to look at. Originally positive in English too (handsome, attractive). By the 17th century it flipped to mean superficially attractive but actually false.",
+    "enteredEnglish": "Late 14th century",
+    "plainEnglishSummary": "From Latin for 'beautiful' — something that looks good on the surface but is actually wrong."
+  },
+  "tendentious": {
+    "languageOfOrigin": "Latin → German → English",
+    "roots": [
+      { "root": "tendere", "language": "Latin", "literalMeaning": "to stretch, aim" },
+      { "root": "Tendenz", "language": "German", "literalMeaning": "tendency, bias" }
+    ],
+    "evolution": "From German 'tendenzioes,' formed from Latin 'tendere' (to stretch toward). Describes writing or speech that is stretched toward a particular conclusion, promoting a specific viewpoint.",
+    "enteredEnglish": "Early 20th century",
+    "plainEnglishSummary": "From Latin for 'stretching toward' — content that leans hard in one direction."
+  },
+  "enervate": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "e-", "language": "Latin", "literalMeaning": "out of" },
+      { "root": "nervus", "language": "Latin", "literalMeaning": "sinew, nerve" }
+    ],
+    "evolution": "From Latin 'enervare' meaning to cut the sinews. Literally means to remove someone's tendons, leaving them weak. Often confused with 'energize' because it sounds similar, but it means the opposite.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'removing the sinews' — draining all the strength and energy out of someone."
+  },
+  "anodyne": {
+    "languageOfOrigin": "Greek → Latin → English",
+    "roots": [
+      { "root": "an-", "language": "Greek", "literalMeaning": "without" },
+      { "root": "odyne", "language": "Greek", "literalMeaning": "pain" }
+    ],
+    "evolution": "From Greek 'anodymos' meaning free from pain. Originally a medical term for painkillers. Extended to describe anything so bland and inoffensive that it numbs — it relieves pain by being utterly uninteresting.",
+    "enteredEnglish": "Mid 16th century",
+    "plainEnglishSummary": "From Greek for 'without pain' — so bland and safe that it can't offend anyone."
+  },
+  "avarice": {
+    "languageOfOrigin": "Latin → Old French → English",
+    "roots": [
+      { "root": "avarus", "language": "Latin", "literalMeaning": "greedy" },
+      { "root": "avere", "language": "Latin", "literalMeaning": "to crave" }
+    ],
+    "evolution": "From Latin 'avaritia' meaning greed. One of the seven deadly sins in Christian theology. Has always meant excessive, consuming greed for wealth.",
+    "enteredEnglish": "Late 13th century",
+    "plainEnglishSummary": "From Latin for 'craving' — greed so intense it was listed among the deadly sins."
+  },
+  "calumny": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "calumnia", "language": "Latin", "literalMeaning": "false accusation, trickery" },
+      { "root": "calvi", "language": "Latin", "literalMeaning": "to deceive" }
+    ],
+    "evolution": "From Latin 'calumnia' meaning a false charge or trick. In Roman law, a calumniator could be punished. The word retains its sense of deliberately false, reputation-destroying accusations.",
+    "enteredEnglish": "Late 15th century",
+    "plainEnglishSummary": "From Latin for 'false accusation' — lies specifically designed to destroy someone's reputation."
+  },
+  "circumlocution": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "circum-", "language": "Latin", "literalMeaning": "around" },
+      { "root": "locutio", "language": "Latin", "literalMeaning": "speech, speaking" }
+    ],
+    "evolution": "From Latin 'circumlocutio' meaning speaking around. A rhetorical term for using many words to avoid saying something directly — talking in circles.",
+    "enteredEnglish": "Late 14th century",
+    "plainEnglishSummary": "From Latin for 'speaking around' — using twenty words when one would do."
+  },
+  "conflagration": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "con-", "language": "Latin", "literalMeaning": "together, intensely" },
+      { "root": "flagrare", "language": "Latin", "literalMeaning": "to burn" }
+    ],
+    "evolution": "From Latin 'conflagratio' meaning a burning up. Originally described literal fires. Extended metaphorically to large-scale conflicts or wars — anything that burns through a society.",
+    "enteredEnglish": "Late 15th century",
+    "plainEnglishSummary": "From Latin for 'burning together' — a fire or conflict so large it consumes everything."
+  },
+  "contumacious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "contumax", "language": "Latin", "literalMeaning": "stubborn, insolent" },
+      { "root": "con-", "language": "Latin", "literalMeaning": "intensive prefix" }
+    ],
+    "evolution": "From Latin 'contumax' meaning haughty or stubborn. Became a legal term for willful disobedience to a court order. Carries a stronger sense of defiance than simple stubbornness.",
+    "enteredEnglish": "Late 16th century",
+    "plainEnglishSummary": "From Latin for 'stubbornly defiant' — disobedience that dares authority to do something about it."
+  },
+  "cupidity": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "cupiditas", "language": "Latin", "literalMeaning": "desire, passion" },
+      { "root": "cupidus", "language": "Latin", "literalMeaning": "desirous, eager" }
+    ],
+    "evolution": "From Latin 'cupiditas' meaning eager desire. Related to Cupid, the god of desire. In English, narrowed from general desire to specifically mean greed for money or possessions.",
+    "enteredEnglish": "Late 14th century",
+    "plainEnglishSummary": "Related to Cupid, the god of desire — but this desire is for money, not love."
+  },
+  "dilettante": {
+    "languageOfOrigin": "Italian → Latin",
+    "roots": [
+      { "root": "dilettare", "language": "Italian", "literalMeaning": "to delight" },
+      { "root": "delectare", "language": "Latin", "literalMeaning": "to delight, charm" }
+    ],
+    "evolution": "From Italian 'dilettante' meaning a lover of the arts. Originally positive — a refined person who appreciated art for pleasure. Shifted to negative, implying someone who dabbles without serious commitment.",
+    "enteredEnglish": "Mid 18th century",
+    "plainEnglishSummary": "From Italian for 'one who delights' — once a compliment for art lovers, now an insult for amateurs."
+  },
+  "emollient": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "e-", "language": "Latin", "literalMeaning": "out" },
+      { "root": "mollire", "language": "Latin", "literalMeaning": "to soften" }
+    ],
+    "evolution": "From Latin 'emollire' meaning to soften. Used in medicine for substances that soften skin. Extended to describe diplomatic speech or actions designed to smooth things over and reduce friction.",
+    "enteredEnglish": "Mid 17th century",
+    "plainEnglishSummary": "From Latin for 'softening out' — smoothing over rough situations, whether skin or social."
+  },
+  "epistemic": {
+    "languageOfOrigin": "Greek",
+    "roots": [
+      { "root": "episteme", "language": "Greek", "literalMeaning": "knowledge, understanding" },
+      { "root": "epistanai", "language": "Greek", "literalMeaning": "to understand, know" }
+    ],
+    "evolution": "From Greek 'episteme' meaning knowledge, as opposed to 'doxa' (mere opinion). Plato distinguished these two in his theory of knowledge. The adjective form became standard in modern philosophy.",
+    "enteredEnglish": "Early 20th century",
+    "plainEnglishSummary": "From Greek for 'knowledge' — how we know what we know, and how certain we can be."
+  },
+  "excoriate": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "ex-", "language": "Latin", "literalMeaning": "off, away" },
+      { "root": "corium", "language": "Latin", "literalMeaning": "skin, hide" }
+    ],
+    "evolution": "From Latin 'excoriare' meaning to strip off the skin. The literal medical meaning (removing skin) still exists, but the figurative meaning of harsh verbal criticism became dominant.",
+    "enteredEnglish": "Late 15th century",
+    "plainEnglishSummary": "From Latin for 'stripping the skin off' — criticism so harsh it flays."
+  },
+  "exigent": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "exigere", "language": "Latin", "literalMeaning": "to drive out, demand" },
+      { "root": "ex-", "language": "Latin", "literalMeaning": "out" }
+    ],
+    "evolution": "From Latin 'exigens' meaning demanding. Originally meant requiring exact payment or compliance. Broadened to mean any situation demanding urgent action.",
+    "enteredEnglish": "Late 15th century",
+    "plainEnglishSummary": "From Latin for 'driving out' — a situation that demands immediate action, no delays."
+  },
+  "fatuous": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "fatuus", "language": "Latin", "literalMeaning": "foolish, silly" }
+    ],
+    "evolution": "From Latin 'fatuus' meaning foolish. In Roman culture, 'fatuus' also meant inspired by the gods (divine madness). English kept only the negative sense — plain foolishness without the divine excuse.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'foolish' — stupidity that is both pointless and self-satisfied."
+  },
+  "feckless": {
+    "languageOfOrigin": "Scots English",
+    "roots": [
+      { "root": "feck", "language": "Scots", "literalMeaning": "effect, value (from 'effect')" },
+      { "root": "-less", "language": "English", "literalMeaning": "without" }
+    ],
+    "evolution": "From Scots 'feck,' a shortened form of 'effect.' Feckless literally means without effect — useless, ineffective. It implies not just failure but a lazy unwillingness to even try.",
+    "enteredEnglish": "Late 16th century",
+    "plainEnglishSummary": "From Scots for 'without effect' — useless and not even trying to be useful."
+  },
+  "filibuster": {
+    "languageOfOrigin": "Spanish → Dutch → English",
+    "roots": [
+      { "root": "filibustero", "language": "Spanish", "literalMeaning": "pirate, freebooter" },
+      { "root": "vrijbuiter", "language": "Dutch", "literalMeaning": "freebooter, pirate" }
+    ],
+    "evolution": "From Spanish 'filibustero' (pirate), from Dutch 'vrijbuiter' (freebooter). Originally described pirates raiding Central America. In the 1850s, applied to senators who 'pirated' legislative time by speaking endlessly.",
+    "enteredEnglish": "Late 18th century",
+    "plainEnglishSummary": "Originally meant pirate — then applied to politicians who hijack debate by talking forever."
+  },
+  "fulminate": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "fulminare", "language": "Latin", "literalMeaning": "to hurl lightning" },
+      { "root": "fulmen", "language": "Latin", "literalMeaning": "lightning bolt" }
+    ],
+    "evolution": "From Latin 'fulminare' meaning to strike with lightning. Originally described Jupiter hurling thunderbolts. Extended to anyone thundering with rage or delivering explosive condemnations.",
+    "enteredEnglish": "Early 15th century",
+    "plainEnglishSummary": "From Latin for 'hurling lightning' — raging against something with thunderous fury."
+  },
+  "hagiography": {
+    "languageOfOrigin": "Greek",
+    "roots": [
+      { "root": "hagios", "language": "Greek", "literalMeaning": "holy, sacred" },
+      { "root": "graphein", "language": "Greek", "literalMeaning": "to write" }
+    ],
+    "evolution": "From Greek 'hagios' (holy) and 'graphein' (to write). Originally the writing of saints' lives in the early church. Extended to any biography that idealizes its subject beyond recognition.",
+    "enteredEnglish": "Early 19th century",
+    "plainEnglishSummary": "From Greek for 'holy writing' — a biography so flattering it reads like a saint's tale."
+  },
+  "hegemony": {
+    "languageOfOrigin": "Greek",
+    "roots": [
+      { "root": "hegemonia", "language": "Greek", "literalMeaning": "leadership, authority" },
+      { "root": "hegeisthai", "language": "Greek", "literalMeaning": "to lead" }
+    ],
+    "evolution": "From Greek 'hegemonia' meaning leadership. In ancient Greece, the hegemon was the leading city-state in a military alliance. Marxist thinker Antonio Gramsci expanded it to mean cultural and ideological dominance.",
+    "enteredEnglish": "Mid 16th century",
+    "plainEnglishSummary": "From Greek for 'to lead' — dominance so complete that it shapes what people even think is normal."
+  },
+  "hermetic": {
+    "languageOfOrigin": "Greek → Latin → English",
+    "roots": [
+      { "root": "Hermes", "language": "Greek", "literalMeaning": "Hermes Trismegistus (thrice-great Hermes)" }
+    ],
+    "evolution": "Named after Hermes Trismegistus, the legendary author of mystical texts. 'Hermetic seal' came from alchemists who sealed vessels using his methods. Extended to mean both airtight and intellectually impenetrable.",
+    "enteredEnglish": "Mid 17th century",
+    "plainEnglishSummary": "Named after a legendary mystic — sealed so tight nothing gets in or out."
+  },
+  "hubris": {
+    "languageOfOrigin": "Greek",
+    "roots": [
+      { "root": "hybris", "language": "Greek", "literalMeaning": "excessive pride, outrage" }
+    ],
+    "evolution": "From Greek 'hybris' meaning wanton violence or insolence born of excessive pride. In Greek tragedy, hubris was the fatal flaw that provoked divine punishment. The tragic pattern — pride, blindness, downfall — remains central to the word.",
+    "enteredEnglish": "Late 19th century",
+    "plainEnglishSummary": "From Greek tragedy — the dangerous pride that comes right before a spectacular fall."
+  },
+  "ignominious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "in-", "language": "Latin", "literalMeaning": "not" },
+      { "root": "nomen", "language": "Latin", "literalMeaning": "name, reputation" }
+    ],
+    "evolution": "From Latin 'ignominiosus' meaning without a good name. Literally means having your reputation stripped away — public disgrace that everyone knows about.",
+    "enteredEnglish": "Late 15th century",
+    "plainEnglishSummary": "From Latin for 'without a good name' — a failure so public it ruins your reputation."
+  },
+  "impecunious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "im-", "language": "Latin", "literalMeaning": "not, without" },
+      { "root": "pecunia", "language": "Latin", "literalMeaning": "money" }
+    ],
+    "evolution": "From Latin 'im-' (without) and 'pecunia' (money), which itself came from 'pecus' (cattle) because livestock was the original form of wealth. Literally: without cattle, therefore without money.",
+    "enteredEnglish": "Late 16th century",
+    "plainEnglishSummary": "From Latin for 'without money' — ultimately from 'cattle,' because cows were the original currency."
+  },
+  "implacable": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "im-", "language": "Latin", "literalMeaning": "not" },
+      { "root": "placare", "language": "Latin", "literalMeaning": "to please, appease" }
+    ],
+    "evolution": "From Latin 'implacabilis' meaning that cannot be appeased. Describes hostility or determination that no amount of apology, pleading, or negotiation can soften.",
+    "enteredEnglish": "Early 16th century",
+    "plainEnglishSummary": "From Latin for 'cannot be appeased' — relentless and immune to any plea."
+  },
+  "inchoate": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "inchoare", "language": "Latin", "literalMeaning": "to begin, start work on" }
+    ],
+    "evolution": "From Latin 'inchoatus' meaning just begun. Originally a legal term for an offense that is begun but not completed (like attempted crime). Broadened to describe anything still forming and not yet coherent.",
+    "enteredEnglish": "Mid 16th century",
+    "plainEnglishSummary": "From Latin for 'just begun' — still forming, not yet fully shaped or coherent."
+  },
+  "inimical": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "inimicus", "language": "Latin", "literalMeaning": "enemy" },
+      { "root": "in-", "language": "Latin", "literalMeaning": "not" },
+      { "root": "amicus", "language": "Latin", "literalMeaning": "friend" }
+    ],
+    "evolution": "From Latin 'inimicalis' meaning hostile, literally 'not a friend.' Related to 'enemy' (from the same Latin root). Describes anything that actively works against something else.",
+    "enteredEnglish": "Late 16th century",
+    "plainEnglishSummary": "From Latin for 'not a friend' — hostile and working against you."
+  },
+  "insidious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "insidiae", "language": "Latin", "literalMeaning": "ambush, trap" },
+      { "root": "insidere", "language": "Latin", "literalMeaning": "to sit in, lie in wait" }
+    ],
+    "evolution": "From Latin 'insidiosus' meaning cunning or deceitful. Literally described someone sitting in ambush. Extended to any danger that works gradually and treacherously, hiding its true harm.",
+    "enteredEnglish": "Mid 16th century",
+    "plainEnglishSummary": "From Latin for 'lying in ambush' — danger that creeps in slowly before you notice it."
+  },
+  "internecine": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "inter-", "language": "Latin", "literalMeaning": "among, between" },
+      { "root": "necare", "language": "Latin", "literalMeaning": "to kill" }
+    ],
+    "evolution": "From Latin 'internecinus' meaning mutually destructive. Originally meant fought to the death. Samuel Johnson's dictionary defined it as simply 'deadly,' but the 'inter-' prefix was reinterpreted to mean conflict within a group.",
+    "enteredEnglish": "Mid 17th century",
+    "plainEnglishSummary": "From Latin for 'killing among each other' — warfare within the same group."
+  },
+  "invective": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "invehi", "language": "Latin", "literalMeaning": "to attack, assail" },
+      { "root": "in-", "language": "Latin", "literalMeaning": "against" },
+      { "root": "vehere", "language": "Latin", "literalMeaning": "to carry" }
+    ],
+    "evolution": "From Latin 'invectiva' (oratio), meaning an attacking speech. Literally 'carried against' someone. Cicero's speeches against Catiline are classic examples of ancient invective.",
+    "enteredEnglish": "Late 15th century",
+    "plainEnglishSummary": "From Latin for 'carried against' — a verbal attack, words hurled like weapons."
+  },
+  "inveterate": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "inveterare", "language": "Latin", "literalMeaning": "to make old" },
+      { "root": "vetus", "language": "Latin", "literalMeaning": "old" }
+    ],
+    "evolution": "From Latin 'inveteratus' meaning of long standing. Originally described diseases that became chronic. Extended to habits and attitudes so deeply established they seem permanent.",
+    "enteredEnglish": "Late 14th century",
+    "plainEnglishSummary": "From Latin for 'made old' — a habit so deeply rooted it has become part of who you are."
+  },
+  "jejune": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "jejunus", "language": "Latin", "literalMeaning": "fasting, hungry, barren" }
+    ],
+    "evolution": "From Latin 'jejunus' meaning fasting or empty. Originally meant hungry or nutritionally empty. Extended to intellectually empty — ideas that lack substance or nourishment for the mind.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'fasting' — ideas so empty they leave your mind hungry for something real."
+  },
+  "malediction": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "male", "language": "Latin", "literalMeaning": "badly, ill" },
+      { "root": "dicere", "language": "Latin", "literalMeaning": "to speak" }
+    ],
+    "evolution": "From Latin 'maledictio' meaning evil-speaking or a curse. The opposite of 'benediction' (good speaking, a blessing). Has always meant a spoken curse calling down harm.",
+    "enteredEnglish": "Late 15th century",
+    "plainEnglishSummary": "From Latin for 'speaking ill' — a curse, the evil opposite of a blessing."
+  },
+  "meretricious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "meretrix", "language": "Latin", "literalMeaning": "prostitute" },
+      { "root": "merere", "language": "Latin", "literalMeaning": "to earn" }
+    ],
+    "evolution": "From Latin 'meretricius' meaning of or relating to a prostitute. Extended to describe anything that attracts through flashy, superficial appeal — alluring on the surface but hollow underneath.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'like a prostitute' — flashy and attractive on the surface but cheap underneath."
+  },
+  "miasma": {
+    "languageOfOrigin": "Greek",
+    "roots": [
+      { "root": "miasma", "language": "Greek", "literalMeaning": "pollution, defilement" },
+      { "root": "miainein", "language": "Greek", "literalMeaning": "to pollute" }
+    ],
+    "evolution": "From Greek 'miasma' meaning pollution. Before germ theory, people believed diseases spread through bad air (miasma). The medical theory was wrong, but the word survived as a metaphor for any oppressive, corrupting atmosphere.",
+    "enteredEnglish": "Mid 17th century",
+    "plainEnglishSummary": "From Greek for 'pollution' — once blamed for disease, now describes any toxic atmosphere."
+  },
+  "munificent": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "munus", "language": "Latin", "literalMeaning": "gift, duty" },
+      { "root": "facere", "language": "Latin", "literalMeaning": "to make, do" }
+    ],
+    "evolution": "From Latin 'munificentia' meaning generosity, literally 'gift-making.' In Roman culture, wealthy citizens were expected to make generous public gifts. The word implies generosity on a grand, impressive scale.",
+    "enteredEnglish": "Late 16th century",
+    "plainEnglishSummary": "From Latin for 'gift-making' — generosity so large it's hard to ignore."
+  },
+  "nefarious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "nefarius", "language": "Latin", "literalMeaning": "wicked, abominable" },
+      { "root": "nefas", "language": "Latin", "literalMeaning": "wrong, sin (literally: not divine law)" }
+    ],
+    "evolution": "From Latin 'nefarius,' from 'nefas' meaning an act against divine law. Literally 'not fas' (not what the gods permit). Reserved for wickedness that violates basic moral law.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'against divine law' — wickedness so serious it offends the gods."
+  },
+  "nugatory": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "nugatorius", "language": "Latin", "literalMeaning": "trifling, worthless" },
+      { "root": "nugae", "language": "Latin", "literalMeaning": "trifles, jests" }
+    ],
+    "evolution": "From Latin 'nugatorius' meaning trifling, from 'nugae' (jokes, trifles). Describes things so unimportant they might as well be a joke — having no purpose, value, or effect.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'trifles' — so worthless it might as well be a joke."
+  },
+  "obdurate": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "obdurare", "language": "Latin", "literalMeaning": "to harden" },
+      { "root": "durus", "language": "Latin", "literalMeaning": "hard" }
+    ],
+    "evolution": "From Latin 'obduratus' meaning hardened. Originally used for a heart hardened against emotion or repentance. Describes stubbornness that is not just resistant but impervious — like stone.",
+    "enteredEnglish": "Late 15th century",
+    "plainEnglishSummary": "From Latin for 'to harden' — stubbornness so extreme it has turned to stone."
+  },
+  "opprobrious": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "ob-", "language": "Latin", "literalMeaning": "against" },
+      { "root": "probrum", "language": "Latin", "literalMeaning": "disgrace, infamy" }
+    ],
+    "evolution": "From Latin 'opprobriosus' meaning bringing disgrace. Describes both language that is scornfully abusive and conduct that brings shame. Carries a strong public dimension — this is disgrace witnessed by others.",
+    "enteredEnglish": "Late 14th century",
+    "plainEnglishSummary": "From Latin for 'against reputation' — shameful language or behavior that everyone can see."
+  },
+  "ossified": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "os", "language": "Latin", "literalMeaning": "bone" },
+      { "root": "facere", "language": "Latin", "literalMeaning": "to make" }
+    ],
+    "evolution": "From Latin 'os' (bone) and 'facere' (to make). Originally a medical term for tissue turning into bone. Extended to describe institutions or thinking that have become rigid and incapable of change.",
+    "enteredEnglish": "Early 18th century",
+    "plainEnglishSummary": "From Latin for 'made into bone' — something once flexible that has hardened beyond change."
+  },
+  "palimpsest": {
+    "languageOfOrigin": "Greek → Latin → English",
+    "roots": [
+      { "root": "palin", "language": "Greek", "literalMeaning": "again" },
+      { "root": "psestos", "language": "Greek", "literalMeaning": "scraped, rubbed" }
+    ],
+    "evolution": "From Greek 'palimpsestos' meaning scraped again. Ancient scribes would scrape parchment clean and write over it, but traces of the original remained visible. Now used for anything with visible layers of history.",
+    "enteredEnglish": "Mid 17th century",
+    "plainEnglishSummary": "From Greek for 'scraped again' — a surface rewritten over old text, where the past still shows through."
+  },
+  "panegyric": {
+    "languageOfOrigin": "Greek → Latin → English",
+    "roots": [
+      { "root": "pan-", "language": "Greek", "literalMeaning": "all" },
+      { "root": "agyris", "language": "Greek", "literalMeaning": "assembly" }
+    ],
+    "evolution": "From Greek 'panegyrikos' meaning fit for a public assembly. In ancient Greece, panegyrics were speeches praising Athens before the whole assembled citizenry. Extended to any lavish public praise.",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Greek for 'speech to the whole assembly' — public praise laid on thick."
+  },
+  "pecuniary": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "pecunia", "language": "Latin", "literalMeaning": "money, property" },
+      { "root": "pecus", "language": "Latin", "literalMeaning": "cattle" }
+    ],
+    "evolution": "From Latin 'pecuniarius' meaning relating to money, from 'pecunia' (money), from 'pecus' (cattle). In early Rome, wealth was measured in livestock. The word preserves this ancient link between cattle and cash.",
+    "enteredEnglish": "Early 16th century",
+    "plainEnglishSummary": "From Latin for 'cattle' — because in ancient Rome, your herd was your bank account."
+  },
+  "pellucid": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "per-", "language": "Latin", "literalMeaning": "through" },
+      { "root": "lucidus", "language": "Latin", "literalMeaning": "clear, bright" }
+    ],
+    "evolution": "From Latin 'pellucidus' meaning transparent, literally shining through. Describes both physical transparency (pellucid water) and intellectual clarity (pellucid prose).",
+    "enteredEnglish": "Early 17th century",
+    "plainEnglishSummary": "From Latin for 'shining through' — so clear you can see right through to the meaning."
+  },
+  "peremptory": {
+    "languageOfOrigin": "Latin",
+    "roots": [
+      { "root": "peremptorius", "language": "Latin", "literalMeaning": "deadly, decisive" },
+      { "root": "perimere", "language": "Latin", "literalMeaning": "to destroy, cut off" }
+    ],
+    "evolution": "From Latin 'peremptorius' meaning destructive or decisive. Originally a legal term — a peremptory challenge ends debate with no appeal. Extended to any tone or manner that demands instant obedience.",
+    "enteredEnglish": "Early 16th century",
+    "plainEnglishSummary": "From Latin for 'cutting off' — a tone that ends all discussion and demands compliance."
+  }
+}
